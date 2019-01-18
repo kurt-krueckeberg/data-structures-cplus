@@ -1,0 +1,30 @@
+TODO
+----
+
+The notes/regex.rst needs the output of the code blocks added. It is missing.
+
+CSS Techniques
+--------------
+
+How to add custom css for inline code to sphinx-generated html. Seehttp://stackoverflow.com/questions/10870719/inline-code-highlighting-in-restructuredtext
+which says:
+
+    To get syntax highlighting you can define a custom role. For example
+    
+    .. role:: bash(code)
+       :language: bash
+    
+    which you can then use like so:
+    
+    Here is some awesome bash code :bash:`a = b + c`.
+    
+How to add an extra css is explained at: http://stackoverflow.com/questions/23462494/how-to-add-a-custom-css-file
+which says:
+
+    A simpler way is to add this to your conf.py:
+    
+    def setup(app):
+        app.add_stylesheet('css/custom.css')
+    
+    Then put the file into the _static/css/ folder.
+

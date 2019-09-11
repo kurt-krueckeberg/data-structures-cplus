@@ -19,7 +19,7 @@ Red nodes are always ones that would join with their parent to become a 3- or 4-
 The crucial slides, notes, and explanations of red black trees and how to transform the nodes of a 2-3-4 tree into red black tree:
 
 * This `Open Data structures article <http://opendatastructures.org/ods-java/9_2_RedBlackTree_Simulated_.html>`_ explains how the 2 3 4 algorithms map to the red black tree algorithms.
-* These `Red black lecture notes <http://cs.armstrong.edu/liang/intro6e/supplement/CH10TreeRBTree.pdf>`_ are the basis for a solid introduction in red black trees. They use use 2 3 4 trees as the basis for understanding red  black trees. They seem conceptually thorough, in depth and tutoriall-oriented.
+* These `Red black lecture notes <https://www.usna.edu/Users/cs/crabbe/SI321/2003-08/red-black/red-black.html>`_ are the basis for a solid introduction in red black trees. They use use 2 3 4 trees as the basis for understanding red  black trees. They seem conceptually thorough, in depth and tutoriall-oriented.
   It has succinct proofs about 2 3 4 tree and red black tree equivalence--I believe. 
 * The `Standford CS166 page <https://web.stanford.edu/class/cs166/>`_ has excellent slides on **Balanced Trees, Part I** and **Balaaced Trees, Part 2** that are very good. They explain how a more memory efficient BST tree than multiway trees like 2 3 4 trees motivated the inventation 
   of red black trees. It shows the isometry between 2 3 4 tree4 and red black trees and how the insertion and deletion algorithm that maintain a balanced 2 3 4 tree are implemented in a red black tree, something that involves many special cases.

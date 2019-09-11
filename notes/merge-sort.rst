@@ -56,7 +56,7 @@ is allocated the recursive subdivision of the array begins. When an array of siz
        // allocate a working buffer for our merges
        std::unique_ptr<T[]> work_buffer { new T[last + 1 - first] };
       
-       do_merge_sort<T, Comparator>(a, first, last, temp_buffer, C);
+       do_merge_sort<T, Comparator>(a, first, last, work_buffer, C);
    }
    
    template<typename T, typename Comparator> static void do_merge_sort(T *a, int first, int last, T *buffer, Comparator C)
@@ -147,7 +147,7 @@ addition and substraction with an integer, subtraction of two iterators, deferen
       // allocate a working buffer for our merges
       std::unique_ptr<T[]> work_buffer { std::make_unqiue(last + 1 - first) };
        
-      do_merge_sort(first, last, temp_buffer, C);
+      do_merge_sort(first, last, work_buffer, C);
    }
    
    template<typename Iterator, typename Comparator> static void do_merge_sort(Iterator  first, Iterator  last,

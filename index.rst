@@ -4,7 +4,6 @@ Notes on Data Structures and Algorithms in C++
 .. toctree::
    :maxdepth: 2
    
-   notes/regex.rst
    notes/merge-sort.rst
    notes/shell-sort.rst
    notes/union-find.rst

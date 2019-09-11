@@ -47,34 +47,34 @@ is allocated the recursive subdivision of the array begins. When an array of siz
    #ifndef GERNEIC_MERGE_SORT_H
    #define GERNEIC_MERGE_SORT_H
    #include <memory>
-   
-   template<typename T, typename Comparator> static void do_merge(T *a, int first, int mid, int last, T *buffer, Comparator C);
-   template<typename T, typename Comparator> static void do_merge_sort(T *a, int first, int last, T *buffer, Comparator C);
-   
-   template<typename T, typename Comparator> void merge_sort(T *a, int first, int last, Comparator C)
-   {
-       // allocate a working buffer for our merges
-       std::unique_ptr<T[]> work_buffer { new T[last + 1 - first] };
-      
-       do_merge_sort<T, Comparator>(a, first, last, work_buffer, C);
+
+    template<typename T, typename Comparator> static void do_merge(T a[], int first, int mid, int last, T *buffer, Comparator C);
+    template<typename T, typename Comparator> static void do_merge_sort(T a[], int first, int last, T *buffer, Comparator C);
+    
+    template<typename T, typename Comparator> void merge_sort(T a[], int first, int last, Comparator C)
+    {
+        // allocate a working buffer for our merges
+        std::unique_ptr<T[]> work_buffer = std::make_unique<T []>( last + 1 - first );
+    
+        do_merge_sort<T, Comparator>(a, first, last, work_buffer.get(), C);
+    }
+    
+    template<typename T, typename Comparator> static void do_merge_sort(T a[], int first, int last, T buffer[], Comparator C)
+    {
+        // base case: the range [first, last] can no longer be subdivided.
+        if (first < last) {
+    
+            int mid = (first + last) / 2; // index of mid point
+    
+            do_merge_sort<T, Comparator>(a, first, mid, buffer, C);    // sort left half
+            do_merge_sort<T, Comparator>(a, mid + 1, last, buffer, C); // sort right half
+    
+            // merge the two halves
+            do_merge<T, Comparator>(a, first, mid, last, buffer, C);
+        }
    }
-   
-   template<typename T, typename Comparator> static void do_merge_sort(T *a, int first, int last, T *buffer, Comparator C)
-   {
-       // base case: the range [first, last] can no longer be subdivided.
-       if (first < last) {
-           
-           int mid = (first + last) / 2; // index of mid point
-           
-           do_merge_sort<T, Comparator>(a, first, mid, buffer, C);    // sort left half
-           do_merge_sort<T, Comparator>(a, mid + 1, last, buffer, C); // sort right half
-           
-           // merge the two halves
-           do_merge<T, Comparator>(a, first, mid, last, buffer, C);
-       }
-   }
-   
-   template<typename T, typename Comparator> static void do_merge(T *a, int first, int mid, int last, T *buffer, Comparator compare)
+
+   template<typename T, typename Comparator> static void do_merge(T a[], int first, int mid, int last, T *buffer, Comparator compare)
    {
        int first1 = first;
        int last1 = mid;

@@ -556,9 +556,17 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
         }
     
         // Bidirectional stl-compatible constant iterator
-        class iterator : public std::iterator<std::bidirectional_iterator_tag, typename tree234<Key, Value>::value_type> { 
+        class iterator { 
                                                      
-           friend class tree234<Key, Value>;   
+          public:
+            using difference_type   = std::ptrdiff_t; 
+            using value_type        = tree234<Key, Value>::value_type; 
+            using reference	        = value_type&; 
+            using pointer           = value_type*;
+            
+            using iterator_category = std::bidirectional_iterator_tag; 
+                                                
+            friend class tree234<Key, Value>; 
     
           private:
              tree234<Key, Value>& tree; 
@@ -613,8 +621,16 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
         };
     
         class const_iterator : public std::iterator<std::bidirectional_iterator_tag, const value_type> {
-    
-             friend class tree234<Key, Value>;   
+                                                     
+          public:
+            using difference_type   = std::ptrdiff_t; 
+            using value_type        = tree234<Key, Value>::value_type; 
+            using reference	        = const value_type&; 
+            using pointer           = const value_type*;
+            
+            using iterator_category = std::bidirectional_iterator_tag; 
+                                                
+            friend class tree234<Key, Value>;   
     
           private:
              iterator iter; 
@@ -651,10 +667,10 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
       
         const_iterator begin() const noexcept;  
         const_iterator end() const noexcept;  
-      
-        using  reverse_iterator       = std::reverse_iterator<typename tree234<Key, Value>::iterator>; 
-        using  const_reverse_iterator = std::reverse_iterator<typename tree234<Key, Value>::const_iterator>;
-    
+        
+        using reverse_iterator = std::reverse_iterator<iterator>;
+        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+        
         reverse_iterator rbegin() noexcept;  
         reverse_iterator rend() noexcept;  
      

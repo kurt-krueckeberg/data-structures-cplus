@@ -2121,7 +2121,7 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
           the predecessor is pnode->key(1). Thus, the predecessor is the key at child_index - 1.
           */
     
-          auto  child = pnode;
+          const Node *child = pnode;
           const Node *parent = child->parent;
           
           Key current_key = child->key(index);

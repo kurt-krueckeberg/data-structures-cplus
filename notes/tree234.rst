@@ -180,6 +180,7 @@ Implementation of class tree234
 -------------------------------
 
 The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages the nodes of the tree. The root is also an instance of `unique_ptr<Node>`. Mention copy ctor and move ctor. And how this differs from shared_ptr<Node> implementation.
+This code is available on `github <https://github.com/kurt-krueckeberg/234tree-in-cpp>`_.
 
 .. code-block:: cpp
 

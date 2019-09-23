@@ -572,7 +572,7 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
              tree234<Key, Value>& tree; 
     
              const Node *current;
-             const Node *cursor;
+             const Node *cursor; //  points to "current" node.
 	     int key_index;
              
              int getChildIndex(const typename tree234<Key, Value>::Node *p) const noexcept;
@@ -620,7 +620,7 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
              typename tree234<Key, Value>::KeyValue *operator->() noexcept;
         };
     
-        class const_iterator : public std::iterator<std::bidirectional_iterator_tag, const value_type> {
+        class const_iterator {
                                                      
           public:
             using difference_type   = std::ptrdiff_t; 
@@ -807,34 +807,31 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
     {
       if (current->isLeaf()) { // If leaf node
          
-         if (current == root.get()) { // special case: root is leaf      
-     
+         if (current == root.get()) { // special case: current is root, which is a leaf      
+    
+             // If root has more than one value--it is not a 2-node--and key_index is not the right-most key/value pair in the node,
+             // return the key--the index of the key--immediately to the right. 
              if (!root->isTwoNode() && key_index != (root->getTotalItems() - 1)) { 
     
                  return {current, key_index + 1};
              } 
                       
-             return {nullptr, 0}; // There is no successor
+             return {nullptr, 0}; // There is no successor because key_index is the right-most index.
      
          } else {
     
             return getLeafNodeSuccessor(current, key_index);
          }
     
-      } else { // else internal node
+      } else { // else internal node successor
     
           return getInternalNodeSuccessor(current, key_index);
       }
     }
     
     /* 
-       Requires:
-       1. pnode is an internal node not a leaf node.
-       2. If pnode is a 3-node, then key_index is 1 not 0.
-       Returns:
-       pointer to successor of internal node.
-       Note: When a 2 3 tree node is a 3-node, it has two "right" chidren from the point of view of its first key and two "left" children from the point of view of its
-       second key.
+       Requires: pnode is an internal node not a leaf node.
+       Returns:  pointer to successor of internal node.
      */
     template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getInternalNodeSuccessor(const typename tree234<Key, Value>::Node *pnode, int key_index) const noexcept	    
     {
@@ -848,68 +845,73 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
     }
     
     /*
-     Requires:
-     1. pnode is a leaf node, either a 2 or 3-node
-     2. If pnode is 3-node, then key_index, the index into pnode->keys_values[].key(), must be 1, the second key. It can never be 0, the first key.
+     Requires: pnode is a leaf node other than the root.
      */
     template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getLeafNodeSuccessor(const Node *pnode, int key_index) const 
     {
       // Handle the easy case: a 3- or 4-node in which key_index is not the right most value in the node.
       if (!pnode->isTwoNode() && (pnode->getTotalItems() - 1) != key_index) { 
     
-          return {pnode, key_index + 1}; 
+          return {pnode, key_index + 1};  
       }
-      // Key is the right most key in a leaf node
+    
+      // Handle the harder case: pnode is a leaf node and pnode->keys_values[key_index] is the right-most key/value in this node.
       Node *successor = nullptr;
     
+      // Determine the parent node's child index such that parent->children[child_index] == pnode.
       auto child_index = pnode->getChildIndex(); 
       
       auto current_key = pnode->key(key_index);
-    
-      if (pnode->parent->children[child_index].get() == pnode->parent->getRightMostChild()) { // If pnode is the right-most child of its parent... 
+      
+      // Handle the case: pnode is the right-most child of its parent... 
+      if (pnode->parent->children[child_index].get() == pnode->parent->getRightMostChild()) { 
     
       /*
-       pnode is the right-most child of its parent, so we must find the first ancestor--parent, grandparent, great grandparent, etc--that is in a "greater than" node.key(i), i.e., an ancestor->key(j) that is to the right of node.key(i). 
-       Note: We know that if it is a 3- or 4-node, then key_index is the right most value in the node. Since a 2-node only has one value, it is by default the "right most".
-       To find this ancester, we ascend the tree until we encounter the first ancestor that is not a right-most child.  We select its left-most value since it is the smallest value that is larger than pnode->key(key_index).
+       pnode is a leaf node, and pnode is the right-most child of its parent, and key_index is the right-most index or last index into pnode->keys(). To find the successor, we need the first ancestor node that contains
+       a value great than current_key. To find this ancester, we ascend the tree until we encounter the first ancestor node that is not a right-most child of its parent, that is, where
+    
+       ancester != ancestor->parent->getRightMostChild(). If the ancestor becomes equal to the root before this happens, there is no successor: pnode is the right most node in the tree and key_index is its right-most key.
        */
-           const Node *parent = pnode->parent;
-           
-           // Ascend the parent pointer as long as the node continues to be the right most child (of its parent). 
-           for(;pnode == parent->getRightMostChild(); parent = parent->parent)  { 
-           
-               // pnode is still the right most child, but if it is also the root, then, there is no successor (because pnode was the largest node in the tree). 
-               if (parent == root.get()) {
-                  
-                   return {nullptr, 0};  // To indicate "no-successor" we return the pair: {nullptr, 0} TODO: I could return a tuple<bool, const Node *, int>
-               }
-           
-               pnode = parent;
-           }
-           // We select its left-most value since it is the smallest value that is larger than pnode->key(key_index).
-           auto successor = 0;
+         const Node *child = pnode;
+         const Node *parent = child->parent;
+       
+         // Ascend the parent pointer as long as the child continues to be the right most child (of its parent). 
+         for(;child == parent->getRightMostChild(); parent = parent->parent)  { 
+       
+             // child is still the right most child, but if it is also the root, then, there is no successor. child holds the largest keys in the tree. 
+             if (parent == root.get()) {
+              
+                 return {nullptr, 0};  // To indicate "no-successor" we return the pair: {nullptr, 0}. 
+             }
+       
+             child = parent;
+         }
+         // We select the ancestor's smallest key that is larger than current_key.
+         auto successor_index = 0;
     
-           for (; successor < parent->getTotalItems() && current_key > parent->key(successor); ++successor);
-             
-           return {parent, successor};
-           
+         for (; successor_index < parent->getTotalItems() && current_key > parent->key(successor_index); ++successor_index);
+         
+         return {parent, successor_index};
     
-      } else { 
+      } else { // Handle the case: pnode is not the right-most child of its parent. 
           /* 
-            ...otherwise, we know that pnode that for 2, 3 and 4-nodes pnode is NOT the right most child of its parent (and it is a leaf). We know that if it is a 2, 3, or 4-node, it is not the right most. 
-            We also know that key_index is the right most value of pnode--right? So need to ascertain the index next_index such that pnode->parent->key(next_index) > pnode->key(key_index). How can next_index be calculated
-            from the input parameters and this use-case?
-            Comment: We can view a 3-node as two catenated 2-nodes in which the the middle child is shared between these two "2-nodes", like this
+            ...else we know that pnode is NOT the right most child of its parent (and it is a leaf). We also know that key_index is the right most value of pnode(in the case of a 2-node, key_index can only have the value zero, and it
+            is considered also as the "right-most" index).
+    
+            We need to ascertain the next index, next_index, such that pnode->parent->key(next_index) > pnode->key(key_index). To determine next_index, we can view a 3-node as two catenated 2-nodes in which the the middle child is
+            shared between these two "2-nodes", like this
           
                [3,       5]  
                /  \     / \
               /    \   /   \
             [1, 2]  [3, 4]  [6]
-            While a 4-node can be viewed as three catenated 2-nodes in which the two middle child are shared
+    
+            and a 4-node can be viewed as three catenated 2-nodes in which the two middle child are shared
               
                [2,   4,   6]  
               /  \  / \  / \
             [1]  [3]   [5]  [7] 
+    
             If the leaft node is a 3- or 4-node, we already know (from the first if-test) that the current key is the last, ie, pnode->getTotalItems() - 1. So the we simply go up on level to find the in order successor.    
             We simply need to determine the index in the parent to choose.
           */
@@ -1411,8 +1413,7 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
     }
     
     /*
-      Input: 
-       Assumes that "this" is never the root. The parent of the root is nullptr.
+      Input: Assumes that "this" is never the root. The parent of the root is always the nullptr.
      */
     template<class Key, class Value> int tree234<Key, Value>::Node::getChildIndex() const noexcept
     {
@@ -2067,7 +2068,7 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
     
       int pred_key_index;
     
-      if (child_index != 0) { // IF pnode is not the left-most child, the predecessor is in the parent
+      if (child_index != 0) { // If pnode is not the left-most child, the predecessor is in the parent
     
           return  {pnode->parent, child_index - 1}; 
     
@@ -2119,19 +2120,21 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
           Determine which key is the predecessor. If child_index is one, the middle child, then the predecessor is pnode->keys_values[0]. If child_index is two, then
           the predecessor is pnode->key(1). Thus, the predecessor is the key at child_index - 1.
           */
-          const Node *parent = pnode->parent;
-          
-          Key current_key = pnode->key(index);
     
-          // Ascend the parent pointer chain as long as pnode is the left most child of its parent.
-          for(; pnode == parent->children[0].get();  parent = parent->parent)  {
+          auto  child = pnode;
+          const Node *parent = child->parent;
           
-              // pnode is still the left most child, but if its is the root, we cannot ascend further and there is no predecessor.  
+          Key current_key = child->key(index);
+    
+          // Ascend the parent pointer chain as long as child is the left most child of its parent.
+          for(; child == parent->children[0].get();  parent = parent->parent)  {
+          
+              // child is still the left most child, but if its is the root, we cannot ascend further and there is no predecessor.  
               if (parent == root.get()) {
                     
                   return {nullptr, 0};  // To indicate this we set current, the member of the pair, to nullptr and key_index, the second member, to 0.
               }
-              pnode = parent;
+              child = parent;
           }
     
           // The predecessor will be the first key, starting with the right most key, that is less than current_key. 
@@ -2153,6 +2156,7 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
        if (!tree.isEmpty()) {
     
           current = tree.min(tree.root.get());
+    
       } else {
     
           current = nullptr;
@@ -2232,19 +2236,18 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
          return *this;  // If tree is empty or we are at the end, do nothing.
       }
     
-      std::pair<const Node *, int> pair = tree.getSuccessor(cursor, key_index);
+      auto [successor, index] = tree.getSuccessor(cursor, key_index);
     
-      if (pair.first == nullptr) { // nullptr implies there is no successor to cursor->keys_values[key_index].key().
-                                   // Therefore cached_cursor already points to last key/value in tree.
+      if (successor == nullptr) { // nullptr implies there is no successor to cursor->keys_values[key_index].key().
+                                 // Therefore cursor already points to last key/value in tree.
     
            current = nullptr; // We are now at the end. 
     
       } else {
     
-          cursor = current = pair.first; 
-          key_index = pair.second;
+          cursor = current = successor; 
+          key_index = index;
       }
-    
       return *this;
     }
     
@@ -2260,14 +2263,17 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
           return *this;
       }
       
-      std::pair<const Node *, int> pair = tree.getPredecessor(cursor, key_index);
+      auto [predecessor, index] = tree.getPredecessor(cursor, key_index);
     
-      if (pair.first != nullptr) { // nullptr implies there is no predecessor cursor->key(key_index).
+      if (predecessor != nullptr) { // nullptr implies there is no predecessor cursor->key(key_index).
           
-          cursor = current = pair.first; 
-          key_index = pair.second;
-      }
+          cursor = current = predecessor; 
+          key_index = index;
     
+      } else {
+        // TODO: Do we need an else statement like in iterator::increment() that sets current to nullptr? I need to create a test case for this.
+         current = nullptr; // TODO: New else-block. Untested.
+      }
       return *this;
     }
     
@@ -2278,6 +2284,8 @@ The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages
     }
     /*
      */
+    
+    // TODO: Can we use C++17 range-base for __end by simply having end() be nullptr.
     template<class Key, class Value> bool tree234<Key, Value>::iterator::operator==(const iterator& lhs) const
     {
      if (&lhs.tree == &tree) {

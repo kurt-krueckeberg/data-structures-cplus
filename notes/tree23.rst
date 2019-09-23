@@ -36,6 +36,9 @@ the  ``tree23<Key,Value>``'s iterators to return ``pair<const Key, Value>`` refe
 
 .. code-block:: cpp 
 
+    #ifndef tree23_h_18932492374
+    #define tree23_h_18932492374
+    
     #include <initializer_list>
     #include <array>
     #include <memory>
@@ -76,6 +79,13 @@ the  ``tree23<Key,Value>``'s iterators to return ``pair<const Key, Value>`` refe
     
           KeyValue(KeyValue&& lhs) :  nc_pair{std::move(lhs.nc_pair)} {}
     
+         ~KeyValue() 
+          {
+            
+             const_pair.first.~Key();  // Note: Anonymous unions require explicit destructor calls.
+             const_pair.second.~Value();
+          } 
+     
           KeyValue& operator=(const KeyValue& lhs);  
           KeyValue& operator=(KeyValue&& lhs); 
      
@@ -100,7 +110,9 @@ the  ``tree23<Key,Value>``'s iterators to return ``pair<const Key, Value>`` refe
     
       
        // The tree's heap-allocated Node nodes are managed by std::unique_ptr<Node>s.
-        class Node {
+        class Node { // Since Node depends on both of tree23's template parameters Key and Value, it is safe
+                     // to make it a nested class. If it depended on only Key or only Value, it would have been
+                     // define outside of tree23
     
             friend class tree23<Key, Value>;             
     
@@ -387,8 +399,17 @@ the  ``tree23<Key,Value>``'s iterators to return ``pair<const Key, Value>`` refe
                                     
         enum class iterator_position {beg, in_between, end}; 
     
-        class iterator : public std::iterator<std::bidirectional_iterator_tag, typename tree23<Key, Value>::value_type> { 
-                                                     
+        class iterator  { 
+    
+          public:
+    
+            using difference_type   = std::ptrdiff_t; 
+            using value_type        = tree23<Key, Value>::value_type; 
+            using reference	        = value_type&; 
+            using pointer           = value_type*;
+            
+            using iterator_category = std::bidirectional_iterator_tag; 
+                        
            friend class tree23<Key, Value>;   
     
           private:
@@ -465,12 +486,19 @@ the  ``tree23<Key,Value>``'s iterators to return ``pair<const Key, Value>`` refe
              typename tree23<Key, Value>::KeyValue *operator->() noexcept;
         };
     
-        class const_iterator : public std::iterator<std::bidirectional_iterator_tag, const value_type> {
+        class const_iterator {
     
           private:
             iterator iter; 
           public:
-             
+    
+            using difference_type   = std::ptrdiff_t; 
+            using value_type        = tree23<Key, Value>::value_type; 
+            using reference	        = const value_type&; 
+            using pointer           = const value_type*;
+            
+            using iterator_category = std::bidirectional_iterator_tag; 
+    
              explicit const_iterator(const tree23<Key, Value>& lhs);
     
              const_iterator(const tree23<Key, Value>& lhs, iterator_position pos); 
@@ -501,8 +529,8 @@ the  ``tree23<Key,Value>``'s iterators to return ``pair<const Key, Value>`` refe
         const_iterator begin() const noexcept;  
         const_iterator end() const noexcept;  
       
-        using  reverse_iterator       = std::reverse_iterator<typename tree23<Key, Value>::iterator>; 
-        using  const_reverse_iterator = std::reverse_iterator<typename tree23<Key, Value>::const_iterator>;
+        using  reverse_iterator       = std::reverse_iterator<iterator>; 
+        using  const_reverse_iterator = std::reverse_iterator<const_iterator>;
     
         reverse_iterator rbegin() noexcept;  
         reverse_iterator rend() noexcept;  
@@ -976,19 +1004,16 @@ the  ``tree23<Key,Value>``'s iterators to return ``pair<const Key, Value>`` refe
     
      return {pnode, pnode->totalItems - 1}; 
     }
-
-
-Finding the predecessor of a given node 
----------------------------------------
-
-The pseudo code for and illustration of how it works is at from http://ee.usc.edu/~redekopp/cs104/slides/L19_BalancedBST_23.pdf slides #7 and #8
-If left child exists, predecessor is the right most node of the left subtree
-Else we walk up the ancestor chain until you traverse the first right child pointer (find the first node that is a right child of its 
-parent...that parent is the predecessor)
-If you get to the root w/o finding a node that is a right child, there is no predecessor
-
-.. code-block:: cpp
-
+    /* 
+    Finding the predecessor of a given node 
+    ---------------------------------------
+      Pseudo code and illustration is at From http://ee.usc.edu/~redekopp/cs104/slides/L19_BalancedBST_23.pdf slides #7 and #8
+      If left child exists, predecessor is the right most node of the left subtree
+      Else we walk up the ancestor chain until you traverse the first right child pointer (find the first node that is a right child of its 
+      parent...that parent is the predecessor)
+      If you get to the root w/o finding a node that is a right child, there is no predecessor
+    */
+    
     template<class Key, class Value> std::pair<const typename tree23<Key, Value>::Node *, int> tree23<Key, Value>::iterator::getLeafNodePredecessor(const typename tree23<Key, Value>::Node *pnode, int index) const noexcept
     {
       // Handle trivial case: if the leaf node is a 3-node and key_index points to the second key, simply set key_index to 0. 
@@ -1084,20 +1109,23 @@ If you get to the root w/o finding a node that is a right child, there is no pre
           return {parent, index_of_child - 1};
       }   
     }
-    /* 
+    
+    /*
+    Finding the successor of a given node 
+    -------------------------------------
     Requires:
-
-    1. If position is beg, current and key_index MUST point to first key in tree. 
-    2. If position is end,  current and key_index MUST point to last key in tree.
-      
-    3. If position is in_between, current and key_index do not point to either the first key in the tree or last key in tree. If the tree has only one node,
-       the state can only be in_between if the first node is a 3-node.
-
-    Returns:
-    pair<const Node *, int>, first is the node with the next in-order key, and second is the index into keys_values[]. If the last key has already been visited,
-    the pointer returned will be nullptr.
-    */
-
+    
+        1. If position is beg, current and key_index MUST point to first key in tree. 
+        2. If position is end,  current and key_index MUST point to last key in tree.
+          
+        3. If position is in_between, current and key_index do not point to either the first key in the tree or last key in tree. If the tree has only one node,
+           the state can only be in_between if the first node is a 3-node.
+    
+        Returns:
+        pair<const Node *, int>, first is the node with the next in-order key, and second is the index into keys_values[]. If the last key has already been visited,
+        the pointer returned will be nullptr.
+    
+     */
     template<class Key, class Value> std::pair<const typename tree23<Key, Value>::Node *, int> tree23<Key, Value>::iterator::getSuccessor(const Node *current,\
                                                                                                                int index_of_key) const noexcept
     {
@@ -1149,15 +1177,14 @@ If you get to the root w/o finding a node that is a right child, there is no pre
     
      return {const_cast<Node *>(pnode), 0};
     }
-    /* 
-    Requires:
-    1. pnode is a either 2- or 3-node leaf node. 
-    2. If pnode is 3-node, then key_index must be one: pnode->keys_values[1].key(), must be 1. It can never be 0, the first key.
+    /*
+     Requires:
+     1. pnode is a either 2- or 3-node leaf node. 
+     2. If pnode is 3-node, then key_index must be one: pnode->keys_values[1].key(), must be 1. It can never be 0, the first key.
     
-    Promises:
-     To return the in-order successor represented by the pair { const Node *pnode; int key_index }.
-    */ 
-
+     Promises:
+      To return the in-order successor represented by the pair { const Node *pnode; int key_index }.
+     */
     template<class Key, class Value> std::pair<const typename tree23<Key, Value>::Node *, int> tree23<Key, Value>::iterator::getLeafNodeSuccessor(const \
      typename tree23<Key, Value>::Node *pnode, int index_of_key) const 
     {
@@ -3479,3 +3506,5 @@ If you get to the root w/o finding a node that is a right child, there is no pre
       // Further test that it is not in the leaf
     }
     */
+    #endif
+    

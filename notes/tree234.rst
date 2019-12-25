@@ -202,7 +202,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<typename Key, typename Value> class tree234;  // Forward declaration
     
-    class DebugPrinter; 
+    class DebugPrinter;  
         
     template<typename Key, typename Value> class tree234 {
     
@@ -287,9 +287,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            /*
             * For 2-nodes, children[0] is left pointer, children[1] is right pointer.
             * For 3-nodes, children[0] is left pointer, children[1] the middle pointer, and children[2] the right pointer.
-            * And so on for 4-nodes.
+            * For 4-nodes, children[0] is left pointer, children[1] the left middle pointer, and children[2] is the right middle pointer, and children[3] is the right pointer.
             */
-        
            std::array<std::shared_ptr<Node>, 4> children;
            
            constexpr Node *getParent() noexcept { return parent; }
@@ -310,7 +309,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            // Remove key at index, if found, from node, shifting remaining keys_values to fill the gap.
            KeyValue removeKeyValue(int index) noexcept; 
         
-           void connectChild(int childNum, std::shared_ptr<Node>& child) noexcept;
+           void connectChild(int childNum, std::shared_ptr<Node>&& child) noexcept;
     
            /*
             * Removes child node (implictly using move ctor) and shifts its children to fill the gap. Returns child pointer.
@@ -318,6 +317,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            std::shared_ptr<Node> disconnectChild(int child_index) noexcept; 
         
            void insertChild(int childNum, std::shared_ptr<Node> &pChild) noexcept;
+    
+           std::pair<bool, int> chooseSibling(int child_index) const noexcept;
         
            /* 
             * Called during remove(Key keym, Node *).
@@ -1062,7 +1063,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     {
        if (root.get() == nullptr) return;
        
-       // pair of: 1. Node pointer and 2. level of tree.
+       // pair of: 1. const Node * and 2. level of tree.
        std::queue<std::pair<const Node*, int>> queue; 
     
        auto level = 1;
@@ -1073,7 +1074,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
             auto [pnode, tree_level] = queue.front(); 
     
-            f(pnode, tree_level); // Call functor. 
+            f(pnode, tree_level); // Call functor 
              
             if (!pnode->isLeaf()) { // If it was not a leaf node, push its children onto the queue
                 
@@ -1309,7 +1310,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      *    children[childIndex]->parent = this; 
      *  
      */
-    template<typename Key, typename Value> inline void  tree234<Key, Value>::Node::connectChild(int childIndex, std::shared_ptr<Node>& child)  noexcept
+    template<typename Key, typename Value> inline void  tree234<Key, Value>::Node::connectChild(int childIndex, std::shared_ptr<Node>&& child)  noexcept
     {
       children[childIndex] = std::move( child ); 
       
@@ -1329,7 +1330,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
          if (lhs_key < key(i)) {
                 
-             return {false, children[i].get(), 0};
+             return {false, children[i].get(), 0}; 
     
          } else if (key(i) == lhs_key) {
     
@@ -1431,11 +1432,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        // ...move its children right, starting from its last child index and stopping just before insert_index.
        for(auto i = last_index; i >= insert_index; i--)  {
     
-           connectChild(i + 1, children[i]);       
+           connectChild(i + 1, std::move(std::move( children[i])));       
        }
     
        // Then insert the new child whose key is larger than key_value.key().
-       connectChild(insert_index,  newChild);
+       connectChild(insert_index, std::move(newChild));
     }
     
     template<typename Key, typename Value> inline typename tree234<Key, Value>::KeyValue tree234<Key, Value>::Node::removeKeyValue(int index) noexcept 
@@ -1453,6 +1454,42 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       return key_value;
     }
     
+    /*
+     * Returns: pair<bool, int>
+     * first --  if first true is there is a 3 or 4 node sibling; otherwise, false implies all siblings are 2-nodes 
+     * second -- contains the child index of the sibling to be used. 
+     *
+     */
+    template<typename Key, typename Value> inline std::pair<bool, int>  tree234<Key, Value>::Node::chooseSibling(int child_index) const noexcept
+    {
+    
+       int left_adjacent = child_index - 1;
+       int right_adjacent = child_index  + 1;
+    
+       bool has3or4NodeSibling = false;
+    
+       int parentChildrenTotal = parent->getChildCount();
+    
+       int sibling_index = left_adjacent; // We assume sibling is to the left unless we discover otherwise.
+        
+       if (right_adjacent < parentChildrenTotal && !parent->children[right_adjacent]->isTwoNode()) {
+    
+            has3or4NodeSibling = true;
+            sibling_index = right_adjacent;  
+    
+       } else if (left_adjacent >= 0 && !parent->children[left_adjacent]->isTwoNode()) {
+    
+            has3or4NodeSibling = true;
+            sibling_index = left_adjacent;  
+    
+       } else if (right_adjacent < parentChildrenTotal) { // There are no 3- or 4-nodes siblings. Therefore the all siblings 
+                                                          // are 2-node(s).
+    
+            sibling_index = right_adjacent; 
+       } 
+    
+       return {has3or4NodeSibling, sibling_index};
+    }
     template<typename Key, typename Value> inline constexpr const typename tree234<Key, Value>::Node *tree234<Key, Value>::Node::getParent() const  noexcept // ok
     { 
        return parent;
@@ -1499,7 +1536,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        auto i = 0;
        
-       for (; i < pnode->getTotalItems(); ++i) {
+       for (;i < pnode->getTotalItems(); ++i) {
     
           if (key < pnode->key(i)) 
              return find_(pnode->children[i].get(), key); 
@@ -1545,9 +1582,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
      * Precondition: pnode is never nullptr.
      *
-     * Purpose: Recursive method that searches the tree for input key. A it searches, it splits 4-nodes as they are encountered. If key is not found, it terminates at
-     * the leaf node where the key should now be inserted and returns the pair {false, pnode_leaf_where_key_should_be_inserted}. If key was found, it returns the pair
-     * {true, pnode_where_key_found}.
+     * Purpose: Recursive method that searches the tree for 'key', splitting 4-nodes when encountered. If key is not found, the tree descent terminates at
+     * the leaf node where the new 'key' should be inserted, and it returns the pair {false, pnode_leaf_where_key_should_be_inserted}. If key was found,
+     * it returns the pair {true, Node *pnode_where_key_found}.
      */
     template<class Key, class Value> std::pair<bool, typename tree234<Key, Value>::Node *>  tree234<Key, Value>::split_find(Node *pnode, Key key) noexcept
     {
@@ -1565,12 +1602,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
                if (pnode->isLeaf()) return {false, pnode};
      
-               return split_find(pnode->children[i].get(), key); // search left subtree of pnode->key(i)
+               return split_find(pnode->children[i].get(), key); // Recurse left subtree of pnode->key(i)
            } 
     
            if (key == pnode->key(i)) {
     
-              return {true, pnode};  // located at std::pair{pnode, i};  
+              return {true, pnode};  // key located at std::pair{pnode, i};  
            }
        }
     
@@ -1578,28 +1615,28 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return {false, pnode};
        } 
     
-       return split_find(pnode->children[i].get(), key); // It was greater than all values in pnode, search right-most subtree.
+       return split_find(pnode->children[i].get(), key); // key is greater than all values in pnode, search right-most subtree.
     }
     
     /* 
      *  split pseudocode: 
      *  
-     *  Upon encountering a four node, it is split into a 2-node by doing:
+     *  pnode is a four node that is is split follows:
      *  
-     *  1. move the largest key into a newly create 2-node, and then connect the two right-most children of the prior four node to it.
-     *  2. convert pnode into a 2-node by setting totalItems to 1, keeping its smallest key and its two left-most chidren, 
-     *  3. We move the middle key up to the parent( which we know is not a 4-node; otherwise, it too would have already been split), and we connect the new node step from #1 to
-     *    it as a new child.
+     *  1. Create a new 2-node holding pnode's largest key and adopt pnode's two right-most children.
+     *  2. Convert pnode into a 2-node by setting totalItems to 1, effectively keeping only its smallest key and its two left-most chidren, 
+     *  3. Move the middle key up to the parent (which we know is not a 4-node. If it was, it has already been split), and connect the new
+     *    2-node step from #1 to it as a new child.
      *
-     *  Note: if pnode is the root, we special case this by creating a new root above the current root.
+     *  Special case: if pnode is the root, we special case this by creating a new root above the current root.
      */ 
     template<typename Key, typename Value> void tree234<Key, Value>::split(Node *pnode) noexcept
     {
-       // 1. create a new node from largest key and adopt pnode's tworight most children
+       // 1. create a new node from largest key of pnode and adopt pnode's two right-most children
        std::shared_ptr<Node> largestNode = std::make_shared<Node>(std::move(pnode->keys_values[2]));
        
-       largestNode->connectChild(0, pnode->children[2]); 
-       largestNode->connectChild(1, pnode->children[3]);
+       largestNode->connectChild(0, std::move(pnode->children[2])); 
+       largestNode->connectChild(1, std::move(pnode->children[3]));
        
        // 2. Make pnode a 2-node. Note: It still retains its two left-most children, 
        pnode->totalItems = 1;
@@ -1610,8 +1647,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
          std::shared_ptr<Node> new_root = std::make_shared<Node>(std::move(pnode->keys_values[1])); // Middle value will become new root
          
-         new_root->connectChild(0, root); 
-         new_root->connectChild(1, largestNode); 
+         new_root->connectChild(0, std::move(root)); 
+         new_root->connectChild(1, std::move(largestNode)); 
          
          root = std::move(new_root); // reset the root. 
     
@@ -1668,8 +1705,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return false;
     
        } else { // there are more nodes than just the root.
-     
-          return remove(root.get(), key); 
+          
+          auto rc = remove(root.get(), key);   
+    
+          if (rc)  --tree_size;
+    
+          return rc; 
       }
     }
     
@@ -1693,7 +1734,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
         } else if (current->isLeaf()) { // not in tree
     
             return false;
-    
         } 
       }
     
@@ -1766,36 +1806,25 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * we fuse the three together into a 4-node. In either case, we shift the children as required.
      * 
      */
-    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::convertTwoNode(Node *node)  noexcept
+    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::convertTwoNode(Node *pnode)  noexcept
     {                                                                         
-      
-       Node *convertedNode;
-       Node *parent = node->getParent();
+       // Return the parent->children[node2_index] such that pnode is root of the left subtree of 
+       auto child_index = pnode->getChildIndex(); 
     
-       int parentKeyTotal = parent->getTotalItems();
-       int parentChildrenTotal = parent->getChildCount();
-       
-       // First, we find the index of the 2-node such that parent->children[node2_index] == node, by comparing node's key to its
-       // parent's keys_values.
-       int node2_index = 0;
-       
-       for (; node2_index < parentKeyTotal; ++node2_index) {
-           //
-           // If we never break, then node->keys_values[0] is greater than the last key of its parent, which means
-           // node == parent->children[parent->totalItems]. It is the last child. 
-           //
-    
-           if (node->key(0) < parent->key(node2_index) ) { 
-                break;                               
-           } 
-       }
-    
+       // TODO: Can these series of if-tests immediately below be made into a separate method, say, 'std::pair<bool,int> get3or4NodeSiblingIndex()'.
        // Determine if any adjacent sibling has a 3- or 4-node, giving preference to the right adjacent sibling first.
-       bool has3or4NodeSibling = false;
-       int sibling_index;
+       auto [has3or4NodeSibling, sibling_index] = pnode->chooseSibling(child_index);
+       /*
+       int left_adjacent = child_index - 1;
+       int right_adjacent = child_index  + 1;
     
-       int left_adjacent = node2_index - 1;
-       int right_adjacent = node2_index  + 1;
+       bool has3or4NodeSibling = false;
+    
+       Node *parent = pnode->getParent();
+    
+       int parentChildrenTotal = parent->getChildCount();
+    
+       int sibling_index = left_adjacent; // We assume sibling is to the left unless we discover otherwise.
         
        if (right_adjacent < parentChildrenTotal && !parent->children[right_adjacent]->isTwoNode()) {
     
@@ -1811,16 +1840,16 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
                                                           // are 2-node(s).
     
             sibling_index = right_adjacent; 
+       } 
+       */
     
-       } else { // sibling is to the left.
+       // Determine whether to rotate or fuse based on whether the parent is a two node, 
     
-            sibling_index = left_adjacent; 
-       }
+       // If all adjacent siblings are also 2-nodes...
+       Node *convertedNode = nullptr;
+       auto parent = pnode->getParent();
     
-       // Determine, based on whether the parent is a two node, whether to rotate or fuse. 
-       // Check if its parent 2-node (or 3- or 4-node).
-    
-       if (has3or4NodeSibling == false) { // All adjacent siblings are also 2-nodes...
+       if (has3or4NodeSibling == false) { 
     
             if (parent->isTwoNode()) { //... as is the parent, which must be root; otherwise, it would have already been converted.
     
@@ -1828,43 +1857,44 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
             } else { // parent is 3- or 4-node and there a no 3- or 4-node adjacent siblings 
     
-               convertedNode = fuseSiblings(parent, node2_index, sibling_index);
+               convertedNode = fuseSiblings(parent, child_index, sibling_index);
             }
     
        } else { // it has a 3- or 4-node sibling.
     
           Node *psibling = parent->children[sibling_index].get();
         
-          Node *p2node = parent->children[node2_index].get();
-        
+          Node *p2node = parent->children[child_index].get();
           
           // First we get the index of the parent's key value such that either 
           // 
-          //   parent->children[node2_index]->keys_values[0]  <  parent->keys_values[index] <  parent->children[sibling_id]->keys_values[0] 
+          //   parent->children[child_index]->keys_values[0]  <  parent->keys_values[index] <  parent->children[sibling_id]->keys_values[0] 
           // 
           // or 
           // 
-          //   parent->children[sibling_id]->keys_values[0]  <  parent->keys_values[index] <  parent->children[node2_index]->keys_values[0]
+          //   parent->children[sibling_id]->keys_values[0]  <  parent->keys_values[index] <  parent->children[child_index]->keys_values[0]
           //
           // by taking the minimum of the indecies.
           
         
-          int parent_key_index = std::min(node2_index, sibling_index); 
+          int parent_key_index = std::min(child_index, sibling_index); 
     
-          if (node2_index > sibling_index) { /* If sibling is to the left, then
-                                        *
-                                        *  parent->children[sibling_id]->keys_values[0] < parent->keys_values[index] < parent->children[node2_index]->keys_values[0]
-                                        * 
-                                        * and we do a right rotation
-                                        */ 
-        
+          /*   If sibling is to the left, then this relation holds
+           *
+           *      parent->children[sibling_id]->keys_values[0] < parent->keys_values[index] < parent->children[child_index]->keys_values[0]
+           * 
+           *   and we do a right rotation
+           */ 
+          if (child_index > sibling_index) { 
+                                      
               convertedNode = rightRotation(p2node, psibling, parent, parent_key_index);
         
-          } else { /* else sibling is to the right and 
-                    *    parent->children[node2_index]->keys_values[0]  <  parent->keys_values[index] <  parent->children[sibling_id]->keys_values[0] 
-                    * therefore do a left rotation
-               */ 
-        
+          } else { /* else sibling is to the right and this relation holds
+                    * 
+                    *    parent->children[child_index]->keys_values[0]  <  parent->keys_values[index] <  parent->children[sibling_id]->keys_values[0] 
+                    *
+                    * therefore we do a left rotation
+                    */ 
               convertedNode = leftRotation(p2node, psibling, parent, parent_key_index);
           }
        }
@@ -1879,13 +1909,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      *
      * Promises: 
      * 1. 4-node resulting from fusing of the two 2-nodes' keys_values into the parent. 
-     * 2. Deletion of the 2-node children from the tree
-     * 3. Adoption of the 2-node children's children as children of parent.
+     * 2. Adoption of the 2-node children's children as children of parent.
      *
      * Pseudo code: 
      *
      * 1. Absorbs its children's keys_values as its own. 
-     * 2. Makes its grandchildren its children and deletes its former, now orphaned child nodes.
+     * 2. Makes its grandchildren its children.
      */
     template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::Node::fuseWithChildren() noexcept
     {
@@ -1898,18 +1927,18 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
       totalItems = 3;
     
-      // leftOrphan and rightOrphan will be automatically deleted when methhod returns. 
-      std::shared_ptr<Node> leftOrphan = std::move(children[0]);  
-      std::shared_ptr<Node> rightOrphan = std::move(children[1]); 
-        
-      // make grandchildren the children of this.
-      connectChild(0, leftOrphan->children[0]); 
-      connectChild(1, leftOrphan->children[1]);
-      connectChild(2, rightOrphan->children[0]); 
-      connectChild(3, rightOrphan->children[1]);
+    //  This is sufficient and the std::move above is not need because
+    //  when connectChild is done below both children[0] and children[1] are reassigned.
+    
+      std::shared_ptr<Node> leftOrphan {children[0]};  
+      std::shared_ptr<Node> rightOrphan {children[1]}; 
+         
+      connectChild(0, std::move(leftOrphan->children[0])); 
+      connectChild(1, std::move(leftOrphan->children[1]));
+      connectChild(2, std::move(rightOrphan->children[0])); 
+      connectChild(3, std::move(rightOrphan->children[1]));
         
       return this;
-    
     }
     
     /* 
@@ -2011,8 +2040,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           p2node->children[2] = std::move(p2node->children[0]);
     
           // Insert sibling's first two child. Note: connectChild() will also reset the parent pointer of these children (to be p2node). 
-          p2node->connectChild(1, psibling->children[1]); 
-          p2node->connectChild(0, psibling->children[0]); 
+          p2node->connectChild(1, std::move(psibling->children[1])); 
+          p2node->connectChild(0, std::move(psibling->children[0])); 
     
        // <-- automatic deletion of psibling in above after } immediately below
       } else { // sibling is to the right:
@@ -2034,8 +2063,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
           // Insert sibling's last two child. Note: connectChild() will also reset the parent pointer of these children (to be p2node). 
     
-          p2node->connectChild(3, psibling->children[1]);  // Add sibling's children
-          p2node->connectChild(2, psibling->children[0]);  
+          p2node->connectChild(3, std::move(psibling->children[1]));  // Add sibling's children
+          p2node->connectChild(2, std::move(psibling->children[0]));  
           
       } // <-- automatic deletion of psibling's underlying raw memory
     

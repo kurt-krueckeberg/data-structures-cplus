@@ -1607,7 +1607,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        if (pnode->isFourNode()) { 
     
            split(pnode);
-           pnode = pnode->parent; // TODO: This doesn't seem correct. Why resume the descent at the parent. We already visited it.  
+           pnode = pnode->parent; 
        }
     
        auto i = 0;

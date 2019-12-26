@@ -55,12 +55,13 @@ Insertion
 ^^^^^^^^^
 
 The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  New keys are inserted at leaf nodes. If the leaf node is a 4-node, we must first split it by pushing its middle key up a level
-to make room for the new key. To ensure the parent can always accomodate a key, we must first split the parent if it is a 4-node. And to ensure the parent's parent can accomodate a new key, we split all 4-nodes as we descend the tree. 
+to make room for the new key. To ensure the parent can always accomodate a key, we must first split the parent if it, too, is a 4-node. And to ensure the parent's parent can accomodate a new key, we split all 4-nodes as we descend the tree. 
 
-If the root must be split (because it is the parent of the leaf or is itself a leaf), the tree will grows upward when a new root node is inserted above the old.
+If the root must be split (because it is the parent of a 4-node leaf or it is itself a 4-node leaf), the tree will grows upward when a new root node is inserted above the old.
 
-The split algorithm converts the fromer 4-node into 2-node that containing only its left key. This downsized node retains it two left-most children. The middle key is pushed into the parent, and the right key is moved into a new 2-node. This newly created 2-node takes ownership
-of the two right-most children of the former 4-node, and this newly created 2-node is made a child of the parent. The child indecies in the parent are adjusted to properly reflect the new node relationships.
+The split algorithm converts the former 4-node into a 2-node that contains only its left key. This downsized node retains its two left-most children. The middle key is pushed into the parent, and the right key is moved into a brand new 2-node. This newly
+created 2-node takes ownership of the two right-most children of the former 4-node, and the newly created 2-node is made a child of the parent. The child indecies in the parent are adjusted as needed to properly reflect the new relationships between all these
+nodes.
 
 Here is an example. The key 73 will be inserted into this tree. Therefore the 4-node containing [59, 70, 75] must be split:
 
@@ -1562,7 +1563,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/    <-- Introduces reb-black trees, too
      *
      * Insertion Algorithm 
-     *
      * The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  New keys are inserted at leaf nodes.
      * If the leaf node is a 4-node, we must first split it by pushing its middle key up a level to make room for the new key. To ensure the parent can always accomodate a
      * key, we must first split the parent if it is a 4-node. And to ensure the parent's parent can accomodate a new key, we split all 4-nodes as we descend the tree. 
@@ -1572,6 +1572,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * The split algorithm converts the fromer 4-node into 2-node that containing only its left key. This downsized node retains it two left-most children. The middle key is
      * pushed into the parent, and the right key is moved into a new 2-node. This newly created 2-node takes ownership of the two right-most children of the former 4-node, and
      * this newly created 2-node is made a child of the parent. The child indexes in the parent are adjusted to properly reflect the new relationships between these nodes.
+     *
      *
      */
     template<typename Key, typename Value> void tree234<Key, Value>::insert(Key key, const Value& value) noexcept 

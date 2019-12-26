@@ -90,9 +90,7 @@ And after the split, the search for the proper leaf node resumes with the parent
 
    **Figure: Tree after 73 inserted into leaf node**
 
-There is a problem, however: if the in-order successor is a 2-node leaf, this leaves an empty leaf node, resulting in an unbalanced tree. 
-
-In summary, we note that after the split a new node has been added to the tree on the same level of the tree as the former 4-node. The parent has a new key added and one additional child, but the tree itself remains balanced. It has only grown "wider" by one 
+In summary, we note that after the split a new node has been added to the tree on the same level of the tree as the former 4-node. The parent has a new key added and one additional child, but **the tree itself remains balanced**. It has only grown "wider" by one 
 node on the level of the former 4-node.
 
 The root is a special case. If the root is a 4-node, its parent is nullptr. In this case a new root node is allocated to hold the middle key of the former root. Here is a tree with 4-node root into which 25 will be inserted: 
@@ -173,7 +171,7 @@ The change again only involves three nodes. The total number of nodes is again d
 .. note::
    If the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.
 
-.. hint::
+.. note::
     If the key is found in an internal node, the processes of finding its in order successor begins with the subtree rooted at the first child (to the right) that holds larger key(s). If this immediate child is a 2-node, it must be converted
     to a 3-node, but this conversion may also move the original key\ |ndash|\ either as a result of case 1, barrowing, or case 2, fusing sibling. If this happens, we must search again for the new location of the key and then resume the search
     for the in-order successor starting from the new location of the key. In the actual implementation below, **getRemoveSuccessor()** does just that: if the key has moved after **convertTwoNode(pnode)**, it searches again for the key and then

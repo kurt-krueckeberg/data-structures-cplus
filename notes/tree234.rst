@@ -54,11 +54,13 @@ How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
 Insertion
 ^^^^^^^^^
 
-The insert algorithm always inserts new keys into a leaf node. To ensure that there is always room, 4-nodes are split as they are encountered. This guarantees that we will never have the problem of inserting the middle element of a former
-4-node into its parent. When a 4-node is encountered, it is 'split' into two 2-nodes as follows. First, the original 4-node is downsized to a 2-node holding only the smallest key and the two left most children of the original 4-node. Next,
-a new 2-node is allocated that holds the 4-node's largest key and whose children become the 4-node's two right most children. Finally, the middle key is inserted into the parent, and the parent adopts the newly allocated 2-node (holding the largest key),
-and it shifts its current children as necessary to maintain the tree\ |apos|\ s ordering. The search for the insertion leaf node resumes with the parent. Note: if the parent has now become a 4-node, it is not split (since we know it is not a leaf node, and
-we know its relevant children are now 2-nodes).
+The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  New keys are inserted at leaf nodes. If the leaf node is a 4-node, we must first split it by pushing its middle key up a level
+to make room for the new key. To ensure the parent can always accomodate a key, we must first split the parent if it is a 4-node. And to ensure the parent's parent can accomodate a new key, we split all 4-nodes as we descend the tree. 
+
+If the root must be split (because it is the parent of the leaf or is itself a leaf), the tree will grows upward when a new root node is inserted above the old.
+
+The split algorithm converts the fromer 4-node into 2-node that containing only its left key. This downsized node retains it two left-most children. The middle key is pushed into the parent, and the right key is moved into a new 2-node. This newly created 2-node takes ownership
+of the two right-most children of the former 4-node, and this newly created 2-node is made a child of the parent. The child indecies in the parent are adjusted to properly reflect the new node relationships.
 
 Here is an example. The key 73 will be inserted into this tree. Therefore the 4-node containing [59, 70, 75] must be split:
 
@@ -203,628 +205,628 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<typename Key, typename Value> class tree234;  // Forward declaration
     
     class DebugPrinter;  
-        
+    
     template<typename Key, typename Value> class tree234 {
     
-         /*
-          * This union eliminates always having to do: const_cast<Key>(p.first) = some_noconst_key;
-          * by holding two different types of pairs: _constkey_pair, where member first is 'const Key'; and _pair, where member 
-          * first is 'Key'.
-          *
-          * Note 1: Anonymous unions do not implicitly destruct their members. Therefore we must explicitly call their destructors within 
-          *         KeyValue::~KeyValue().
-          * Note 2: A user-declared destructor by default causes the move constructor and move assignment to be not declared, so
-          *         we explictily declare and defined them.
-          */
+    /*
+    * This union eliminates always having to do: const_cast<Key>(p.first) = some_noconst_key;
+    * by holding two different types of pairs: _constkey_pair, where member first is 'const Key'; and _pair, where member 
+    * first is 'Key'.
+    *
+    * Note 1: Anonymous unions do not implicitly destruct their members. Therefore we must explicitly call their destructors within 
+    *         KeyValue::~KeyValue().
+    * Note 2: A user-declared destructor by default causes the move constructor and move assignment to be not declared, so
+    *         we explictily declare and defined them.
+    */
     
-       union KeyValue { 
-           std::pair<Key, Value>        _pair;  // ...this pair
-           std::pair<const Key, Value>  _constkey_pair; 
+    union KeyValue { 
+    std::pair<Key, Value>        _pair;  // ...this pair
+    std::pair<const Key, Value>  _constkey_pair; 
     
-         public:    
-           KeyValue() {} 
-          ~KeyValue() 
-           {
-             // Anonymous unions do not implicitly destruct their members. It must be done explicitly.
-             _pair.first.~Key();
-             _pair.second.~Value();
-           } 
-          
-           KeyValue(Key key, const Value& value) : _pair{key, value} {}
+    public:    
+    KeyValue() {} 
+    ~KeyValue() 
+    {
+     // Anonymous unions do not implicitly destruct their members. It must be done explicitly.
+     _pair.first.~Key();
+     _pair.second.~Value();
+    } 
+    
+    KeyValue(Key key, const Value& value) : _pair{key, value} {}
+    
+    KeyValue(const KeyValue& lhs) : _pair{lhs._pair.first, lhs._pair.second} {}
+    
+    KeyValue(Key k, Value&& v) : _pair{k, std::move(v)} {} 
+    
+    KeyValue(KeyValue&& lhs) :  _pair{move(lhs._pair)} {}
+    
+    KeyValue& operator=(const KeyValue& lhs) noexcept;  
+    KeyValue& operator=(KeyValue&& lhs) noexcept; 
+    
+    constexpr Key&  key()  { return _pair.first; }
+    
+    constexpr const Key& key() const { return _constkey_pair.first; }
+    
+    constexpr Value&  value()  { return _pair.second; }
+    
+    constexpr const Value& value() const { return _constkey_pair.second; }
+    
+    constexpr const std::pair<Key, Value>& pair() const { return _pair; }
+    constexpr std::pair<Key, Value>& pair() { return _pair; }
            
-           KeyValue(const KeyValue& lhs) : _pair{lhs._pair.first, lhs._pair.second} {}
-           
-           KeyValue(Key k, Value&& v) : _pair{k, std::move(v)} {} 
-       
-           KeyValue(KeyValue&& lhs) :  _pair{move(lhs._pair)} {}
-       
-           KeyValue& operator=(const KeyValue& lhs) noexcept;  
-           KeyValue& operator=(KeyValue&& lhs) noexcept; 
+    constexpr const std::pair<const Key, Value>& constkey_pair() const { return _constkey_pair; }
     
-           constexpr Key&  key()  { return _pair.first; }
-           
-           constexpr const Key& key() const { return _constkey_pair.first; }
+    constexpr std::pair<const Key, Value>& constkey_pair() { return _constkey_pair; }
     
-           constexpr Value&  value()  { return _pair.second; }
-           
-           constexpr const Value& value() const { return _constkey_pair.second; }
+    friend std::ostream& operator<<(std::ostream& ostr, const KeyValue& key_value)
+    {
+      ostr << "{" << key_value._pair.first << ',' <<  key_value._pair.second <<  "}, ";
+      return ostr;
+    }
+    };
     
-           constexpr const std::pair<Key, Value>& pair() const { return _pair; }
-           constexpr std::pair<Key, Value>& pair() { return _pair; }
-                   
-           constexpr const std::pair<const Key, Value>& constkey_pair() const { return _constkey_pair; }
+    class Node; // Forward feference. 
     
-           constexpr std::pair<const Key, Value>& constkey_pair() { return _constkey_pair; }
+    class Node { // The tree node class. 
+    /*
+    Note: Since Node depends on both of tree234's template parameters, on both Key and Value, we can 
+    make it a nested class. Had it depended on only one template parameter, it could not be a nested class.
+    */
+    private:  
+    friend class tree234<Key, Value>;             
+    friend class DebugPrinter;
+    static const int MAX_KEYS;   
     
-           friend std::ostream& operator<<(std::ostream& ostr, const KeyValue& key_value)
-           {
-              ostr << "{" << key_value._pair.first << ',' <<  key_value._pair.second <<  "}, ";
-              return ostr;
-           }
-       };
+    enum class NodeType : int { two_node=1, three_node=2, four_node=3 };
     
-       class Node; // Forward feference. 
+    Node *parent; /* parent is only used for navigation of the tree. It never owns the memory
+		    it points to. */
     
-       class Node { // The tree node class. 
-         /*
-           Note: Since Node depends on both of tree234's template parameters, on both Key and Value, we can 
-           make it a nested class. Had it depended on only one template parameter, it could not be a nested class.
-          */
-         private:  
-           friend class tree234<Key, Value>;             
-           friend class DebugPrinter;
-           static const int MAX_KEYS;   
+    int totalItems; /* If 1, two node; if 2, three node; if 3, four node. */   
     
-           enum class NodeType : int { two_node=1, three_node=2, four_node=3 };
-        
-           Node *parent; /* parent is only used for navigation of the tree. It never owns the memory
-                            it points to. */
-        
-           int totalItems; /* If 1, two node; if 2, three node; if 3, four node. */   
-        
-           std::array<KeyValue, 3> keys_values; 
-           
-           /*
-            * For 2-nodes, children[0] is left pointer, children[1] is right pointer.
-            * For 3-nodes, children[0] is left pointer, children[1] the middle pointer, and children[2] the right pointer.
-            * For 4-nodes, children[0] is left pointer, children[1] the left middle pointer, and children[2] is the right middle pointer, and children[3] is the right pointer.
-            */
-           std::array<std::shared_ptr<Node>, 4> children;
-           
-           constexpr Node *getParent() noexcept { return parent; }
+    std::array<KeyValue, 3> keys_values; 
     
-           int getChildIndex() const noexcept;
-        
-           /* 
-            * Returns {true, Node * pnode, int index} if key is found in node and sets pnode and index such that pnode->keys_values[index] == key
-            * Returns {false, Node * pnode, int index} if key is if not found, and sets pnode and index such that pnode->keys_values[index] is the
-            * next prospective node to be searched one level lower in the tree.
-            */
-           std::tuple<bool, typename tree234<Key, Value>::Node *, int>  find(Key key) const noexcept;
-        
-           void insert(KeyValue&& key_value, std::shared_ptr<Node>& newChild) noexcept;
+    /*
+    * For 2-nodes, children[0] is left pointer, children[1] is right pointer.
+    * For 3-nodes, children[0] is left pointer, children[1] the middle pointer, and children[2] the right pointer.
+    * For 4-nodes, children[0] is left pointer, children[1] the left middle pointer, and children[2] is the right middle pointer, and children[3] is the right pointer.
+    */
+    std::array<std::shared_ptr<Node>, 4> children;
     
-           int insert(Key key, const Value& value) noexcept;
-           
-           // Remove key at index, if found, from node, shifting remaining keys_values to fill the gap.
-           KeyValue removeKeyValue(int index) noexcept; 
-        
-           void connectChild(int childNum, std::shared_ptr<Node>&& child) noexcept;
+    constexpr Node *getParent() noexcept { return parent; }
     
-           /*
-            * Removes child node (implictly using move ctor) and shifts its children to fill the gap. Returns child pointer.
-            */  
-           std::shared_ptr<Node> disconnectChild(int child_index) noexcept; 
-        
-           void insertChild(int childNum, std::shared_ptr<Node> &pChild) noexcept;
+    int getChildIndex() const noexcept;
     
-           std::pair<bool, int> chooseSibling(int child_index) const noexcept;
-        
-           /* 
-            * Called during remove(Key keym, Node *).
-            * Merges the 2-node children of a parent 2-node into the parent, making the parent a 4-node. The parent, then, adopts the "grand children", and the children
-            * after having been adopted by the parent are deallocated. 
-            */
-           Node *fuseWithChildren() noexcept; 
-           
-          public:
-                 
-               Node() noexcept;
-               
-              ~Node() // For debug purposes only
-               { 
-                  // std::cout << "~Node(): " << *this << std::endl; 
-               }
+    /* 
+    * Returns {true, Node * pnode, int index} if key is found in node and sets pnode and index such that pnode->keys_values[index] == key
+    * Returns {false, Node * pnode, int index} if key is if not found, and sets pnode and index such that pnode->keys_values[index] is the
+    * next prospective node to be searched one level lower in the tree.
+    */
+    std::tuple<bool, typename tree234<Key, Value>::Node *, int>  find(Key key) const noexcept;
     
-               explicit Node(Key small, const Value& value, Node *parent=nullptr) noexcept;
+    void insert(KeyValue&& key_value, std::shared_ptr<Node>& newChild) noexcept;
     
-               explicit Node(const Node& node, Node *lhs_parent=nullptr) noexcept : keys_values{node.keys_values}, totalItems{node.totalItems}, parent{lhs_parent}
-               {
-               } 
+    int insert(Key key, const Value& value) noexcept;
     
-               explicit Node(KeyValue&& key_value) noexcept; 
-               
-               constexpr const Node *getParent() const noexcept;
-        
-               constexpr int getTotalItems() const noexcept;
-               constexpr int getChildCount() const noexcept;
+    // Remove key at index, if found, from node, shifting remaining keys_values to fill the gap.
+    KeyValue removeKeyValue(int index) noexcept; 
     
-               constexpr const Node *getRightMostChild() const noexcept { return children[getTotalItems()].get(); }
+    void connectChild(int childNum, std::shared_ptr<Node>&& child) noexcept;
     
-               // method to help in debugging
-               void printKeys(std::ostream&);
+    /*
+    * Removes child node (implictly using move ctor) and shifts its children to fill the gap. Returns child pointer.
+    */  
+    std::shared_ptr<Node> disconnectChild(int child_index) noexcept; 
     
-               constexpr Key& key(int i) { return keys_values[i].key(); } 
+    void insertChild(int childNum, std::shared_ptr<Node> &pChild) noexcept;
     
-               constexpr const Key& key(int i) const { return keys_values[i].key(); } 
+    std::pair<bool, int> chooseSibling(int child_index) const noexcept;
     
-               constexpr Value& value(int i) { return keys_values[i].value(); } 
+    /* 
+    * Called during remove(Key keym, Node *).
+    * Merges the 2-node children of a parent 2-node into the parent, making the parent a 4-node. The parent, then, adopts the "grand children", and the children
+    * after having been adopted by the parent are deallocated. 
+    */
+    Node *fuseWithChildren() noexcept; 
     
-               constexpr const Value& value(int i) const { return keys_values[i].value(); } 
-                   
-               constexpr const std::pair<const Key, Value>& constkey_pair(int i) const { return keys_values[i].constkey_pair(); }
-        
-               constexpr std::pair<const Key, Value>& constkey_pair(int i) { return keys_values[i]._constkey_pair(); }
-    
-               int getIndexInParent() const;
-    
-               constexpr bool isLeaf() const noexcept; 
-               constexpr bool isTwoNode() const noexcept;
-               constexpr bool isThreeNode() const noexcept;
-               constexpr bool isFourNode() const noexcept;
-               constexpr bool isEmpty() const noexcept; 
-    
-               constexpr const std::pair<Key, Value>& pair(int index) const noexcept 
-               {
-                 return keys_values[index].pair(); 
-               }
-    
-               constexpr std::pair<Key, Value>& pair(int index ) noexcept 
-               { 
-                 return keys_values[index].pair(); 
-               }
-    
-               std::ostream& print(std::ostream& ostr) const noexcept;
-       
-               friend std::ostream& operator<<(std::ostream& ostr, const Node& node234)
-               { 
-                 return node234.print(ostr);
-               }
-    
-      }; // end class Tree<Key, Value>::Node  
-      
-      class NodeLevelOrderPrinter {
-    
-          std::ostream& ostr;
-          int current_level;
-          int height;
-    
-          void display_level(std::ostream& ostr, int level) const noexcept
-          {
-            ostr << "\n\n" << "current_level = " <<  current_level << ' '; 
-               
-            // Provide some basic spacing to tree appearance.
-            std::size_t num = height - current_level + 1;
-            
-            std::string str( num, ' ');
-            
-            ostr << str; 
-          }
-    
-          std::ostream& (Node::*pmf)(std::ostream&) const noexcept;
-    
-         public: 
-            
-         NodeLevelOrderPrinter (int hght,  std::ostream& (Node::*pmf_)(std::ostream&) const noexcept, std::ostream& ostr_in): height{hght}, ostr{ostr_in}, current_level{0}, pmf{pmf_} {}
-    
-         NodeLevelOrderPrinter (const NodeLevelOrderPrinter& lhs): height{lhs.height}, ostr{lhs.ostr}, current_level{lhs.current_level}, pmf{lhs.pmf} {}
-    
-         void operator ()(const Node *pnode, int level)
-         { 
-             // Did current_level change?
-             if (current_level != level) { 
-            
-                 current_level = level;
-            
-                 display_level(ostr, level);       
-             }
-    
-             (pnode->*pmf)(std::cout);
-    
-             std::cout << ' ' << std::flush;
-         }
-      };
-    
-     private:
-    
-       friend class DebugPrinter;
-    
-        std::shared_ptr<Node>  root; 
-    
-        int  tree_size; // adjusted by insert(), remove(), operator=(const tree234...), move ctor
-    
-        // Implementations of the public depth-frist traversal methods    
-        template<typename Functor> void DoInOrderTraverse(Functor f, const Node *proot) const noexcept;
-    
-        template<typename Functor> void DoPostOrderTraverse(Functor f,  const Node *proot) const noexcept;
-    
-        template<typename Functor> void DoPreOrderTraverse(Functor f, const Node *proot) const noexcept;
-    
-        void split(Node *node) noexcept;  // called during insert(Key key) to split 4-nodes when encountered.
-    
-        // Called during remove(Key key)
-        bool remove(Node *location, Key key); 
-        
-        // Called during remove(Key key, Node *) to convert two-node to three- or four-node during descent of tree.
-        Node *convertTwoNode(Node *node) noexcept;
-    
-        // These methods are called by convertTwoNode()
-        Node *fuseSiblings(Node *parent, int node2_id, int sibling_id) noexcept;
-    
-        Node *leftRotation(Node *p2node, Node *psibling, Node *parent, int parent_key_index) noexcept;
-    
-        Node *rightRotation(Node *p2node, Node *psibling, Node *parent, int parent_key_index) noexcept;
-    
-        // Non recursive in-order traversal of tree methods
-        std::pair<const Node *, int> getSuccessor(const Node *current, int key_index) const noexcept;
-        std::pair<const Node *, int> getPredecessor(const Node *current, int key_index) const noexcept;
-    
-        // Subroutines of the two methods above.
-        std::pair<const Node *, int> getInternalNodeSuccessor(const Node *pnode,  int index_of_key) const noexcept;
-        std::pair<const Node *, int> getInternalNodePredecessor(const Node *pnode,  int index_of_key) const noexcept;
-    
-        std::pair<const Node *, int> getLeafNodeSuccessor(const Node *pnode, int key_index) const;
-        std::pair<const Node *, int> getLeafNodePredecessor(const Node *pnode, int key_index) const;
-       
-        // Returns node with smallest value of tree whose root is 'root'
-        const Node *min(const Node* root) const noexcept; 
-        const Node *max(const Node* root) const noexcept; 
-        
-        int  height(const Node *pnode) const noexcept;
-        
-        int  depth(const Node *pnode) const noexcept;
-        bool isBalanced(const Node *pnode) const noexcept;
-    
-        bool find_(const Node *current, Key key) const noexcept; // called by 'bool find(Key keu) const'
-    
-        std::pair<bool, Node *> split_find(Node *pnode, Key key) noexcept;  // Called during insert
-    
-        Node *convert_findmin(Node *pnode) noexcept; // Called during remove()
-    
-      public:
-        // Basic STL-required types:
-    
-        using value_type      = std::pair<const Key, Value>; 
-        using difference_type = long int;
-        using pointer         = value_type*; 
-        using reference       = value_type&; 
-        using node_type       = Node; 
-    
-         explicit tree234() noexcept : root{}, tree_size{0} { } 
-    
-         tree234(const tree234& lhs) noexcept; 
-         tree234(tree234&& lhs) noexcept;     // move constructor
-    
-         tree234& operator=(const tree234& lhs) noexcept; 
-         tree234& operator=(tree234&& lhs) noexcept;    // move assignment
-    
-         tree234(std::initializer_list<std::pair<Key, Value>> list) noexcept; 
+    public:
          
-         constexpr int size() const;
-    
-        ~tree234(); 
-    
-        // Breadth-first traversal
-        template<typename Functor> void levelOrderTraverse(Functor f) const noexcept;
-    
-        // Depth-first traversals
-        template<typename Functor> void inOrderTraverse(Functor f) const noexcept;
-    
-        template<typename Functor> void iterativeInOrderTraverse(Functor f) const noexcept;
-    
-        template<typename Functor> void postOrderTraverse(Functor f) const noexcept;
-        template<typename Functor> void preOrderTraverse(Functor f) const noexcept;
+       Node() noexcept;
        
-        // Used during development and testing 
-        template<typename Functor> void debug_dump(Functor f) noexcept;
+      ~Node() // For debug purposes only
+       { 
+          // std::cout << "~Node(): " << *this << std::endl; 
+       }
     
-        bool find(Key key) const noexcept;
+       explicit Node(Key small, const Value& value, Node *parent=nullptr) noexcept;
     
-        void insert(Key key, const Value &) noexcept; 
-        
-        void insert(const value_type& pair) noexcept { insert(pair.first, pair.second); } 
+       explicit Node(const Node& node, Node *lhs_parent=nullptr) noexcept : keys_values{node.keys_values}, totalItems{node.totalItems}, parent{lhs_parent}
+       {
+       } 
     
-        bool remove(Key key);
+       explicit Node(KeyValue&& key_value) noexcept; 
+       
+       constexpr const Node *getParent() const noexcept;
     
-        void printlevelOrder(std::ostream&) const noexcept;
-        
-        void printInOrder(std::ostream&) const noexcept;
-        
-        void printPreOrder(std::ostream&) const noexcept;
-        
-        void printPostOrder(std::ostream&) const noexcept;
+       constexpr int getTotalItems() const noexcept;
+       constexpr int getChildCount() const noexcept;
     
-        bool isEmpty() const noexcept;
+       constexpr const Node *getRightMostChild() const noexcept { return children[getTotalItems()].get(); }
     
-        int  height() const noexcept;
+       // method to help in debugging
+       void printKeys(std::ostream&);
     
-        bool isBalanced() const noexcept;
+       constexpr Key& key(int i) { return keys_values[i].key(); } 
     
-        friend std::ostream& operator<<(std::ostream& ostr, const tree234<Key, Value>& tree)
-        {
-           tree.printlevelOrder(ostr);
-           return ostr;
-        }
+       constexpr const Key& key(int i) const { return keys_values[i].key(); } 
     
-        // Bidirectional stl-compatible constant iterator
-        class iterator { 
-                                                     
-          public:
-            using difference_type   = std::ptrdiff_t; 
-            using value_type        = tree234<Key, Value>::value_type; 
-            using reference	        = value_type&; 
-            using pointer           = value_type*;
-            
-            using iterator_category = std::bidirectional_iterator_tag; 
-                                                
-            friend class tree234<Key, Value>; 
+       constexpr Value& value(int i) { return keys_values[i].value(); } 
     
-          private:
-             tree234<Key, Value>& tree; 
+       constexpr const Value& value(int i) const { return keys_values[i].value(); } 
+           
+       constexpr const std::pair<const Key, Value>& constkey_pair(int i) const { return keys_values[i].constkey_pair(); }
     
-             const Node *current;
-             const Node *cursor; //  points to "current" node.
-	     int key_index;
-             
-             int getChildIndex(const typename tree234<Key, Value>::Node *p) const noexcept;
+       constexpr std::pair<const Key, Value>& constkey_pair(int i) { return keys_values[i]._constkey_pair(); }
     
-             std::pair<const typename tree234<Key, Value>::Node *, int> findLeftChildAncestor() noexcept;
+       int getIndexInParent() const;
     
-             iterator& increment() noexcept; 
+       constexpr bool isLeaf() const noexcept; 
+       constexpr bool isTwoNode() const noexcept;
+       constexpr bool isThreeNode() const noexcept;
+       constexpr bool isFourNode() const noexcept;
+       constexpr bool isEmpty() const noexcept; 
     
-             iterator& decrement() noexcept;
+       constexpr const std::pair<Key, Value>& pair(int index) const noexcept 
+       {
+         return keys_values[index].pair(); 
+       }
     
-             iterator(tree234<Key, Value>& lhs, int i);  // called by end()   
+       constexpr std::pair<Key, Value>& pair(int index ) noexcept 
+       { 
+         return keys_values[index].pair(); 
+       }
     
-             constexpr reference dereference() noexcept 
-             { 
-                 return cursor->constkey_pair(key_index); 
-             } 
+       std::ostream& print(std::ostream& ostr) const noexcept;
     
-          public:
+       friend std::ostream& operator<<(std::ostream& ostr, const Node& node234)
+       { 
+         return node234.print(ostr);
+       }
     
-             explicit iterator(tree234<Key, Value>&); 
+    }; // end class Tree<Key, Value>::Node  
     
-             iterator(const iterator& lhs); 
+    class NodeLevelOrderPrinter {
     
-             iterator(iterator&& lhs); 
+    std::ostream& ostr;
+    int current_level;
+    int height;
+    
+    void display_level(std::ostream& ostr, int level) const noexcept
+    {
+    ostr << "\n\n" << "current_level = " <<  current_level << ' '; 
+       
+    // Provide some basic spacing to tree appearance.
+    std::size_t num = height - current_level + 1;
+    
+    std::string str( num, ' ');
+    
+    ostr << str; 
+    }
+    
+    std::ostream& (Node::*pmf)(std::ostream&) const noexcept;
+    
+    public: 
+    
+    NodeLevelOrderPrinter (int hght,  std::ostream& (Node::*pmf_)(std::ostream&) const noexcept, std::ostream& ostr_in): height{hght}, ostr{ostr_in}, current_level{0}, pmf{pmf_} {}
+    
+    NodeLevelOrderPrinter (const NodeLevelOrderPrinter& lhs): height{lhs.height}, ostr{lhs.ostr}, current_level{lhs.current_level}, pmf{lhs.pmf} {}
+    
+    void operator ()(const Node *pnode, int level)
+    { 
+     // Did current_level change?
+     if (current_level != level) { 
+    
+         current_level = level;
+    
+         display_level(ostr, level);       
+     }
+    
+     (pnode->*pmf)(std::cout);
+    
+     std::cout << ' ' << std::flush;
+    }
+    };
+    
+    private:
+    
+    friend class DebugPrinter;
+    
+    std::shared_ptr<Node>  root; 
+    
+    int  tree_size; // adjusted by insert(), remove(), operator=(const tree234...), move ctor
+    
+    // Implementations of the public depth-frist traversal methods    
+    template<typename Functor> void DoInOrderTraverse(Functor f, const Node *proot) const noexcept;
+    
+    template<typename Functor> void DoPostOrderTraverse(Functor f,  const Node *proot) const noexcept;
+    
+    template<typename Functor> void DoPreOrderTraverse(Functor f, const Node *proot) const noexcept;
+    
+    void split(Node *node) noexcept;  // called during insert(Key key) to split 4-nodes when encountered.
+    
+    // Called during remove(Key key)
+    bool remove(Node *location, Key key); 
+    
+    // Called during remove(Key key, Node *) to convert two-node to three- or four-node during descent of tree.
+    Node *convertTwoNode(Node *node) noexcept;
+    
+    // These methods are called by convertTwoNode()
+    Node *fuseSiblings(Node *parent, int node2_id, int sibling_id) noexcept;
+    
+    Node *leftRotation(Node *p2node, Node *psibling, Node *parent, int parent_key_index) noexcept;
+    
+    Node *rightRotation(Node *p2node, Node *psibling, Node *parent, int parent_key_index) noexcept;
+    
+    // Non recursive in-order traversal of tree methods
+    std::pair<const Node *, int> getSuccessor(const Node *current, int key_index) const noexcept;
+    std::pair<const Node *, int> getPredecessor(const Node *current, int key_index) const noexcept;
+    
+    // Subroutines of the two methods above.
+    std::pair<const Node *, int> getInternalNodeSuccessor(const Node *pnode,  int index_of_key) const noexcept;
+    std::pair<const Node *, int> getInternalNodePredecessor(const Node *pnode,  int index_of_key) const noexcept;
+    
+    std::pair<const Node *, int> getLeafNodeSuccessor(const Node *pnode, int key_index) const;
+    std::pair<const Node *, int> getLeafNodePredecessor(const Node *pnode, int key_index) const;
+    
+    // Returns node with smallest value of tree whose root is 'root'
+    const Node *min(const Node* root) const noexcept; 
+    const Node *max(const Node* root) const noexcept; 
+    
+    int  height(const Node *pnode) const noexcept;
+    
+    int  depth(const Node *pnode) const noexcept;
+    bool isBalanced(const Node *pnode) const noexcept;
+    
+    bool find_(const Node *current, Key key) const noexcept; // called by 'bool find(Key keu) const'
+    
+    std::pair<bool, Node *> insert_descent(Node *pnode, Key key) noexcept;  // Called during insert
+    
+    Node *convert_findmin(Node *pnode) noexcept; // Called during remove()
+    
+    public:
+    // Basic STL-required types:
+    
+    using value_type      = std::pair<const Key, Value>; 
+    using difference_type = long int;
+    using pointer         = value_type*; 
+    using reference       = value_type&; 
+    using node_type       = Node; 
+    
+    explicit tree234() noexcept : root{}, tree_size{0} { } 
+    
+    tree234(const tree234& lhs) noexcept; 
+    tree234(tree234&& lhs) noexcept;     // move constructor
+    
+    tree234& operator=(const tree234& lhs) noexcept; 
+    tree234& operator=(tree234&& lhs) noexcept;    // move assignment
+    
+    tree234(std::initializer_list<std::pair<Key, Value>> list) noexcept; 
+    
+    constexpr int size() const;
+    
+    ~tree234(); 
+    
+    // Breadth-first traversal
+    template<typename Functor> void levelOrderTraverse(Functor f) const noexcept;
+    
+    // Depth-first traversals
+    template<typename Functor> void inOrderTraverse(Functor f) const noexcept;
+    
+    template<typename Functor> void iterativeInOrderTraverse(Functor f) const noexcept;
+    
+    template<typename Functor> void postOrderTraverse(Functor f) const noexcept;
+    template<typename Functor> void preOrderTraverse(Functor f) const noexcept;
+    
+    // Used during development and testing 
+    template<typename Functor> void debug_dump(Functor f) noexcept;
+    
+    bool find(Key key) const noexcept;
+    
+    void insert(Key key, const Value &) noexcept; 
+    
+    void insert(const value_type& pair) noexcept { insert(pair.first, pair.second); } 
+    
+    bool remove(Key key);
+    
+    void printlevelOrder(std::ostream&) const noexcept;
+    
+    void printInOrder(std::ostream&) const noexcept;
+    
+    void printPreOrder(std::ostream&) const noexcept;
+    
+    void printPostOrder(std::ostream&) const noexcept;
+    
+    bool isEmpty() const noexcept;
+    
+    int  height() const noexcept;
+    
+    bool isBalanced() const noexcept;
+    
+    friend std::ostream& operator<<(std::ostream& ostr, const tree234<Key, Value>& tree)
+    {
+    tree.printlevelOrder(ostr);
+    return ostr;
+    }
+    
+    // Bidirectional stl-compatible constant iterator
+    class iterator { 
+					     
+    public:
+    using difference_type   = std::ptrdiff_t; 
+    using value_type        = tree234<Key, Value>::value_type; 
+    using reference	        = value_type&; 
+    using pointer           = value_type*;
+    
+    using iterator_category = std::bidirectional_iterator_tag; 
+				        
+    friend class tree234<Key, Value>; 
+    
+    private:
+     tree234<Key, Value>& tree; 
+    
+     const Node *current;
+     const Node *cursor; //  points to "current" node.
+     int key_index;
      
-             bool operator==(const iterator& lhs) const;
-             
-             constexpr bool operator!=(const iterator& lhs) const { return !operator==(lhs); }
+     int getChildIndex(const typename tree234<Key, Value>::Node *p) const noexcept;
     
-             constexpr const std::pair<const Key, Value>& dereference() const noexcept 
-             { 
-                 return cursor->constkey_pair(key_index); 
-             }
-             
-             iterator& operator++() noexcept 
-             {
-                increment();
-                return *this;
-             } 
+     std::pair<const typename tree234<Key, Value>::Node *, int> findLeftChildAncestor() noexcept;
     
-             iterator operator++(int) noexcept
-             {
-                iterator tmp(*this);
-                increment();
-                return tmp;
-             } 
-             
-             iterator& operator--() noexcept 
-             {
-                decrement();
-                return *this;
-             } 
+     iterator& increment() noexcept; 
     
-             iterator operator--(int) noexcept
-             {
-                iterator tmp(*this);
-                decrement();
-                return tmp;
-             } 
-             std::pair<const Key, Value>& operator*() noexcept { return dereference(); } 
+     iterator& decrement() noexcept;
     
-             const std::pair<const Key, Value>& operator*() const noexcept { return dereference(); }
-             
-             typename tree234<Key, Value>::KeyValue *operator->() noexcept;
-        };
+     iterator(tree234<Key, Value>& lhs, int i);  // called by end()   
     
-        class const_iterator {
-                                                     
-          public:
-            using difference_type   = std::ptrdiff_t; 
-            using value_type        = tree234<Key, Value>::value_type; 
-            using reference	        = const value_type&; 
-            using pointer           = const value_type*;
-            
-            using iterator_category = std::bidirectional_iterator_tag; 
-                                                
-            friend class tree234<Key, Value>;   
+     constexpr reference dereference() noexcept 
+     { 
+         return cursor->constkey_pair(key_index); 
+     } 
     
-          private:
-             iterator iter; 
+    public:
+    
+     explicit iterator(tree234<Key, Value>&); 
+    
+     iterator(const iterator& lhs); 
+    
+     iterator(iterator&& lhs); 
+    
+     bool operator==(const iterator& lhs) const;
      
-             explicit const_iterator(const tree234<Key, Value>& lhs, int i);
-          public:
-             
-             explicit const_iterator(const tree234<Key, Value>& lhs);
+     constexpr bool operator!=(const iterator& lhs) const { return !operator==(lhs); }
     
-             const_iterator(const const_iterator& lhs);
-             const_iterator(const_iterator&& lhs); 
-    
-             // This ctor provide implicit conversion from iterator to const_iterator     
-             const_iterator(const typename tree234<Key, Value>::iterator& lhs); 
-    
-             bool operator==(const const_iterator& lhs) const;
-             bool operator!=(const const_iterator& lhs) const;
-             
-             const_iterator& operator++() noexcept 
-             {
-                iter.increment();
-                return *this;
-             } 
-    
-             const_iterator operator++(int) noexcept
-             {
-                const_iterator tmp(*this);
-                iter.increment();
-                return tmp;
-             } 
-             
-             const_iterator& operator--() noexcept 
-             {
-                iter.decrement();
-                return *this;
-             } 
-    
-             const_iterator operator--(int) noexcept
-             {
-                const_iterator tmp(*this);
-                iter.decrement();
-                return tmp;
-             }
-    
-             const std::pair<const Key,Value>&  operator*() const noexcept 
-             {
-               return iter.dereference(); 
-             } 
-    
-             const std::pair<const Key, Value> *operator->() const noexcept { return &this->operator*(); } 
-        };
-    
-        iterator begin() noexcept;  
-        iterator end() noexcept;  
-      
-        const_iterator begin() const noexcept;  
-        const_iterator end() const noexcept;  
-        
-        using reverse_iterator = std::reverse_iterator<iterator>;
-        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-        
-        reverse_iterator rbegin() noexcept;  
-        reverse_iterator rend() noexcept;  
+     constexpr const std::pair<const Key, Value>& dereference() const noexcept 
+     { 
+         return cursor->constkey_pair(key_index); 
+     }
      
-        const_reverse_iterator rbegin() const noexcept;  
-        const_reverse_iterator rend() const noexcept;    
+     iterator& operator++() noexcept 
+     {
+        increment();
+        return *this;
+     } 
+    
+     iterator operator++(int) noexcept
+     {
+        iterator tmp(*this);
+        increment();
+        return tmp;
+     } 
+     
+     iterator& operator--() noexcept 
+     {
+        decrement();
+        return *this;
+     } 
+    
+     iterator operator--(int) noexcept
+     {
+        iterator tmp(*this);
+        decrement();
+        return tmp;
+     } 
+     std::pair<const Key, Value>& operator*() noexcept { return dereference(); } 
+    
+     const std::pair<const Key, Value>& operator*() const noexcept { return dereference(); }
+     
+     typename tree234<Key, Value>::KeyValue *operator->() noexcept;
+    };
+    
+    class const_iterator {
+					     
+    public:
+    using difference_type   = std::ptrdiff_t; 
+    using value_type        = tree234<Key, Value>::value_type; 
+    using reference	        = const value_type&; 
+    using pointer           = const value_type*;
+    
+    using iterator_category = std::bidirectional_iterator_tag; 
+				        
+    friend class tree234<Key, Value>;   
+    
+    private:
+     iterator iter; 
+    
+     explicit const_iterator(const tree234<Key, Value>& lhs, int i);
+    public:
+     
+     explicit const_iterator(const tree234<Key, Value>& lhs);
+    
+     const_iterator(const const_iterator& lhs);
+     const_iterator(const_iterator&& lhs); 
+    
+     // This ctor provide implicit conversion from iterator to const_iterator     
+     const_iterator(const typename tree234<Key, Value>::iterator& lhs); 
+    
+     bool operator==(const const_iterator& lhs) const;
+     bool operator!=(const const_iterator& lhs) const;
+     
+     const_iterator& operator++() noexcept 
+     {
+        iter.increment();
+        return *this;
+     } 
+    
+     const_iterator operator++(int) noexcept
+     {
+        const_iterator tmp(*this);
+        iter.increment();
+        return tmp;
+     } 
+     
+     const_iterator& operator--() noexcept 
+     {
+        iter.decrement();
+        return *this;
+     } 
+    
+     const_iterator operator--(int) noexcept
+     {
+        const_iterator tmp(*this);
+        iter.decrement();
+        return tmp;
+     }
+    
+     const std::pair<const Key,Value>&  operator*() const noexcept 
+     {
+       return iter.dereference(); 
+     } 
+    
+     const std::pair<const Key, Value> *operator->() const noexcept { return &this->operator*(); } 
+    };
+    
+    iterator begin() noexcept;  
+    iterator end() noexcept;  
+    
+    const_iterator begin() const noexcept;  
+    const_iterator end() const noexcept;  
+    
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    
+    reverse_iterator rbegin() noexcept;  
+    reverse_iterator rend() noexcept;  
+    
+    const_reverse_iterator rbegin() const noexcept;  
+    const_reverse_iterator rend() const noexcept;    
     };
     
     template<class Key, class Value> inline bool tree234<Key, Value>::isEmpty() const noexcept
     {
-      return root == nullptr ? true : false;
+    return root == nullptr ? true : false;
     }
     
     template<typename Key, typename Value> inline typename tree234<Key, Value>::KeyValue& tree234<Key, Value>::KeyValue::operator=(const KeyValue& lhs) noexcept
     {
-      if (this != &lhs) { 
+    if (this != &lhs) { 
     
-        pair() = lhs.pair();
+    pair() = lhs.pair();
     
-      }
-      return *this;
+    }
+    return *this;
     }
     
     template<typename Key, typename Value> inline typename tree234<Key, Value>::KeyValue& tree234<Key, Value>::KeyValue::operator=(KeyValue&& lhs) noexcept
     {
-      if (this != &lhs) { 
+    if (this != &lhs) { 
     
-        pair() = std::move(lhs.pair());
+    pair() = std::move(lhs.pair());
     
-      }
-      return *this;
+    }
+    return *this;
     }
     
     template<typename Key, typename Value> const int  tree234<Key, Value>::Node::MAX_KEYS = 3; 
     
     /*
-     * Node constructors. Note: While all children are initialized to nullptr, this is not really necessary. 
-     * Instead your can simply set children[0] = nullptr, since a Node is a leaf if and only if children[0] == 0'
-     */
+    * Node constructors. Note: While all children are initialized to nullptr, this is not really necessary. 
+    * Instead your can simply set children[0] = nullptr, since a Node is a leaf if and only if children[0] == 0'
+    */
     template<typename Key, typename Value> inline  tree234<Key, Value>::Node::Node()  noexcept : totalItems{0}, parent{nullptr}, children()
     { 
     }
     
     template<typename Key, typename Value> inline  tree234<Key, Value>::Node::Node(Key small, const Value& value_in, Node *parent_in)  noexcept : totalItems{1}, parent{parent_in}, children()
     { 
-       key(0) = small; 
-       value(0) = value_in;
+    key(0) = small; 
+    value(0) = value_in;
     }
     
     template<class Key, class Value> std::ostream& tree234<Key, Value>::Node::print(std::ostream& ostr) const noexcept
     {
-       ostr << "[";
+    ostr << "[";
     
-       if (getTotalItems() == 0) { // remove() situation when merge2Nodes() is called
+    if (getTotalItems() == 0) { // remove() situation when merge2Nodes() is called
     
-           ostr << "empty"; 
+    ostr << "empty"; 
     
-       } else {
+    } else {
     
-            for (auto i = 0; i < getTotalItems(); ++i) {
+    for (auto i = 0; i < getTotalItems(); ++i) {
     
-                ostr << key(i); // or to print both keys and values do: ostr << keys_values[i];
+        ostr << key(i); // or to print both keys and values do: ostr << keys_values[i];
     
-                if (i + 1 == getTotalItems())  {
-                    continue;
+        if (i + 1 == getTotalItems())  {
+	    continue;
     
-                } else { 
-                    ostr << ", ";
-                }
-            }
-       }
+        } else { 
+	    ostr << ", ";
+        }
+    }
+    }
     
-       ostr << "]";
-       return ostr;
+    ostr << "]";
+    return ostr;
     }
     
     template<typename Key, typename Value> inline  tree234<Key, Value>::Node::Node(KeyValue&& key_value) noexcept : parent{nullptr}, totalItems{1}
     {
-       keys_values[0] = std::move(key_value); 
+    keys_values[0] = std::move(key_value); 
     }
     
     template<class Key, class Value> int tree234<Key, Value>::Node::getIndexInParent() const 
     {
-      for (int child_index = 0; child_index <= parent->getTotalItems(); ++child_index) { // Check the address of each of the children of the parent with the address of "this".
+    for (int child_index = 0; child_index <= parent->getTotalItems(); ++child_index) { // Check the address of each of the children of the parent with the address of "this".
     
-           if (this == parent->children[child_index].get()) {
-               return  child_index;
-           }
-      }
+    if (this == parent->children[child_index].get()) {
+       return  child_index;
+    }
+    }
     
-      throw std::logic_error("Cannot find the parent child index of the node. The node may be the tree's root or the invariant may have been violated.");
+    throw std::logic_error("Cannot find the parent child index of the node. The node may be the tree's root or the invariant may have been violated.");
     }
     
     
     template<typename Key, typename Value> inline tree234<Key, Value>::tree234(const tree234<Key, Value>& lhs) noexcept 
     {
-     if (root == lhs.root) { // are they the same?
+    if (root == lhs.root) { // are they the same?
     
-          return;
-      }
-    
-      root = lhs.root;
+    return;
     }
-     
+    
+    root = lhs.root;
+    }
+    
     // move constructor
     template<typename Key, typename Value> inline tree234<Key, Value>::tree234(tree234&& lhs) noexcept : root{std::move(lhs.root)}, tree_size{lhs.tree_size}  
     {
-        root->parent = nullptr;
-        lhs.tree_size = 0;
+    root->parent = nullptr;
+    lhs.tree_size = 0;
     }
     
     template<typename Key, typename Value> inline tree234<Key, Value>::tree234(std::initializer_list<std::pair<Key, Value>> il) noexcept : root(nullptr), tree_size{0} 
     {
-       for (auto& x: il) { // simply call tree234<Key, Value>::insert(x)
+    for (auto& x: il) { // simply call tree234<Key, Value>::insert(x)
              
            insert(x.first, x.second);
        }
@@ -1549,16 +1551,28 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     }
     
     /*
-     * This insertion method is based on the pseudo code at:
+     * Insersion algorithm is based on https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf   
      *
-     *   http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt and 
-     *   http://www.serc.iisc.ernet.in/~viren/Courses/2010/SE286/Lecture16.pdf 
+     * Other helpful links are:
      *
-     * As 4-nodes are encountered, they are split into two 2-nodes: one holding the smallest key, the other the largest. The middle key is inserted into the parent.
-     * iThen the two left most children of the former 4-node are assigned to the smaller 2-node, and the two right most children, likewise, are assigned to the larger 
-     * two node. The parent of the former 4-node adopts the two new 2-nodes
+     * https://www.cs.usfca.edu/~galles/visualization/BTree.html       <-- Best manually insert/delete animation
+     * https://www.educative.io/page/5689413791121408/80001            <-- Top notch animation of insert and delete.
+     * https://www.cs.purdue.edu/homes/ayg/CS251/slides/chap13a.pdf    <-- Has good illustrations
+     * https://www.cs.mcgill.ca/~cs251/ClosestPair/2-4trees.html
+     * https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/    <-- Introduces reb-black trees, too
      *
-     * Note: the smaller 2-node is simply the original 4-node downsized to a 2-node.
+     * Insertion Algorithm 
+     *
+     * The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  New keys are inserted at leaf nodes.
+     * If the leaf node is a 4-node, we must first split it by pushing its middle key up a level to make room for the new key. To ensure the parent can always accomodate a
+     * key, we must first split the parent if it is a 4-node. And to ensure the parent's parent can accomodate a new key, we split all 4-nodes as we descend the tree. 
+     *
+     * If the root must be split (because it is the parent of the leaf or is itself a leaf), the tree will grows upward when a new root node is inserted above the old.
+     *
+     * The split algorithm converts the fromer 4-node into 2-node that containing only its left key. This downsized node retains it two left-most children. The middle key is
+     * pushed into the parent, and the right key is moved into a new 2-node. This newly created 2-node takes ownership of the two right-most children of the former 4-node, and
+     * this newly created 2-node is made a child of the parent. The child indexes in the parent are adjusted to properly reflect the new relationships between these nodes.
+     *
      */
     template<typename Key, typename Value> void tree234<Key, Value>::insert(Key key, const Value& value) noexcept 
     { 
@@ -1569,7 +1583,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return; 
        } 
     
-       auto [bool_found, current] = split_find(root.get(), key);  
+       auto [bool_found, current] = insert_descent(root.get(), key);  
        
        if (bool_found) return;
     
@@ -1577,6 +1591,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        current->insert(key, value); 
        ++tree_size;
     }
+    
     /*
      * Called by insert(Key key, const Value& value) to determine if key exits or not.
     
@@ -1586,26 +1601,26 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * the leaf node where the new 'key' should be inserted, and it returns the pair {false, pnode_leaf_where_key_should_be_inserted}. If key was found,
      * it returns the pair {true, Node *pnode_where_key_found}.
      */
-    template<class Key, class Value> std::pair<bool, typename tree234<Key, Value>::Node *>  tree234<Key, Value>::split_find(Node *pnode, Key key) noexcept
+    template<class Key, class Value> std::pair<bool, typename tree234<Key, Value>::Node *>  tree234<Key, Value>::insert_descent(Node *pnode, Key new_key) noexcept
     {
        if (pnode->isFourNode()) { 
     
            split(pnode);
-           pnode = pnode->parent; 
+           pnode = pnode->parent; // TODO: This doesn't seem correct. Why resume the descent at the parent. We already visited it.  
        }
     
        auto i = 0;
     
        for(; i < pnode->getTotalItems(); ++i) {
     
-           if (key < pnode->key(i)) {
+           if (new_key < pnode->key(i)) {
     
                if (pnode->isLeaf()) return {false, pnode};
      
-               return split_find(pnode->children[i].get(), key); // Recurse left subtree of pnode->key(i)
+               return insert_descent(pnode->children[i].get(), new_key); // Recurse left subtree of pnode->key(i)
            } 
     
-           if (key == pnode->key(i)) {
+           if (new_key == pnode->key(i)) {
     
               return {true, pnode};  // key located at std::pair{pnode, i};  
            }
@@ -1615,7 +1630,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return {false, pnode};
        } 
     
-       return split_find(pnode->children[i].get(), key); // key is greater than all values in pnode, search right-most subtree.
+       return insert_descent(pnode->children[i].get(), new_key); // key is greater than all values in pnode, search right-most subtree.
     }
     
     /* 
@@ -1660,7 +1675,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     }
     
     /*
-     * Deletion based on pseudo code on pages 50-53 of: www.serc.iisc.ernet.in/~viren/Courses/2009/SE286/2-3Trees-Mod.ppt 
+     * Insert and Delete based on
+     * 
+     * https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf
+     * https://www.cs.purdue.edu/homes/ayg/CS251/slides/chap13a.pdf
+     * https://www.cs.mcgill.ca/~cs251/ClosestPair/2-4trees.html
+     * https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/
      *
      * We reduce deletion of an internal node's key to deletion of a leaf node's key by swapping the deleted key
      * with its in-order successor and then deleting the key moved to its successor's prior position. To prevent deleting it from a two node, which
@@ -1718,6 +1738,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     {
       std::tuple<bool, Node *, int> result_tuple;
     
+      // Loop until inner if-test satisfied.
       for (Node *current = psubtree; true; current = std::get<1>(result_tuple)) { 
     
         if (current != root.get() && current->isTwoNode()) {
@@ -1811,37 +1832,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        // Return the parent->children[node2_index] such that pnode is root of the left subtree of 
        auto child_index = pnode->getChildIndex(); 
     
-       // TODO: Can these series of if-tests immediately below be made into a separate method, say, 'std::pair<bool,int> get3or4NodeSiblingIndex()'.
        // Determine if any adjacent sibling has a 3- or 4-node, giving preference to the right adjacent sibling first.
        auto [has3or4NodeSibling, sibling_index] = pnode->chooseSibling(child_index);
-       /*
-       int left_adjacent = child_index - 1;
-       int right_adjacent = child_index  + 1;
-    
-       bool has3or4NodeSibling = false;
-    
-       Node *parent = pnode->getParent();
-    
-       int parentChildrenTotal = parent->getChildCount();
-    
-       int sibling_index = left_adjacent; // We assume sibling is to the left unless we discover otherwise.
-        
-       if (right_adjacent < parentChildrenTotal && !parent->children[right_adjacent]->isTwoNode()) {
-    
-            has3or4NodeSibling = true;
-            sibling_index = right_adjacent;  
-    
-       } else if (left_adjacent >= 0 && !parent->children[left_adjacent]->isTwoNode()) {
-    
-            has3or4NodeSibling = true;
-            sibling_index = left_adjacent;  
-    
-       } else if (right_adjacent < parentChildrenTotal) { // There are no 3- or 4-nodes siblings. Therefore the all siblings 
-                                                          // are 2-node(s).
-    
-            sibling_index = right_adjacent; 
-       } 
-       */
     
        // Determine whether to rotate or fuse based on whether the parent is a two node, 
     

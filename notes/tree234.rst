@@ -448,7 +448,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        template<typename Functor> void DoPreOrderTraverse(Functor f, const Node *proot) const noexcept;
        
-       Node * split(Node *node, Key new_key) noexcept;  // called during insert(Key key) to split 4-nodes when encountered.
+       Node *split(Node *node, Key new_key) noexcept;  // called during insert(Key key) to split 4-nodes when encountered.
        
        // Called during remove(Key key)
        bool remove(Node *location, Key key); 
@@ -485,7 +485,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        bool find_(const Node *current, Key key) const noexcept; // called by 'bool find(Key keu) const'
        
-       std::pair<bool, Node *> insert_descent(Node *pnode, Key new_key) noexcept;  // Called during insert
+       std::pair<bool, Node *> find_insert_node(Node *pnode, Key new_key) noexcept;  // Called during insert
        
        Node *convert_findmin(Node *pnode) noexcept; // Called during remove()
        
@@ -1389,7 +1389,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     /*
      * Inserts key_value pair into its sorted position in this Node and makes largerNode its right most child.
      */
-    //template<typename Key, typename Value> void tree234<Key, Value>::Node::insert(KeyValue&& key_value, std::shared_ptr<Node>& largerNode) noexcept 
     template<typename Key, typename Value> void tree234<Key, Value>::Node::insert(KeyValue&& key_value, std::shared_ptr<Node>&& largerNode) noexcept 
     { 
       // start on right, examine items
@@ -1419,20 +1418,20 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
         return;
     }
     /*
-     Input: A new child to insert at child index position insert_index. The current number of children currently is given by children_num.
+     Input: A new child to insert at child index position insertindex. The current number of children currently is given by children_num.
      */
-    template<typename Key, typename Value> void tree234<Key, Value>::Node::insertChild(int insert_index, std::shared_ptr<Node>& newChild) noexcept
+    template<typename Key, typename Value> void tree234<Key, Value>::Node::insertChild(int insertindex, std::shared_ptr<Node>& newChild) noexcept
     {
        int last_index = getTotalItems() - 1;  // While totalItems reflects the correct number of keys, the number of children currently is also equal to the number of keys.
     
-       // ...move its children right, starting from its last child index and stopping just before insert_index.
-       for(auto i = last_index; i >= insert_index; i--)  {
+       // ...move its children right, starting from its last child index and stopping just before insertindex.
+       for(auto i = last_index; i >= insertindex; i--)  {
     
            connectChild(i + 1, std::move(std::move( children[i])));       
        }
     
        // Then insert the new child whose key is larger than key_value.key().
-       connectChild(insert_index, std::move(newChild));
+       connectChild(insertindex, std::move(newChild));
     }
     
     template<typename Key, typename Value> inline typename tree234<Key, Value>::KeyValue tree234<Key, Value>::Node::removeKeyValue(int index) noexcept 
@@ -1577,7 +1576,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return; 
        } 
        
-       auto [bool_found, current] = insert_descent(root.get(), new_key);  
+       auto [bool_found, current] = find_insert_node(root.get(), new_key);  
        
        if (bool_found) return;
     
@@ -1594,11 +1593,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * the leaf node where the new 'new_key' should be inserted, and it returns the pair {false, pnode_leaf_where_key_should_be_inserted}. If key was found,
      * it returns the pair {true, Node *pnode_where_key_found}.
      */
-    template<class Key, class Value> std::pair<bool, typename tree234<Key, Value>::Node *>  tree234<Key, Value>::insert_descent(Node *pcurrent, Key new_key) noexcept
+    template<class Key, class Value> std::pair<bool, typename tree234<Key, Value>::Node *>  tree234<Key, Value>::find_insert_node(Node *pcurrent, Key new_key) noexcept
     {
        if (pcurrent->isFourNode()) { 
     
-           if (pcurrent->key(1) == new_key) // First check the middle key, the one that split() will move up a level.
+           if (pcurrent->key(1) == new_key) // First check the middle key, before split() moves it up a level.
                 return {true, pcurrent};
     
            pcurrent = split(pcurrent, new_key);  
@@ -1612,7 +1611,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
                if (pcurrent->isLeaf()) return {false, pcurrent};
      
-               return insert_descent(pcurrent->children[i].get(), new_key); // Recurse left subtree of pcurrent->key(i)
+               return find_insert_node(pcurrent->children[i].get(), new_key); // Recurse left subtree of pcurrent->key(i)
            } 
     
            if (new_key == pcurrent->key(i)) {
@@ -1625,7 +1624,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return {false, pcurrent};
        } 
     
-       return insert_descent(pcurrent->children[i].get(), new_key); // key is greater than all values in pcurrent, search right-most subtree.
+       return find_insert_node(pcurrent->children[i].get(), new_key); // key is greater than all values in pcurrent, search right-most subtree.
     }
     
     /* 
@@ -1672,11 +1671,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
          pnode->parent->insert(std::move(pnode->keys_values[1]), std::move(largestNode)); 
        }
     
-       // Set the descent cursor.
+       // Set descent cursor to next lower level.
       Node *pnext =  (new_key < middle_key) ? pnode : pLargest;
     
       return pnext;
-            
     }
     
     /*

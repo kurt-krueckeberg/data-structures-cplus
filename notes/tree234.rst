@@ -112,8 +112,12 @@ When the root is split, the tree also remains balanced, but grows upward by one 
 Deletion
 ^^^^^^^^
 
-To delete a key we "swap" the item to be deleted with its in-order successor. We then delete the key from its new temporary "successor" position. The successor key of any internal node is the first key of the left most leaf node of its first right subtree; for example,
-given this tree
+.. todo:: Make sure the pseudo code matches the comments in ~/n/234tree-in-cpp/include/tree234.h for tree234::remove().
+
+For an internal node, we reduce deletion of a node's key to deletion of a leaf node's key by swapping the key to be deleted with its in-order successor and then deleting the key from the leaf. To prevent deletion from a 2-node leaf, which
+would leave an empty node (underflow), we convert all 2-nodes as we descend the tree to 3 or 4-nodes.
+
+The in-order successor of an internal node's key is the first key of the left most leaf node of its first right subtree; for example, given this tree
 
 .. figure:: ../images/inorder-successor-1.jpg
    :alt: Tree with 4-node root
@@ -122,9 +126,10 @@ given this tree
 
    **Figure: Internal Node in-order successor**
 
-the in order successor of 23 is 27, of 50 is 51, of 60 is 62, and so on\ |mdash|\ all successors of these internal nodes are the first key of the left most child leaf node of the right subtree. "Swap" above means we overwrite the item
-to be deleted with its in-order successor and then remove the in-order successor from the leaf node. But what if the in order successor is in a 2-node? This would result in an empty node, and an unbalanced tree. To prevent this, as we descend the tree we
-turn 2-nodes into 3-nodes. The two techniques for converting 2-nodes into 3-nodes are:  
+the in-order successor of 23 is 27; of 50 is 51; of 60 is 62; and so on\ |mdash|\ all successors of these internal nodes are the first key of the left most leaf node in the right subtree. Since we converted all 2-nodes into 3- or 4-nodes as we
+descended to the leaf containing the in-order successor, we know the leaf will not be a 2-node, and therefore the swapped key can safely be removed.
+
+There two techniques for converting 2-nodes into 3-nodes as we descend the tree:  
 
 Case 1: If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an item from the sibling by rotating items and moving the subtree. For example, if 4 is to be deleted from this tree
 

@@ -19,20 +19,16 @@ rather than the successor for the deletion algorithm.
 
 3. `2 3 4 Tree Part1 slides <http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt>`_
 
-This link contains java code for insertion into a 2 3 4 tree.
-
-4. `2 3 Trees and 2 3 4 Trees <http://www.serc.iisc.ernet.in/~viren/Courses/2009/SE286/2-3Trees-Mod.ppt>`_  
-
 This link has a excellent working example and discusses how delete works, using descent restructuring. It uses the swap-with-successor for deletion of internal keys.
 It contains a working tree example. It shows that when converting 2-nodes, we first check if we can rotation else we do a merge (since both siblings are 2-nodes).
 
 This link has a more high level pseudo code. 
 
-5. http://www2.thu.edu.tw/~emtools/Adv.%20Data%20Structure/2-3,2-3-4%26red-blackTree_952.pdf 
+4. http://www2.thu.edu.tw/~emtools/Adv.%20Data%20Structure/2-3,2-3-4%26red-blackTree_952.pdf 
 
-6. `Tree <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_. This has an overview of BST, 2 3 trees, 2 3 4 trees, and red black trees.
+5. `Tree <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_. This has an overview of BST, 2 3 trees, 2 3 4 trees, and red black trees.
 
-7. `2 3 4 Tree Delete Example <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2-3-4-delete.html>`_.
+6. `2 3 4 Tree Delete Example <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2-3-4-delete.html>`_.
 
 tree234's Use of shared_ptr<Node> to Manage Memory
 --------------------------------------------------

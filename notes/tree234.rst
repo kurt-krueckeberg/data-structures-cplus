@@ -114,10 +114,10 @@ Deletion
 
 .. todo:: Make sure the pseudo code matches the comments in ~/n/234tree-in-cpp/include/tree234.h for tree234::remove().
 
-For an internal node, we reduce deletion of a node's key to deletion of a leaf node's key by swapping the key to be deleted with its in-order successor and then deleting the key from the leaf. To prevent deletion from a 2-node leaf, which
-would leave an empty node (underflow), we convert all 2-nodes as we descend the tree to 3 or 4-nodes.
+For an internal node, deletion is reduced to the deletion of a leaf node's key by swapping the internal key to be deleted with its in-order successor and then deleting the swapped leaf node key. This preserves the ordering of the tree. To prevent an empty 2-node leaf from occuring, all
+2-nodes are converted to 3 or 4-nodes as the tree is descended (OR: as we descend to the leaf from the internal node??).
 
-The in-order successor of an internal node's key is the first key of the left most leaf node of its first right subtree; for example, given this tree
+The in-order successor of an internal node's key is found in the first key of the left most leaf node of the internal node's key's right subtree; for example, given this tree
 
 .. figure:: ../images/inorder-successor-1.jpg
    :alt: Tree with 4-node root
@@ -126,8 +126,8 @@ The in-order successor of an internal node's key is the first key of the left mo
 
    **Figure: Internal Node in-order successor**
 
-the in-order successor of 23 is 27; of 50 is 51; of 60 is 62; and so on\ |mdash|\ all successors of these internal nodes are the first key of the left most leaf node in the right subtree. Since we converted all 2-nodes into 3- or 4-nodes as we
-descended to the leaf containing the in-order successor, we know the leaf will not be a 2-node, and therefore the swapped key can safely be removed.
+the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ all successors of these internal nodes are the first key of the left most leaf node in the right subtree. Since we converted all 2-nodes into 3- or 4-nodes as we
+descended to the leaf that contains the in-order successor, we know the leaf will not be a 2-node, and therefore the swapped internal key can safely be removed from it.
 
 There two techniques for converting 2-nodes into 3-nodes as we descend the tree:  
 
@@ -181,7 +181,7 @@ The change again only involves three nodes. The total number of nodes is again d
 Implementation of class tree234
 -------------------------------
 
-The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages the nodes of the tree. The root is also an instance of `unique_ptr<Node>`. Mention copy ctor and move ctor. And how this differs from shared_ptr<Node> implementation.
+The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages the nodes of the tree. The root is also an instance of `shared_ptr<Node>`. Mention copy ctor and move ctor. And how this differs from shared_ptr<Node> implementation.
 This code is available on `github <https://github.com/kurt-krueckeberg/234tree-in-cpp>`_.
 
 .. code-block:: cpp
@@ -817,6 +817,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            return;
        }
        
+       //TODO: We still need to clone the tree; otherwise, the children will only have one reference count.
        root = lhs.root;
     }
     

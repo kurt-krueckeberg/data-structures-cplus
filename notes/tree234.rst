@@ -452,7 +452,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        template<typename Functor> void DoPreOrderTraverse(Functor f, const Node *proot) const noexcept;
        
-       std::pair<bool, Node *> split(Node *node, Key new_key) noexcept;  // called during insert(Key key) to split 4-nodes when encountered.
+       Node * split(Node *node, Key new_key) noexcept;  // called during insert(Key key) to split 4-nodes when encountered.
        
        // Called during remove(Key key)
        bool remove(Node *location, Key key); 
@@ -1601,12 +1601,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<class Key, class Value> std::pair<bool, typename tree234<Key, Value>::Node *>  tree234<Key, Value>::insert_descent(Node *pcurrent, Key new_key) noexcept
     {
        if (pcurrent->isFourNode()) { 
-           
-           auto[found, pnext] = split(pcurrent, new_key);  
-           
-           if (found) return {true, pnext}; 
-           
-           pcurrent = pnext; 
+    
+           if (pcurrent->key(1) == new_key) // First check the middle key, the one that split() will move up a level.
+                return {true, pcurrent};
+    
+           pcurrent = split(pcurrent, new_key);  
        }
     
        auto i = 0;
@@ -1645,20 +1644,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      *
      *  Special case: if pnode is the root, we special case this by creating a new root above the current root.
      */ 
-    template<typename Key, typename Value> std::pair<bool, typename tree234<Key, Value>::Node *> tree234<Key, Value>::split(Node *pnode, Key new_key) noexcept
+    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::split(Node *pnode, Key new_key) noexcept
     {
-       Node *pnode_parent = pnode->parent;
-    
-       auto middle_key = pnode->key(1); // Save the middle key that will be pushed to the parent.
-    
-       if (new_key == middle_key) { // No need to split the node
-    
-           return {true, pnode};
-       }
-     
+       Key middle_key = pnode->key(1);
+       
        // 1. create a new node from largest key of pnode and adopt pnode's two right-most children
        std::shared_ptr<Node> largestNode = std::make_shared<Node>(std::move(pnode->keys_values[2]));
-          
        
        largestNode->connectChild(0, std::move(pnode->children[2])); 
        largestNode->connectChild(1, std::move(pnode->children[3]));
@@ -1688,7 +1679,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        // Set the descent cursor.
       Node *pnext =  (new_key < middle_key) ? pnode : pLargest;
     
-      return {false, pnext};
+      return pnext;
             
     }
     
@@ -2567,4 +2558,3 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
         return true; // All Nodes were balanced.
     }
     #endif
-    

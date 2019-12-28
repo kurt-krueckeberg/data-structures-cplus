@@ -112,10 +112,11 @@ When the root is split, the tree also remains balanced, but grows upward by one 
 Deletion
 ^^^^^^^^
 
-.. todo:: Make sure the pseudo code matches the comments in ~/n/234tree-in-cpp/include/tree234.h for tree234::remove().
+.. todo:: Make sure the pseudo code matches the comments in ~/n/234tree-in-cpp/include/tree234.h for tree234::remove(). Follow the delete logic as described in of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. Point out that the elimination of 2-nodes
+   begins from the root. Write the the core of the algorithm.
 
 For an internal node, deletion can be reduced to the deletion of a leaf node's key by swapping the internal key to be deleted with its in-order successor and then deleting the swapped key from the leaf node. This preserves the ordering of the tree. To prevent an empty 2-node leaf from
-occuring, however, all 2-nodes are converted to 3 or 4-nodes as the tree is descended to the in-order successor.
+occuring, however, all 2-nodes are converted to 3 or 4-nodes as the tree is descended.
 
 The in-order successor of an internal node's key is found in the first key of the left most leaf node of the internal node's key's right subtree; for example, given this tree
 
@@ -138,8 +139,7 @@ Case 1: If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an it
 
    **Figure: Delete from 4 from 2-node by barrowing**
 
-we barrow the 2 from the left sibling, move it to the parent and bring 3 down from the parent, creating a 3-node. This change that involves the shifting of keys among three nodes reduces the total number of nodes by one, but the tree
-remains balanced.
+we barrow the 2 from the left sibling, move it to the parent and bring 3 down from the parent, creating a 3-node. 
 
 .. figure:: ../images/delete-barrow-2.jpg
    :align: center 

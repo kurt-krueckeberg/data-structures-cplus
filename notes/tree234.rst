@@ -114,8 +114,8 @@ Deletion
 
 .. todo:: Make sure the pseudo code matches the comments in ~/n/234tree-in-cpp/include/tree234.h for tree234::remove().
 
-For an internal node, deletion is reduced to the deletion of a leaf node's key by swapping the internal key to be deleted with its in-order successor and then deleting the swapped leaf node key. This preserves the ordering of the tree. To prevent an empty 2-node leaf from occuring, all
-2-nodes are converted to 3 or 4-nodes as the tree is descended (OR: as we descend to the leaf from the internal node??).
+For an internal node, deletion can be reduced to the deletion of a leaf node's key by swapping the internal key to be deleted with its in-order successor and then deleting the swapped key from the leaf node. This preserves the ordering of the tree. To prevent an empty 2-node leaf from
+occuring, however, all 2-nodes are converted to 3 or 4-nodes as the tree is descended to the in-order successor.
 
 The in-order successor of an internal node's key is found in the first key of the left most leaf node of the internal node's key's right subtree; for example, given this tree
 
@@ -126,9 +126,8 @@ The in-order successor of an internal node's key is found in the first key of th
 
    **Figure: Internal Node in-order successor**
 
-the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ all successors of these internal nodes are the first key of the left most leaf node in the right subtree. Since we converted all 2-nodes into 3- or 4-nodes as we
-descended to the leaf that contains the in-order successor, we know the leaf will not be a 2-node, and therefore the swapped internal key can safely be removed from it.
-
+the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ all successors of these internal nodes are the first key of the left most leaf node in the right subtree. 
+ 
 There two techniques for converting 2-nodes into 3-nodes as we descend the tree:  
 
 Case 1: If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an item from the sibling by rotating items and moving the subtree. For example, if 4 is to be deleted from this tree

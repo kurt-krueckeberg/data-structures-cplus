@@ -147,7 +147,7 @@ we barrow the 2 from the left sibling, moving it into the parent and bringing 3 
 
    **Figure: 2-node after barrowing**
  
-We then delete 4 from the leaf contain 3 and 4. This operation involves only shifting keys. No new nodes are created and **the tree remains balanced**.
+We then delete 4 from the leaf contain 3 and 4. This operation involves only shifting keys. No new nodes are created or deleted and **the tree remains balanced**.
 
 Case 2: If each adjacent sibling (there are at most two) has only one item, we know its parent must be a 3- or 4-node (because if it were a 2-node, it was already converted to a 3-node). In this case we fuse together the two siblings and bring a key down from parent, forming a 4-node
 and shifting all children effected appropriately. For example, say, we wish to delete 6 from our first example:

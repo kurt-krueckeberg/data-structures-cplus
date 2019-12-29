@@ -166,7 +166,7 @@ Since there a no 3- or 4-node siblings, we fuse the 2-node containing 4 into the
 
    **Figure: 2-node now a 4-node**
 
-The change again only involves three nodes. The total number of nodes is again decreased by one, but **the tree remains balanced**.
+The change again only involves three nodes. The total number of nodes is decreased by one, but **the tree remains balanced**.
 
 .. note::
    If the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.

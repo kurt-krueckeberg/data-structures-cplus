@@ -115,8 +115,8 @@ Deletion
 .. todo:: Make sure the pseudo code matches the comments in ~/n/234tree-in-cpp/include/tree234.h for tree234::remove(). Follow the delete logic as described in of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. Point out that the elimination of 2-nodes
    begins from the root. Write the the core of the algorithm.
 
-For an internal node, deletion can be reduced to the deletion of a leaf node's key by swapping the internal key to be deleted with its in-order successor and then deleting the swapped key from the leaf node. This preserves the ordering of the tree. To prevent an empty 2-node leaf from
-occuring, however, all 2-nodes are converted to 3 or 4-nodes as the tree is descended.
+To ensure deletion does not leave an empty node, we convert 2-nodes to 3- or 4-nodes as we descend the tree. For an internal node, deletion is reduced to the deletion of a leaf node's key by swapping the internal key with its in-order successor and then deleting the swapped key from the
+leaf node. This preserves the ordering of the tree. 
 
 The in-order successor of an internal node's key is found in the first key of the left most leaf node of the internal node's key's right subtree; for example, given this tree
 
@@ -131,7 +131,7 @@ the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ al
  
 There two techniques for converting 2-nodes into 3-nodes as we descend the tree:  
 
-Case 1: If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an item from the sibling by rotating items and moving the subtree. For example, if 4 is to be deleted from this tree
+Case 1: If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an item from the sibling by rotating items through the parent and moving the subtree. For example, if 4 is to be deleted from this tree
 
 .. figure:: ../images/delete-barrow-1.jpg
    :align: center 
@@ -139,7 +139,7 @@ Case 1: If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an it
 
    **Figure: Delete from 4 from 2-node by barrowing**
 
-we barrow the 2 from the left sibling, move it to the parent and bring 3 down from the parent, creating a 3-node. 
+we barrow the 2 from the left sibling, moving it into the parent and bringing 3 down from the parent creating a 3-node. 
 
 .. figure:: ../images/delete-barrow-2.jpg
    :align: center 
@@ -147,10 +147,10 @@ we barrow the 2 from the left sibling, move it to the parent and bring 3 down fr
 
    **Figure: 2-node after barrowing**
  
-We then delete 4 from the leaf contain 3 and 4.
+We then delete 4 from the leaf contain 3 and 4. This operation involves only shifting keys. No new nodes are created and **the tree remains balanced**.
 
-Case 2: If each adjacent sibling (there are at most two) has only one item, we know its parent must be a 3- or 4-node (because if it were a 2-node, it will already have been converted to a 3-node). In this case we fuse together the two siblings
-and bring a key down from parent, forming a 4-node and shifting all children effected appropriately. For example, say, we wish to delete 6 from our first example:
+Case 2: If each adjacent sibling (there are at most two) has only one item, we know its parent must be a 3- or 4-node (because if it were a 2-node, it was already converted to a 3-node). In this case we fuse together the two siblings and bring a key down from parent, forming a 4-node
+and shifting all children effected appropriately. For example, say, we wish to delete 6 from our first example:
 
 .. figure:: ../images/delete-barrow-1.jpg
    :align: center 
@@ -166,7 +166,7 @@ Since there a no 3- or 4-node siblings, we fuse the 2-node containing 4 into the
 
    **Figure: 2-node now a 4-node**
 
-The change again only involves three nodes. The total number of nodes is again decreased by one, but the tree remains balanced.
+The change again only involves three nodes. The total number of nodes is again decreased by one, but **the tree remains balanced**.
 
 .. note::
    If the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.

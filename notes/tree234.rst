@@ -11,24 +11,18 @@ Implementing a 2 3 4 Tree in C++17
 Implementation links:
 
 1. `2 3 4 Trees a Visual Introduction <https://www.educative.io/page/5689413791121408/80001>`_ is an excellent introduction and explanation of how a 2 3 4 works and how its algorithms work.
-
-2. `B Tress and 2 3 4 Trees <http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_
+2. https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf
+3. https://www.cs.usfca.edu/~galles/visualization/BTree.html       <-- Best manually insert/delete animation
+4. https://www.educative.io/page/5689413791121408/80001            <-- Top notch animation of insert and delete.
+5. https://www.cs.purdue.edu/homes/ayg/CS251/slides/chap13a.pdf    <-- Has good illustrations
+6. https://www.cs.mcgill.ca/~cs251/ClosestPair/2-4trees.html
+7. https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/    <-- I
+8. `B Tress and 2 3 4 Trees <http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_
 
 This link has an excellent working example. The explanation is thorough and clear. It gives several example of deleting elements. It uses the in-order predecessor
 rather than the successor for the deletion algorithm.
 
-3. `2 3 4 Tree Part1 slides <http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt>`_
-
-This link has a excellent working example and discusses how delete works, using descent restructuring. It uses the swap-with-successor for deletion of internal keys.
-It contains a working tree example. It shows that when converting 2-nodes, we first check if we can rotation else we do a merge (since both siblings are 2-nodes).
-
-This link has a more high level pseudo code. 
-
-4. http://www2.thu.edu.tw/~emtools/Adv.%20Data%20Structure/2-3,2-3-4%26red-blackTree_952.pdf 
-
-5. `Tree <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_. This has an overview of BST, 2 3 trees, 2 3 4 trees, and red black trees.
-
-6. `2 3 4 Tree Delete Example <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2-3-4-delete.html>`_.
+* `2 3 4 Tree Part1 slides <http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt>`_
 
 tree234's Use of shared_ptr<Node> to Manage Memory
 --------------------------------------------------
@@ -115,7 +109,7 @@ Deletion
 .. todo:: Make sure the pseudo code matches the comments in ~/n/234tree-in-cpp/include/tree234.h for tree234::remove(). Follow the delete logic as described in of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. Point out that the elimination of 2-nodes
    begins from the root. Write the the core of the algorithm.
 
-To ensure deletion does not leave an empty node, we convert 2-nodes to 3- or 4-nodes as we descend the tree. For an internal node, deletion is reduced to the deletion of a leaf node's key by swapping the internal key with its in-order successor and then deleting the swapped key from the
+To ensure deletion does not leave an empty node, 2-nodes are converted to 3- or 4-nodes as we descend the tree. For an internal node, deletion is reduced to the deletion of a leaf node's key by swapping the internal key with its in-order successor and then deleting the swapped key from the
 leaf node. This preserves the ordering of the tree. 
 
 The in-order successor of an internal node's key is found in the first key of the left most leaf node of the internal node's key's right subtree; for example, given this tree

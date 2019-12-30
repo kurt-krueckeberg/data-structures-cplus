@@ -10,17 +10,12 @@ Implementing a 2 3 4 Tree in C++17
 
 Implementation links:
 
-1. `2 3 4 Trees a Visual Introduction <https://www.educative.io/page/5689413791121408/80001>`_ is an excellent introduction and explanation of how a 2 3 4 works and how its algorithms work.
-2. https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf
-3. https://www.cs.usfca.edu/~galles/visualization/BTree.html       <-- Best manually insert/delete animation
-4. https://www.educative.io/page/5689413791121408/80001            <-- Top notch animation of insert and delete.
-5. https://www.cs.purdue.edu/homes/ayg/CS251/slides/chap13a.pdf    <-- Has good illustrations
-6. https://www.cs.mcgill.ca/~cs251/ClosestPair/2-4trees.html
-7. https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/    <-- I
-8. `B Tress and 2 3 4 Trees <http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_
+*  `2 3 4 Trees a Visual Introduction <https://www.educative.io/page/5689413791121408/80001>`_ is an excellent tutorial with an animantion of how 2 3 4 algorithms work.
+*  `B Tress and 2 3 4 Trees <http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_  has a very good explanation with ilustrative examples
+*  https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/ lists all cases, including the special case of the root 
+*  https://www.cs.usfca.edu/~galles/visualization/BTree.html       <-- Best manually insert/delete animation
 
-This link has an excellent working example. The explanation is thorough and clear. It gives several example of deleting elements. It uses the in-order predecessor
-rather than the successor for the deletion algorithm.
+This link has an code and illustration of insertion. 
 
 * `2 3 4 Tree Part1 slides <http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt>`_
 
@@ -109,8 +104,8 @@ Deletion
 .. todo:: Make sure the pseudo code matches the comments in ~/n/234tree-in-cpp/include/tree234.h for tree234::remove(). Follow the delete logic as described in of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. Point out that the elimination of 2-nodes
    begins from the root. Write the the core of the algorithm.
 
-To ensure deletion does not leave an empty node, 2-nodes are converted to 3- or 4-nodes as we descend the tree. For an internal node, deletion is reduced to the deletion of a leaf node's key by swapping the internal key with its in-order successor and then deleting the swapped key from the
-leaf node. This preserves the ordering of the tree. 
+To ensure deletion does not leave an empty node, 2-nodes are converted to 3- or 4-nodes as we descend the tree (except in the special case of the root)`. For an internal node, we reduce deletion to the deletion of a leaf node key by swapping the internal key with its in-order successor
+and then deleting the swapped key from the leaf. This preserves the ordering of the tree. 
 
 The in-order successor of an internal node's key is found in the first key of the left most leaf node of the internal node's key's right subtree; for example, given this tree
 
@@ -121,11 +116,15 @@ The in-order successor of an internal node's key is found in the first key of th
 
    **Figure: Internal Node in-order successor**
 
-the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ all successors of these internal nodes are the first key of the left most leaf node in the right subtree. 
+the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ all successors of these internal nodes are the first key in the left most leaf node of the right subtree. 
  
-There two techniques for converting 2-nodes into 3-nodes as we descend the tree:  
+There are two techniques for converting 2-nodes into 3-nodes as we descend the tree: 1.) barrowing a key from a sibling and 2.) merging or fusing with the parent. We always attempt to barrow first, so we can merge, if needed.
 
-Case 1: If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an item from the sibling by rotating items through the parent and moving the subtree. For example, if 4 is to be deleted from this tree
+**Case 1: Barrow From Sibling**
+
+If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an item from the sibling by rotating items through the parent and moving the effected subtree. For example, if 4 is to be deleted from this tree
+
+.. todo:: **Use better examples**
 
 .. figure:: ../images/delete-barrow-1.jpg
    :align: center 
@@ -133,7 +132,7 @@ Case 1: If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an it
 
    **Figure: Delete from 4 from 2-node by barrowing**
 
-we barrow the 2 from the left sibling, moving it into the parent and bringing 3 down from the parent creating a 3-node. 
+we barrow the 2 from the left sibling, moving it into the parent, and we bring 3 down from the parent creating a 3-node. 
 
 .. figure:: ../images/delete-barrow-2.jpg
    :align: center 
@@ -141,10 +140,12 @@ we barrow the 2 from the left sibling, moving it into the parent and bringing 3 
 
    **Figure: 2-node after barrowing**
  
-We then delete 4 from the leaf contain 3 and 4. This operation involves only shifting keys. No new nodes are created or deleted and **the tree remains balanced**.
+We then delete 4 from the leaf contain 3 and 4. This operation only shifts keys. No new nodes are created or deleted, and **the tree remains balanced**.
 
-Case 2: If each adjacent sibling (there are at most two) has only one item, we know its parent must be a 3- or 4-node (because if it were a 2-node, it was already converted to a 3-node). In this case we fuse together the two siblings and bring a key down from parent, forming a 4-node
-and shifting all children effected appropriately. For example, say, we wish to delete 6 from our first example:
+**Case 2: Fuse Nodes**
+
+If each adjacent sibling (there are at most two) has only one item, we know its parent must be a 3- or 4-node (because if it were a 2-node, it was already converted to a 3-node). In this case we fuse together the two siblings and bring a key down from parent, forming a 4-node
+and shifting all children effected as needed. For example, say, we wish to delete 6 from our first example:
 
 .. figure:: ../images/delete-barrow-1.jpg
    :align: center 
@@ -161,6 +162,10 @@ Since there a no 3- or 4-node siblings, we fuse the 2-node containing 4 into the
    **Figure: 2-node now a 4-node**
 
 The change again only involves three nodes. The total number of nodes is decreased by one, but **the tree remains balanced**.
+
+**Special Case: 2-node Root**
+
+If the root is a 2-node
 
 .. note::
    If the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.

@@ -11,9 +11,9 @@ Implementing a 2 3 4 Tree in C++17
 Implementation links:
 
 *  `2 3 4 Trees a Visual Introduction <https://www.educative.io/page/5689413791121408/80001>`_ is an excellent tutorial with an animantion of how 2 3 4 algorithms work.
-*  `B Tress and 2 3 4 Trees <http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_  has a very good explanation with ilustrative examples
-*  https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/ lists all cases, including the special case of the root 
-*  https://www.cs.usfca.edu/~galles/visualization/BTree.html       <-- Best manually insert/delete animation
+*  `B Tress and 2 3 4 Trees <http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_  has a very good explanation with ilustrative examples.
+* `2-3-4 Trees https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/>`_ at Algorithm Tutor lists all cases for delete, including how root special case. 
+* `Best manual insert and delete animation <https://www.cs.usfca.edu/~galles/visualization/BTree.html>`_
 
 This link has an code and illustration of insertion. 
 

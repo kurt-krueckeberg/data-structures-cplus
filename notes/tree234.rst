@@ -14,7 +14,7 @@ Implementation links:
 * `Balanced Search Trees <https://www.cs.drexel.edu/~amd435/courses/cs260/lectures/L-6_2-3_Trees.pdf>`_ has excellent slides and pseudocode of 2-3 and 2-3-4 trees.
 * `B Tress and 2 3 4 Trees <http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_  has a very good explanation with ilustrative examples.
 * `2-3-4 Trees <https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/>`_ at Algorithm Tutor lists all cases for delete, including how root special case. 
-* `Deleting an entry from the (2,4)-tree  <http://www.mathcs.emory.edu/~cheung/Courses/323/Syllabus/Trees/2,4-delete.html<`_ has compelete Java delete code.
+* `Deleting an entry from the (2,4)-tree  <http://www.mathcs.emory.edu/~cheung/Courses/323/Syllabus/Trees/2,4-delete.html>`_ has compelete Java delete code.
 * `Best manual insert and delete animation <https://www.cs.usfca.edu/~galles/visualization/BTree.html>`_
 
 This link has an code and illustration of insertion. 
@@ -167,7 +167,7 @@ The change again only involves three nodes. The total number of nodes is decreas
 
 **Special Case: 2-node Root**
 
-If the root is a 2-node
+If the root is a 2-node...
 
 .. note::
    If the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.

@@ -11,8 +11,10 @@ Implementing a 2 3 4 Tree in C++17
 Implementation links:
 
 * `2 3 4 Trees a Visual Introduction <https://www.educative.io/page/5689413791121408/80001>`_ is an excellent tutorial with an animantion of how 2 3 4 algorithms work.
+* `Balanced Search Trees <https://www.cs.drexel.edu/~amd435/courses/cs260/lectures/L-6_2-3_Trees.pdf>`_ has excellent slides and pseudocode of 2-3 and 2-3-4 trees.
 * `B Tress and 2 3 4 Trees <http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_  has a very good explanation with ilustrative examples.
 * `2-3-4 Trees <https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/>`_ at Algorithm Tutor lists all cases for delete, including how root special case. 
+* `Deleting an entry from the (2,4)-tree  <http://www.mathcs.emory.edu/~cheung/Courses/323/Syllabus/Trees/2,4-delete.html<`_ has compelete Java delete code.
 * `Best manual insert and delete animation <https://www.cs.usfca.edu/~galles/visualization/BTree.html>`_
 
 This link has an code and illustration of insertion. 
@@ -120,7 +122,7 @@ the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ al
  
 There are two techniques for converting 2-nodes into 3-nodes as we descend the tree: 1.) barrowing a key from a sibling and 2.) merging or fusing with the parent. We always attempt to barrow first, so we can merge, if needed.
 
-**Case 1: Barrow From Sibling**
+**Case 1: Barrow a Key From Sibling**
 
 If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an item from the sibling by rotating items through the parent and moving the effected subtree. For example, if 4 is to be deleted from this tree
 
@@ -142,10 +144,10 @@ we barrow the 2 from the left sibling, moving it into the parent, and we bring 3
  
 We then delete 4 from the leaf contain 3 and 4. This operation only shifts keys. No new nodes are created or deleted, and **the tree remains balanced**.
 
-**Case 2: Fuse Nodes**
+**Case 2: Merge with Sibling**
 
-If each adjacent sibling (there are at most two) has only one item, we know its parent must be a 3- or 4-node (because if it were a 2-node, it was already converted to a 3-node). In this case we fuse together the two siblings and bring a key down from parent, forming a 4-node
-and shifting all children effected as needed. For example, say, we wish to delete 6 from our first example:
+If each adjacent sibling (there are at most two) is a 2-node, we "steal" a key from the parent, which we know is a 3- or 4-node (because if it was a 2-node, it has already been converted to a 3- or 4-node), and merge the node with its sibling, creating a 4-node. 
+We shift all children affected as needed. For example, say, we wish to delete 6 from our first example:
 
 .. figure:: ../images/delete-barrow-1.jpg
    :align: center 
@@ -184,8 +186,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
 
 .. code-block:: cpp
 
-    #ifndef  TREE234_H
-    #define  TREE234_H
+    #ifndef TREE234_H
+    #define	TREE234_H
     #include <utility>
     #include <algorithm>
     #include <stdexcept>
@@ -284,7 +286,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           /*
           * For 2-nodes, children[0] is left pointer, children[1] is right pointer.
           * For 3-nodes, children[0] is left pointer, children[1] the middle pointer, and children[2] the right pointer.
-          * For 4-nodes, children[0] is left pointer, children[1] the left middle pointer, and children[2] is the right middle pointer, and children[3] is the right pointer.
+          * For 4-nodes, children[0] is left pointer, children[1] the left middle pointer, and children[2] is the right middle pointer,
+          * and children[3] is the right pointer.
           */
           std::array<std::unique_ptr<Node>, 4> children;
           
@@ -319,8 +322,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           
           /* 
           * Called during remove(Key keym, Node *).
-          * Merges the 2-node children of a parent 2-node into the parent, making the parent a 4-node. The parent, then, adopts the "grand children", and the children
-          * after having been adopted by the parent are deallocated. 
+          * Merges the 2-node children of a parent 2-node into the parent, making the parent a 4-node. The parent, then, adopts the "grand children", 
+          * and the children after having been adopted by the parent are deallocated. 
           */
           Node *fuseWithChildren() noexcept; 
           
@@ -403,8 +406,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           int height;
     
           std::ostream& (Node::*pmf)(std::ostream&) const noexcept;
-          //std::ostream& (Node::*pmf)(std::ostream&, bool) const noexcept;
-          
     
           void display_level(std::ostream& ostr, int level) const noexcept
           {
@@ -422,8 +423,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           
           NodeLevelOrderPrinter (int height_in,  std::ostream& (Node::*pmf_)(std::ostream&) const noexcept, std::ostream& ostr_in):  ostr{ostr_in}, current_level{0}, height{height_in}, pmf{pmf_} {}
               
-          //--NodeLevelOrderPrinter(int height_in,  std::ostream& (Node::*pmf_)(std::ostream&, bool) const noexcept, std::ostream& ostr_in) :  ostr{ostr_in}, current_level{0}, height{height_in}, pmf(pmf_) {}
-          
           NodeLevelOrderPrinter (const NodeLevelOrderPrinter& lhs): ostr{lhs.ostr}, current_level{lhs.current_level}, height{lhs.height}, pmf{lhs.pmf} {}
           
           void operator ()(const Node *pnode, int level)
@@ -458,7 +457,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        Node *split(Node *node, Key new_key) noexcept;  // called during insert(Key key) to split 4-nodes when encountered.
        
        // Called during remove(Key key)
-       bool remove(Node *location, Key key); 
+       bool remove(Node *location, Key key);     
        
        // Called during remove(Key key, Node *) to convert two-node to three- or four-node during descent of tree.
        Node *convertTwoNode(Node *node) noexcept;
@@ -493,8 +492,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        bool find_(const Node *current, Key key) const noexcept; // called by 'bool find(Key keu) const'
        
        std::pair<bool, Node *> find_insert_node(Node *pnode, Key new_key) noexcept;  // Called during insert
+    
+       std::tuple<bool, typename tree234<Key, Value>::Node *, int>  find_delete_node(Node *pcurrent, Key delete_key) noexcept; // New code
        
-       Node *convert_findmin(Node *pnode) noexcept; // Called during remove()
+       Node *get_successor_node(Node *pnode) noexcept; // Called during remove()
+    
+       std::tuple<Node *, int, Node *> get_delete_successor(Node *pdelete, Key delete_key, int delete_key_index) noexcept;
     
        void copy_tree(const std::unique_ptr<Node>& src, std::unique_ptr<Node>& dest, Node *dest_parent=nullptr) const noexcept; 
     
@@ -980,7 +983,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       }
     
       // Handle the harder case: pnode is a leaf node and pnode->keys_values[key_index] is the right-most key/value in this node.
-      Node *successor = nullptr;
     
       // Determine the parent node's child index such that parent->children[child_index] == pnode.
       auto child_index = pnode->getChildIndex(); 
@@ -1577,24 +1579,21 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           oss << "]";
        } 
     
-       //--if (show_addresses) {
+       ostr << " children[";
     
-          ostr << " children[";
-    
-          for (auto i = 0; i < getChildCount(); ++i) {
-              
+       for (auto i = 0; i < getChildCount(); ++i) {
+           
        
-                   if (children[i] == nullptr) {
+                if (children[i] == nullptr) {
        
-                        ostr <<  "nullptr" << ", ";
+                     ostr <<  "nullptr" << ", ";
        
-                   } else {
-         
-                       ostr <<  children[i].get() << ", ";
-                   }
-          }
+                } else {
        
-       //--}
+                    ostr <<  children[i].get() << ", ";
+                }
+       }
+       
        ostr << "] }\n";
     
        return ostr;
@@ -1892,82 +1891,130 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       }
     }
     
+    /*
+     * Input: right subtree from which to remove key. 
+     * Return: true if key remove. false if key not found.
+     */
     template<class Key, class Value> bool tree234<Key, Value>::remove(Node *psubtree, Key key)
     {
-      std::tuple<bool, Node *, int> result_tuple;
+      auto [found, pdelete, key_index] = find_delete_node(psubtree, key); 
     
-      // Loop until inner if-test satisfied.
-      for (Node *current = psubtree; true; current = std::get<1>(result_tuple)) { 
+      if (pdelete->isLeaf()) {
     
-        if (current != root.get() && current->isTwoNode()) {
+           // Remove from leaf node
+           pdelete->removeKeyValue(key_index); 
     
-            current = convertTwoNode(current);
-        }
-    
-        result_tuple = current->find(key);
-    
-        if (std::get<0>(result_tuple)) { // found
-    
-            break;
-    
-        } else if (current->isLeaf()) { // not in tree
-    
-            return false;
-        } 
-      }
-    
-      auto [found, pnode, key_index] = result_tuple;
-    
-      if (pnode->isLeaf()) {
-    
-         // Remove from leaf node
-         pnode->removeKeyValue(key_index); 
-    
-      } else { // internal node. Find successor, converting 2-nodes as we search.
-    
-         // get immediate right subtree.
-         Node *pchildSubTree = pnode->children[key_index + 1].get();
-    
-         if (pchildSubTree->isTwoNode()) { // If we need to convert it...
-    
-            convertTwoNode(pchildSubTree); 
-            
-            if (pnode->getTotalItems() - 1 < key_index || pnode->key(key_index) != key) { // did our key move?
-    
-                return remove(pchildSubTree, key);     // ...if it did, recurse, passing the new subtree to remove(psubtree, key).
-            } 
-         }
-         
-         // find min and convert 2-nodes as we search.
-         Node *pmin = convert_findmin(pchildSubTree);
-    
-         pnode->keys_values[key_index] = pmin->keys_values[0]; // overwrite key to be deleted with its successor.
+      } else { // Internal node. Find successor, converting 2-nodes as we search and resetting pdelete and key_index if necessary.
         
-         pmin->removeKeyValue(0); // Since successor is not in a 2-node, delete it from the leaf.
+          // find min and convert 2-nodes as we search.
+          auto[pdelete_new, key_index_new, pmin] = get_delete_successor(pdelete, key, key_index);
+    
+          pdelete_new->keys_values[key_index_new] = pmin->keys_values[0]; // overwrite key to be deleted with its successor.
+        
+          pmin->removeKeyValue(0); // Since successor is not in a 2-node, delete it from the leaf.
       }
     
       return true;
     }
     /*
+     * Input: 
+     * pdelete points to the Node that has the key to be deleted and pdelete->key(delete_key_index) == delete_key == key to be deleted.
+     *
+     *  Returns tuple consisting of:
+     *  0 - Node* of key to be deleted, which may have changed from its input value.
+     *  1- The child index in the Node *of key to be deleted, which may have changed from its input value.
+     *  2- Node* of leaf node successor.
+     */
+    template<class Key, class Value> std::tuple<typename tree234<Key, Value>::Node *, int, typename tree234<Key, Value>::Node *> 
+    tree234<Key, Value>::get_delete_successor(Node *pdelete, Key delete_key, int delete_key_index) noexcept
+    {
+      // get immediate right subtree.
+      Node *rightSubtree = pdelete->children[delete_key_index + 1].get();
+    
+      if (rightSubtree->isTwoNode()) { 
+    
+           convertTwoNode(rightSubtree); 
+        /*
+          Check if, when we converted the rightSubtree, delete_key moved.  
+          Comments: If the root of the right subtree had to be converted, either a left or right rotation occurred, or a fusion (with the parent,
+          rightSubtree and a sibling occurred). If a left rotation occurred (that "steals" a key from the left sibling and brings down the delete_key),
+          then delete_key becomes the first key in the converted rightSubtree.
+          
+          If a right rotation occurred, delete_key is unaffected.
+          This reasoning concerning rotations applies both when pdelete is a 3-node and when it is a 4-node.
+    
+          If a fusion of a parent key, rightSubtree and a sibling occurred, delete_key moves down into rightSubtree becoming its 2nd key. 
+    
+          Conclusion: Therefore we must check if delete_key is now the first or second key of rightSubtree...
+         */
+         if (delete_key == rightSubtree->key(0) || delete_key == rightSubtree->key(1)) {              
+    
+             // ...if it is, reset delete_key_index...
+             delete_key_index = (delete_key == rightSubtree->key(0)) ? 0 : 1;
+             
+             if (rightSubtree->isLeaf()) { // ...and if the rightSubtree is a leaf, we are done.
+    
+                  return {rightSubtree, delete_key_index, rightSubtree};
+             }  
+             // ...otherwise, we start over by recursing, passing prightSubtree (as the Node with the delete_key) and the new delete_key_index.
+             return get_delete_successor(rightSubtree, delete_key, delete_key_index); 
+         } 
+      }
+     
+      // We get here if rightSubtree was not a leaf.
+     
+      // find left-most node of right subtree, converting 2-nodes as we search.
+      Node *psuccessor = get_successor_node(rightSubtree);
+    
+      return {pdelete, delete_key_index, psuccessor};
+    }
+    /*
+     * Called by remove(Key key). Recursively searches for key to delete, converting, if not the root, 2-nodes to 3- or 4-node.
+     */
+    template<class Key, class Value> std::tuple<bool, typename tree234<Key, Value>::Node *, int>   tree234<Key, Value>::find_delete_node(Node *pcurrent, Key delete_key) noexcept
+    {
+       if (pcurrent != root.get() && pcurrent->isTwoNode()) { 
+    
+            pcurrent = convertTwoNode(pcurrent);  
+       }
+       
+       auto i = 0; 
+       
+       for(;i < pcurrent->getTotalItems(); ++i) {
+    
+           if (delete_key == pcurrent->key(i)) {
+    
+               return {true, pcurrent, i}; // Key to be deleted is at pcurrent->key(i).
+           } 
+    
+           if (delete_key < pcurrent->key(i)) {
+    
+               if (pcurrent->isLeaf()) return {false, nullptr, 0}; // Key not in tree.
+     
+               return find_delete_node(pcurrent->children[i].get(), delete_key); // Recurse left subtree of pcurrent->key(i)
+           } 
+       }
+    
+       if (pcurrent->isLeaf()) { // key was not found in tree.
+          return {false, pcurrent, 0};
+       } 
+    
+       return find_delete_node(pcurrent->children[i].get(), delete_key); // key is greater than all values in pcurrent, search right-most subtree.
+    }
+    
+    /*
      *  Converts 2-nodes to 3- or 4-nodes as we descend to the left-most leaf node of the substree rooted at pnode.
      *  Return min leaf node.
      */
-    template<class Key, class Value> inline typename tree234<Key, Value>::Node *tree234<Key, Value>::convert_findmin(Node *pnode) noexcept
+    template<class Key, class Value> inline typename tree234<Key, Value>::Node *tree234<Key, Value>::get_successor_node(Node *pnode) noexcept
     {
-     while (true) {
-     
-        if (pnode->isTwoNode()) {
-        
-            pnode = convertTwoNode(pnode);                                    
-        }
-        
-        if (pnode->isLeaf())
-             break; 
-        
-        pnode = pnode->children[0].get();
-     }
+      if (pnode->isTwoNode()) 
+          pnode = convertTwoNode(pnode);
     
-      return pnode;
+      if (pnode->isLeaf())
+          return pnode;
+    
+      return get_successor_node(pnode->children[0].get());
     }
     
     /*
@@ -2068,24 +2115,24 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      */
     template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::Node::fuseWithChildren() noexcept
     {
-      // move key of 2-node 
-      keys_values[1] = std::move(keys_values[0]);
-    
-      // absorb children's keys_values
-      keys_values[0] = std::move(children[0]->keys_values[0]);    
-      keys_values[2] = std::move(children[1]->keys_values[0]);       
-    
-      totalItems = 3;
-    
-      std::unique_ptr<Node> leftOrphan {std::move(children[0])};  // These two Nodes will be freed upon return. 
-      std::unique_ptr<Node> rightOrphan {std::move(children[1])}; 
+       // move key of 2-node 
+       keys_values[1] = std::move(keys_values[0]);
+     
+       // absorb children's keys_values
+       keys_values[0] = std::move(children[0]->keys_values[0]);    
+       keys_values[2] = std::move(children[1]->keys_values[0]);       
+     
+       totalItems = 3;
+     
+       std::unique_ptr<Node> leftOrphan {std::move(children[0])};  // These two Nodes will be freed upon return. 
+       std::unique_ptr<Node> rightOrphan {std::move(children[1])}; 
+          
+       connectChild(0, std::move(leftOrphan->children[0])); 
+       connectChild(1, std::move(leftOrphan->children[1]));
+       connectChild(2, std::move(rightOrphan->children[0])); 
+       connectChild(3, std::move(rightOrphan->children[1]));
          
-      connectChild(0, std::move(leftOrphan->children[0])); 
-      connectChild(1, std::move(leftOrphan->children[1]));
-      connectChild(2, std::move(rightOrphan->children[0])); 
-      connectChild(3, std::move(rightOrphan->children[1]));
-        
-      return this;
+       return this;
     }
     
     /* 
@@ -2093,47 +2140,47 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      */
     template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::rightRotation(Node *p2node, Node *psibling, Node *parent, int parent_key_index) noexcept
     {    
-      // Add the parent's key to 2-node, making it a 3-node
-    
-      // 1. But first shift the 2-node's sole key right one position
-      p2node->keys_values[1] = p2node->keys_values[0];      
-    
-      p2node->keys_values[0] = parent->keys_values[parent_key_index];  // 2. Now bring down parent key
-    
-      p2node->totalItems = static_cast<int>(tree234<Key, Value>::Node::NodeType::three_node); // 3. increase total items
-    
-      int total_sibling_keys_values = psibling->getTotalItems(); 
-    
-      // 4. disconnect right-most child of sibling
+       // Add the parent's key to 2-node, making it a 3-node
       
-      std::unique_ptr<Node> pchild_of_sibling = psibling->disconnectChild(total_sibling_keys_values); 
+       // 1. But first shift the 2-node's sole key right one position
+       p2node->keys_values[1] = p2node->keys_values[0];      
       
-      parent->keys_values[parent_key_index] = std::move(psibling->removeKeyValue(total_sibling_keys_values - 1)); // remove the largest, the right-most, sibling's key, and, then, overwrite parent item with largest sibling key ++
+       p2node->keys_values[0] = parent->keys_values[parent_key_index];  // 2. Now bring down parent key
+     
+       p2node->totalItems = static_cast<int>(tree234<Key, Value>::Node::NodeType::three_node); // 3. increase total items
+     
+       int total_sibling_keys_values = psibling->getTotalItems(); 
+      
+       // 4. disconnect right-most child of sibling
+       
+       std::unique_ptr<Node> pchild_of_sibling = psibling->disconnectChild(total_sibling_keys_values); 
+       
+       parent->keys_values[parent_key_index] = std::move(psibling->removeKeyValue(total_sibling_keys_values - 1)); // remove the largest, the right-most, sibling's key, and, then, overwrite parent item with largest sibling key ++
+      
+       p2node->insertChild(0, std::move(pchild_of_sibling)); // add former right-most child of sibling as its first child
     
-      p2node->insertChild(0, std::move(pchild_of_sibling)); // add former right-most child of sibling as its first child
-    
-      return p2node;
+       return p2node;
     }
     /* Requires: sibling is to the right therefore: parent->children[node2_index]->keys_values[0]  <  parent->keys_values[index] <  parent->children[sibling_id]->keys_values[0] 
      * Do a left rotation
      */ 
     template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::leftRotation(Node *p2node, Node *psibling, Node *parent, int parent_key_index) noexcept
     {
-      // pnode2->keys_values[0] doesn't change.
-      p2node->keys_values[1] = parent->keys_values[parent_key_index];  // 1. insert parent key making 2-node a 3-node
-    
-      p2node->totalItems = static_cast<int>(tree234<Key, Value>::Node::NodeType::three_node);// 3. increase total items
-    
-      std::unique_ptr<Node> pchild_of_sibling = psibling->disconnectChild(0); // disconnect first child of sibling.
-    
-      // Remove smallest key in sibling
-      parent->keys_values[parent_key_index] = std::move(psibling->removeKeyValue(0)); 
-    
-      // add former first child of silbing as right-most child of our 3-node.
-      p2node->insertChild(p2node->getTotalItems(), std::move(pchild_of_sibling)); 
-    
-      return p2node;
-    }
+       // pnode2->keys_values[0] doesn't change.
+       p2node->keys_values[1] = parent->keys_values[parent_key_index];  // 1. insert parent key making 2-node a 3-node
+     
+       p2node->totalItems = static_cast<int>(tree234<Key, Value>::Node::NodeType::three_node);// 3. increase total items
+      
+       std::unique_ptr<Node> pchild_of_sibling = psibling->disconnectChild(0); // disconnect first child of sibling.
+     
+       // Remove smallest key in sibling
+       parent->keys_values[parent_key_index] = std::move(psibling->removeKeyValue(0)); 
+      
+       // add former first child of silbing as right-most child of our 3-node.
+       p2node->insertChild(p2node->getTotalItems(), std::move(pchild_of_sibling)); 
+      
+       return p2node;
+    } 
     /*
      * Requirements: 
      *
@@ -2228,10 +2275,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<typename Key, typename Value> void tree234<Key, Value>::debug_printlevelOrder(std::ostream& ostr) const noexcept
     {
-      ostr << "\n--- First print tree ---\n"
+      ostr << "\n--- First: tree printed ---\n";
+      
       ostr << *this;  // calls tree.printlevelOrder(ostr);
     
-      ostr << "\n--- Second print Node relationship info ---\n"
+      ostr << "\n--- Second: Node relationship info ---\n";
+      
       NodeLevelOrderPrinter tree_printer(height(), &Node::debug_print, ostr);  
       
       levelOrderTraverse(tree_printer);
@@ -2301,8 +2350,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
       // Determine child_index such that pnode == pnode->parent->children[child_index]
       int child_index = pnode->getChildIndex();
-    
-      int pred_key_index;
     
       if (child_index != 0) { // If pnode is not the left-most child, the predecessor is in the parent
     

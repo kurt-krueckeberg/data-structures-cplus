@@ -150,7 +150,7 @@ Since there a no 3- or 4-node siblings, we fuse the 2-node containing 4 into the
 
 **Special Fuse Case: the root**
 
-If the parent is a 2-node with two 2-node children, the parent is the root. We know this because this situation is handled as a special case, and once handled the root becomes a 4-node. If a child of the root must be converted from a 2-node child, we know the parent, the root,
+If the parent is a 2-node with two 2-node children, the parent is the root. We know this because this situation is always handled first as a special case, and once handled the root becomes a 4-node. If a child of the root must be converted from a 2-node child, we know the parent, the root,
 is a 4-node. Similarly if a child of this child, in turn, needs to be converted, its parent will not be a 2-node. The same thing applies likewise for all subsequent children.
 
 Note that when a fusion occurs, the total number of nodes is decreased by one, but **the tree remains balanced**.
@@ -160,9 +160,8 @@ Note that when a fusion occurs, the total number of nodes is decreased by one, b
 
 .. note::
     If the key is found in an internal node, the processes of finding its in order successor begins with the subtree rooted at the first child (to the right) that holds larger key(s). If this immediate child is a 2-node, it must be converted
-    to a 3-node, but this conversion may also move the original key\ |ndash|\ either as a result of case 1, barrowing, or case 2, fusing sibling. If this happens, we must search again for the new location of the key and then resume the search
-    for the in-order successor starting from the new location of the key. In the actual implementation below, **getRemoveSuccessor()** does just that: if the key has moved after **convertTwoNode(pnode)**, it searches again for the key and then
-    recurses. See `std::pair<const Node *, int> getRemoveSuccessor(Key key, const Node *&pfound_node, int& key_index) noexcept` below.
+    to a 3-node, but this conversion may also move the original key\ |ndash|\ down into the converted 2-node. It may or may not move as a result of stealing a key from a sibling, but if it does it becomes the first key. If a fusion happens, it becomes
+    the 2nd key. This is handled in member function **get_delete_successor()**.   
 
 Implementation of class tree234
 -------------------------------

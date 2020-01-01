@@ -89,9 +89,6 @@ When the root is split, the tree also remains balanced, but grows upward by one 
 Deletion
 ^^^^^^^^
 
-.. todo:: Make sure the pseudo code matches the comments in ~/n/234tree-in-cpp/include/tree234.h for tree234::remove(). Follow the delete logic as described in of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. Point out that the elimination of 2-nodes
-   begins from the root. Write the the core of the algorithm.
-
 For a leaf node, we simply delete the key. If the key is in an internal node, we swap the key with its in-order successor, which will be a leaf node, and delete the swapped key from the leaf. To ensure deletion does not leave an empty node, 2-nodes are converted to 3- or 4-nodes as we
 descend the tree (except in the special case of the root). This preserves the ordering of the tree. 
 

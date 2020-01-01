@@ -21,20 +21,6 @@ This link has an code and illustration of insertion.
 
 * `2 3 4 Tree Part1 slides <http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt>`_
 
-tree234's Use of shared_ptr<Node> to Manage Memory
---------------------------------------------------
-
-tree234's root node is of type ``shared<Node>``. tree234's assignament operator and copy constructor are trivial: they simply copy the root node. The underlying root Node therefore is not deleted until its reference count goes to 0. 
-Class Node contains the array: type ``std::array<std::shared_ptr<Node>, 4>``.  ``shared_ptr``'s reference counting handles all the memory management for the tree properly.  The children are not deleted until the root is evetually destructed, when
-its default constructor invokes the destructor for std::array, which in turn invokes the shared_ptr<Node> destructor. The children qqshared_ptr<Node>qq's reference counts remains one throughout the program's execution become these children
-shared_ptr<Node> are never publically exposed and therefore can never copied or assignment outside the scope of class tree234. Thus, only when the root Node is deleted are its left and right children deleted. 
-
-.. note::
-
-   The deletion of the root's left and right children triggers the proper post-order recursive destruction of all the tree's underlying Nodes.
-
-.. todo:: Show print_tree() output of code being copied a few times, then deleted.
-
 How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
 -------------------------------------------------------------------
 

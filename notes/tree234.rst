@@ -186,7 +186,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
 
 .. code-block:: cpp
 
-    #ifndef TREE234_H
+    #ifndef	TREE234_H
     #define	TREE234_H
     #include <utility>
     #include <algorithm>
@@ -207,13 +207,13 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<typename Key, typename Value> class tree234 {
        
        /*
-       * This union eliminates always having to do: const_cast<Key>(p.first) = some_noconst_key;
-       * by holding two different types of pairs: _constkey_pair, where member first is 'const Key'; and _pair, where member 
+       * This union eliminates repetitive const_cast<Node*>: const_cast<Key>(p.first) = some_noconst_key;
+       * by holding two different types of pairs: _constkey_pair, where member first is 'const Key'; and _pair, where  
        * first is 'Key'.
        *
-       * Note 1: Anonymous unions do not implicitly destruct their members. Therefore we must explicitly call their destructors within 
+       * Note 1: Since anonymous unions do not implicitly destruct their members, we must explicitly call their destructors in 
        *         KeyValue::~KeyValue().
-       * Note 2: A user-declared destructor by default causes the move constructor and move assignment to be not declared, so
+       * Note 2: Defining a user-declared destructor causes the default move constructor and move assignment to be created, so
        *         we explictily declare and defined them.
        */
        
@@ -265,10 +265,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        class Node; // Forward feference. 
        
-       class Node { // The tree node class. 
+       class Node { 
           /*
-          Note: Since Node depends on both of tree234's template parameters, on both Key and Value, we can 
-          make it a nested class. Had it depended on only one template parameter, it could not be a nested class.
+          Note: Node depends on both of tree234's template parameters, Key and Value, so we can 
+          make it a nested class.
           */
           private:  
           friend class tree234<Key, Value>;             
@@ -296,9 +296,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           int getChildIndex() const noexcept;
           
           /* 
-          * Returns {true, Node * pnode, int index} if key is found in node and sets pnode and index such that pnode->keys_values[index] == key
-          * Returns {false, Node * pnode, int index} if key is if not found, and sets pnode and index such that pnode->keys_values[index] is the
-          * next prospective node to be searched one level lower in the tree.
+          * Returns {true, Node * pnode, int index} if key is found and pnode->keys_values[index] == found_key
+          * Returns {false, Node * pnode, int index} if key is not found, pnode and index set to next prospective Node to be searched, ie,
+          * pnode->keys_values[index] is the next prospective node one level lower in the tree.
           */
           std::tuple<bool, typename tree234<Key, Value>::Node *, int>  find(Key key) const noexcept;
           
@@ -306,24 +306,23 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           
           int insert(Key key, const Value& value) noexcept;
           
-          // Remove key at index, if found, from node, shifting remaining keys_values to fill the gap.
+          // Remove key and value at index, if found, from node, shifting remaining keys_values to fill the gap and shifting children.
           KeyValue removeKeyValue(int index) noexcept; 
-          
+         
+          // Take ownership of child, inserting it a childNum. 
+          void insertChild(int childNum, std::unique_ptr<Node>&& pChild) noexcept;
+    
           void connectChild(int childNum, std::unique_ptr<Node>&& child) noexcept;
           
           /*
           * Removes child node (implictly using move ctor) and shifts its children to fill the gap. Returns child pointer.
           */  
-          std::unique_ptr<Node> disconnectChild(int child_index) noexcept; //???? 
-          
-          void insertChild(int childNum, std::unique_ptr<Node>&& pChild) noexcept;
-          
+          std::unique_ptr<Node> disconnectChild(int child_index) noexcept; 
+    
           std::pair<bool, int> chooseSibling(int child_index) const noexcept;
           
           /* 
-          * Called during remove(Key keym, Node *).
-          * Merges the 2-node children of a parent 2-node into the parent, making the parent a 4-node. The parent, then, adopts the "grand children", 
-          * and the children after having been adopted by the parent are deallocated. 
+          * Called during remove(Key keym, Node *) if a parent key needs to be merged with convert a 2-node to a 4-node.
           */
           Node *fuseWithChildren() noexcept; 
           
@@ -344,7 +343,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
              explicit Node(KeyValue&& key_value) noexcept;
     
-             // This ctor is used by copy_tree()
+             // This cconstructor is called by copy_tree()
              Node(const std::array<KeyValue, 3>& lhs_keys_values, Node *const lhs_parent, int lhs_totalItems) noexcept;             
     
              constexpr const Node *getParent() const noexcept;
@@ -354,7 +353,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           
              constexpr const Node *getRightMostChild() const noexcept { return children[getTotalItems()].get(); }
           
-             // method to help in debugging
+             // Helps in debugging
              void printKeys(std::ostream&);
           
              constexpr Key& key(int i) { return keys_values[i].key(); } 
@@ -394,7 +393,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
                return node234.print(ostr);
              }
     
-             //--std::ostream& debug_print(std::ostream& ostr, bool show_addresses=false) const noexcept;
              std::ostream& debug_print(std::ostream& ostr) const noexcept;
           
          }; // end class Tree<Key, Value>::Node  
@@ -568,18 +566,18 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        friend std::ostream& operator<<(std::ostream& ostr, const tree234<Key, Value>& tree)
        {
-         tree.printlevelOrder(ostr);
-         return ostr;
+          tree.printlevelOrder(ostr);
+          return ostr;
        }
        
        // Bidirectional stl-compatible constant iterator
        class iterator { 
 					           
           public:
-          using difference_type   = std::ptrdiff_t; 
-          using value_type        = tree234<Key, Value>::value_type; 
-          using reference	        = value_type&; 
-          using pointer           = value_type*;
+          using difference_type  = std::ptrdiff_t; 
+          using value_type       = tree234<Key, Value>::value_type; 
+          using reference        = value_type&; 
+          using pointer          = value_type*;
           
           using iterator_category = std::bidirectional_iterator_tag; 
 				              
@@ -833,7 +831,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     /*
      * Does a post order tree traversal, using recursion and deleting nodes as they are visited.
      */
-      
     template<typename Key, typename Value> void tree234<Key, Value>::destroy_tree(std::unique_ptr<Node>& current) noexcept
     {
       if (current == nullptr) {
@@ -870,7 +867,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
                  copy_tree(src_node->children[1], dest_node->children[1], dest_node.get()); 
          
                  break;
-         
             }   
             case 2: // 3-node
             {
@@ -1141,7 +1137,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     }
     /*
      * F is a functor whose function call operator takes a 1.) const Node * and an 2.) int, indicating the depth of the node from the root,
-       which has depth 1.
+     * which has depth 1.
      */
     template<typename Key, typename Value> template<typename Functor> void tree234<Key, Value>::levelOrderTraverse(Functor f) const noexcept
     {
@@ -1339,7 +1335,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     /*
      * Calls functor on each node in in-order traversal. Uses recursion.
      */
-    
     template<typename Key, typename Value> template<typename Functor> void tree234<Key, Value>::DoInOrderTraverse(Functor f, const Node *current) const noexcept
     {     
        if (current == nullptr) return;
@@ -1433,7 +1428,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * Note: disconnectChild() must always be called before removeItem(); otherwise, it will not work correctly (because totalItems
      * will have been altered).
      */
-    
     template<typename Key, typename Value> inline std::unique_ptr<typename tree234<Key, Value>::Node> tree234<Key, Value>::Node::disconnectChild(int childIndex) noexcept // ok
     {
       std::unique_ptr<Node> node{ std::move(children[childIndex] ) }; // invokes shared_ptr<Node> move ctor.
@@ -1450,7 +1444,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * Preconditions: node is not a four node, and key is not present in node.
      * Purpose: Shifts keys_values needed so key is inserted in sorted position. Returns index of inserted key.
      */
-    
     template<typename Key, typename Value> int  tree234<Key, Value>::Node::insert(Key lhs_key, const Value& lhs_value)  noexcept // ok. Maybe add a move version, too: insertKey(Key, Value&&)
     { 
       // start on right, examine items
@@ -1537,7 +1530,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
       return key_value;
     }
-    //--template<class Key, class Value> std::ostream& tree234<Key, Value>::Node::debug_print(std::ostream& ostr, bool show_addresses) const noexcept
+    
     template<class Key, class Value> std::ostream& tree234<Key, Value>::Node::debug_print(std::ostream& ostr) const noexcept
     {
        ostr << "\n{ ["; 
@@ -1662,11 +1655,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     { 
        return !children[0] ? true : false;
     }
-    /*
-    template<typename Key, typename Value> inline tree234<Key, Value>::~tree234()
-    {
-    }
-    */
+    
     /*
      * Recursive version of find
      */
@@ -1838,21 +1827,21 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/
      *
      * We reduce deletion of an internal node's key to deletion of a leaf node's key by swapping the key to be deleted
-     * with its in-order successor and then deleting the key from the leaf noden. To prevent deletion from a 2-node leaf, which
+     * with its in-order successor and then deleting the key from the leaf. To prevent deletion from a 2-node leaf, which
      * would leave an empty node (underflow), we convert all 2-nodes as we descend the tree to 3 or 4-nodes using the stratagies below.
      *  
      * If the key is an internal node, then its successor will be the minimum key of its first right subtree. To ensure that the successor of the
-     * internal node is not a 2-node, we again convert all 2-nodes to 3- or 4-nodes as we descend. 
+     * internal node is not a 2-node, we again convert all 2-nodes to 3- or 4-nodes as we descend. If the right subtree root is itself a 2-node, when it
+     * is converted, the key to be delete may move down into it (as its first or second key), so we check for this.
      * 
      * Conversion of 2-node has two cases:
-     * TODO: Make sure the deletion description matches that in ~/d/notes/tree234.rst.
     
-     * Case 1: If an adjacent sibling has is a 3- or 4-node (so it has 2 or 3 items, respectively), and if the parent -- of which node????--is a 3- or 4-node,
-     * we "steal" an item from sibling by rotating items and moving subtree. See slide #51 at www.serc.iisc.ernet.in/~viren/Courses/2009/SE286/2-3Trees-Mod.ppt 
+     * Case 1: If an adjacent sibling has is a 3- or 4-node, we "steal" a sibling key by rotating it into the parent and bringing down a parent key into the 2-node,
      *         
-     * Case 2: If each adjacent sibling (there are at most two) has only one item, we fuse together the two siblings, plus an item we bring down from parent (which we
-     * know is not a 2-node), forming a 4-node and shifting all children effected appropriately. 
+     * Case 2: If each adjacent sibling (there are at most two) is a 2-node, we canvert the 2-node into a 4-node by merging into it a sibling key and a key from parent (which we
+     * know is not a 2-node). The children affected are shifted and adopted(see code). 
      *
+     * Special case: If the root holds the key to be deleted, we meris a 2-node
      */
     template<class Key, class Value> bool tree234<Key, Value>::remove(Key key) 
     {
@@ -1871,7 +1860,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
                                
                  if (root->isEmpty()) {
     
-                    root.reset(); // delete root if tree now empty. 
+                    destroy_tree(root); 
                 }  
     
                  --tree_size;
@@ -2568,26 +2557,21 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     /*
      */
     
-    // TODO: Can we use C++17 range-base for __end by simply having end() be nullptr.
     template<class Key, class Value> bool tree234<Key, Value>::iterator::operator==(const iterator& lhs) const
     {
-     if (&lhs.tree == &tree) {
-       /*
-         The first if-test, checks for "at end".
-         If current is nullptr, that signals the iterator is "one past the end.". If current is not nullptr, then current will equal cached_cursor.fist. current is either nullptr or cursor. cached_cursor never 
-         becomes nullptr.
-         In the else-if block block, we must check 'current == lhs.current' and not 'cursor == lhs.cursor' because 'cursor' never signals the end of the range, it never becomes nullptr,
-         but the iterator returned by tree234::end()'s iterator always sets current to nullptr (to signal "one past the end").
-         current to nullptr.
-       */
+       //
+       // The first if-test, checks for "at end".
+       // If current is nullptr, that signals the iterator is "one past the end.". If current is not nullptr, then current will equal cached_cursor.fist. current is either nullptr or cursor. cached_cursor never 
+       // becomes nullptr.
+       // In the else-if block block, we must check 'current == lhs.current' and not 'cursor == lhs.cursor' because 'cursor' never signals the end of the range, it never becomes nullptr,
+       // but the iterator returned by tree234::end()'s iterator always sets current to nullptr (to signal "one past the end").
+       // current to nullptr.
+       //
     
        if (current == nullptr && lhs.current == nullptr) return true; 
        else if (current == lhs.current && key_index == lhs.key_index) { 
-           
            return true;
-       }    
-     } 
-     return false;
+       } else return false;
     }
     
     /*
@@ -2679,12 +2663,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
         return -1; // not found
     }
-    /*
-    template<class Key, class Value> inline int tree234<Key, Value>::height() const noexcept
-    {
-       return height(root);
-    }
-    */
+    
     template<class Key, class Value> int tree234<Key, Value>::height(const Node* pnode) const noexcept
     {
        if (pnode == nullptr) {
@@ -2708,39 +2687,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return 1 + max; // add one to it.
        }
     }
-    /*
-    template<class Key, class Value> bool tree234<Key, Value>::test_invariant() const noexcept
-    {
     
-    1. Tree is balanced
-    2. The size reflects the actual number of Nodes
-    3. The invariant of each Node in the tree is satisfied. Add Node invariant of:
-    
-    1. Test validity of parent pointer
-    2. Test that each Node contains the correct count of children, that is, the other children are set to nullptr.
-    
-      if (!isBalanced()) 
-            std::cout << "Tree is not balanced.\n";
-    
-           
-      // Compare size with a count of the number of nodes from traversing the tree.
-      auto end_iter = end();
-    
-      auto  count = 0;
-      for (auto iter : *this)  {
-    
-          ++count; 
-      }
-    
-      if (size_ != count) {
-    
-          std::cout << "The manual node count is " << count << ", and the value of size_ is " << size_  << '.' << std::endl;
-      }
-    
-      return (size_ == count) ? true : false;
-    
-    }
-    */
     /*
       Input: pnode must be in tree
      */

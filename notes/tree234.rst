@@ -844,8 +844,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        destroy_tree(root); 
        copy_tree(lhs.root, root);
     }
-    
-    template<typename Key, typename Value> void tree234<Key, Value>::copy_tree(const std::unique_ptr<Node>& src_node, std::unique_ptr<Node>& dest_node, Node *dest_parent) const noexcept
+    /*
+     * Copies a Node, then recursively copies its children from left to right.
+     */
+    template<typename Key, typename Value> void tree234<Key, Value>::copy_tree(const std::unique_ptr<Node>& src_node,\
+                                                                               std::unique_ptr<Node>& dest_node, Node *dest_parent) const noexcept
     {
       if (src_node != nullptr) { 
                                   
@@ -1277,15 +1280,13 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<typename Key, typename Value> template<typename Functor> void tree234<Key, Value>::DoPreOrderTraverse(Functor f, const Node *current) const noexcept
     {  
     
-      if (current == nullptr) {
+       if (current == nullptr) return;
     
-            return;
-       }
+       f(current->constkey_pair(0)); // Visit Node::keys_values[0]
     
        switch (current->getTotalItems()) {
     
           case 1: // two node
-            f(current->constkey_pair(0));
     
             DoPreOrderTraverse(f, current->children[0].get());
     
@@ -1294,30 +1295,28 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
             break;
     
           case 2: // three node
-            f(current->constkey_pair(0));
     
             DoPreOrderTraverse(f, current->children[0].get());
     
             DoPreOrderTraverse(f, current->children[1].get());
     
-            f(current->constkey_pair(1));
+            f(current->constkey_pair(1));// Visit Node::keys_values[1]
     
             DoPreOrderTraverse(f, current->children[2].get());
     
             break;
     
           case 3: // four node
-            f(current->constkey_pair(0));
     
             DoPreOrderTraverse(f, current->children[0].get());
     
             DoPreOrderTraverse(f, current->children[1].get());
     
-            f(current->constkey_pair(1));
+            f(current->constkey_pair(1));// Visit Node::keys_values[1]
     
             DoPreOrderTraverse(f, current->children[2].get());
     
-            f(current->constkey_pair(2));
+            f(current->constkey_pair(2));// Visit Node::keys_values[2]
     
             DoPreOrderTraverse(f, current->children[3].get());
     

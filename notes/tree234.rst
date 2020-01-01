@@ -153,14 +153,10 @@ Since there a no 3- or 4-node siblings, we fuse the 2-node containing 4 into the
 
 **Special Fuse Case: the root**
 
-If the parent is a 2-node with two 2-node children, the parent is the root. We know this because this situation is handled as a special case, and once handled the root becomes a 4-node. If a child of the root must be converted from a 2-node child, we know the parent is a 4-node.
-Similarly if a child of this child, in turn, needs to be converted, its parent will not be a 2-node. And likewise so subsequent children.
+If the parent is a 2-node with two 2-node children, the parent is the root. We know this because this situation is handled as a special case, and once handled the root becomes a 4-node. If a child of the root must be converted from a 2-node child, we know the parent, the root,
+is a 4-node. Similarly if a child of this child, in turn, needs to be converted, its parent will not be a 2-node. The same thing applies likewise for all subsequent children.
 
 Note that when a fusion occurs, the total number of nodes is decreased by one, but **the tree remains balanced**.
-
-**Special Case: 2-node Root**
-
-If the root is a 2-node...
 
 .. note::
    If the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.

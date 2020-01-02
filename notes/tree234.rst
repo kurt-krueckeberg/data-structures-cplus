@@ -896,7 +896,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<typename Key, typename Value> inline tree234<Key, Value>::tree234(std::initializer_list<std::pair<Key, Value>> il) noexcept : root(nullptr), tree_size{0} 
     {
         for (auto& x: il) { 
-                 
+                        
              insert(x.first, x.second);
         }
     }
@@ -1890,6 +1890,42 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       return true;
     }
     /*
+     * Called by remove(Key key). Recursively searches for key to delete, converting, if not the root, 2-nodes to 3- or 4-node.
+     */
+    template<class Key, class Value> std::tuple<bool, typename tree234<Key, Value>::Node *, int>   tree234<Key, Value>::find_delete_node(Node *pcurrent, Key delete_key) noexcept
+    {
+       //--if (pcurrent != root.get() && pcurrent->isTwoNode()) { 
+       if (pcurrent->isTwoNode()) { 
+    
+            pcurrent = convertTwoNode(pcurrent);  
+       }
+       
+       auto i = 0; 
+       
+       for(;i < pcurrent->getTotalItems(); ++i) {
+    
+           if (delete_key == pcurrent->key(i)) {
+    
+               return {true, pcurrent, i}; // Key to be deleted is at pcurrent->key(i).
+           } 
+    
+           if (delete_key < pcurrent->key(i)) {
+    
+               if (pcurrent->isLeaf()) return {false, nullptr, 0}; // Key not in tree.
+     
+               return find_delete_node(pcurrent->children[i].get(), delete_key); // Recurse left subtree of pcurrent->key(i)
+           } 
+       }
+    
+       if (pcurrent->isLeaf()) { // key was not found in tree.
+          return {false, pcurrent, 0};
+       } 
+    
+       return find_delete_node(pcurrent->children[i].get(), delete_key); // key is greater than all values in pcurrent, search right-most subtree.
+    }
+    
+    
+    /*
      * Input: 
      * pdelete points to the Node that has the key to be deleted and pdelete->key(delete_key_index) == delete_key == key to be deleted.
      *
@@ -1942,40 +1978,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       return {pdelete, delete_key_index, psuccessor};
     }
     /*
-     * Called by remove(Key key). Recursively searches for key to delete, converting, if not the root, 2-nodes to 3- or 4-node.
-     */
-    template<class Key, class Value> std::tuple<bool, typename tree234<Key, Value>::Node *, int>   tree234<Key, Value>::find_delete_node(Node *pcurrent, Key delete_key) noexcept
-    {
-       if (pcurrent != root.get() && pcurrent->isTwoNode()) { 
-    
-            pcurrent = convertTwoNode(pcurrent);  
-       }
-       
-       auto i = 0; 
-       
-       for(;i < pcurrent->getTotalItems(); ++i) {
-    
-           if (delete_key == pcurrent->key(i)) {
-    
-               return {true, pcurrent, i}; // Key to be deleted is at pcurrent->key(i).
-           } 
-    
-           if (delete_key < pcurrent->key(i)) {
-    
-               if (pcurrent->isLeaf()) return {false, nullptr, 0}; // Key not in tree.
-     
-               return find_delete_node(pcurrent->children[i].get(), delete_key); // Recurse left subtree of pcurrent->key(i)
-           } 
-       }
-    
-       if (pcurrent->isLeaf()) { // key was not found in tree.
-          return {false, pcurrent, 0};
-       } 
-    
-       return find_delete_node(pcurrent->children[i].get(), delete_key); // key is greater than all values in pcurrent, search right-most subtree.
-    }
-    
-    /*
      *  Converts 2-nodes to 3- or 4-nodes as we descend to the left-most leaf node of the substree rooted at pnode.
      *  Return min leaf node.
      */
@@ -2006,7 +2008,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * 
      */
     template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::convertTwoNode(Node *pnode)  noexcept
-    {                                                                         
+    {   
+       if (pnode == root) {
+           
+           return convertRoot();
+       } 
        // Return the parent->children[node2_index] such that pnode is root of the left subtree of 
        auto child_index = pnode->getChildIndex(); 
     
@@ -2020,7 +2026,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        auto parent = pnode->getParent();
     
        if (has3or4NodeSibling == false) { 
-    
+            /* 
             if (parent->isTwoNode()) { //... as is the parent, which must be root; otherwise, it would have already been converted.
     
                 convertedNode = parent->fuseWithChildren();
@@ -2028,7 +2034,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
             } else { // parent is 3- or 4-node and there a no 3- or 4-node adjacent siblings 
     
                convertedNode = fuseSiblings(parent, child_index, sibling_index);
-            }
+            } 
+             */
+    
+            convertedNode = parent->fuseWithChildren();
+    
+            convertedNode = fuseSiblings(parent, child_index, sibling_index);
     
        } else { // it has a 3- or 4-node sibling.
     
@@ -2070,6 +2081,15 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        }
        
        return convertedNode;
+    }
+    /*
+     * Converts 2-node root by merging it with its children
+     */
+    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::convertRoot()  noexcept
+    {   
+        Node *proot = root.get();
+       
+        return proot;
     }
     
     /*

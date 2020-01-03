@@ -28,7 +28,7 @@ Insertion
 ^^^^^^^^^
 
 The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  New keys are inserted at leaf nodes. If the leaf node is a 4-node, we must first split it by pushing its middle key up a level
-to make room for the new key. If the parent is a 2-node, we must first split the parent, so it accept a new. To ensure a parent can always accomodate a new key, we split all 4-nodes as we descend the tree. 
+to make room for the new key. If the parent is a 2-node, we must first split the parent, so it can accept a new key. To ensure a parent can always accomodate a new key, we split all 4-nodes as we descend the tree. 
 
 If the root must be split (because it is the parent of a 4-node leaf or it is itself a 4-node leaf), the tree will grow upward when a new root node is added above the old.
 

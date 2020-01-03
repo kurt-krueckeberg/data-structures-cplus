@@ -280,7 +280,6 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     
     template<class Key, class Value> std::ostream& bstree<Key, Value>::Node::print(std::ostream& ostr) const noexcept
     {
-      //ostr << "[ { " << nc_pair.first << ", " << nc_pair.second << "} : parent(" << parent << "), this(" << this << ") ]";
       ostr << "[ " << key() << ", " << value() << "] " << std::flush;  
       return ostr; 
     }
@@ -290,7 +289,7 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     {
        std::queue< std::pair<const Node*, int> > queue; 
     
-       Node* proot = root.get();
+       auto proot = root.get();
     
        if (proot == nullptr) return;
           
@@ -301,14 +300,6 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
        queue.push(std::make_pair(proot, initial_level));
     
        while (!queue.empty()) {
-    
-           /*
-            std::pair<const Node *, int> pair_ = queue.front();
-    
-            const Node *current = pair_.first;
-    
-            int current_level = pair_.second;
-           */
     
             auto[current, current_level] = queue.front(); // C++17 unpacking.
     

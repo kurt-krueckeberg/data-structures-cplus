@@ -90,7 +90,7 @@ Deletion
 ^^^^^^^^
 
 For a leaf node, we simply delete the key. If the key is in an internal node, we swap the key with its in-order successor, which will be a leaf node, and delete the swapped key from the leaf. To ensure deletion does not leave an empty node, 2-nodes are converted to 3- or 4-nodes as we
-descend the tree (except in the special case of the root). This preserves the ordering of the tree. 
+descend the tree (except in the special case of the root). Doing so, preserves the ordering of the tree. 
 
 The in-order successor of an internal node's key is found in the first key of the left most leaf node of the internal node's key's right subtree; for example, given this tree
 
@@ -103,11 +103,11 @@ The in-order successor of an internal node's key is found in the first key of th
 
 the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ all successors of these internal nodes are the first key in the left most leaf node of the right subtree. 
  
-There are two techniques for converting 2-nodes into 3-nodes as we descend the tree: 1.) barrowing a key from a sibling and 2.) or fusing the node with a parent and silbing key. We always attempt to barrow first, so we can fuse, if needed.
+There are two techniques for converting 2-nodes into 3-nodes as we descend the tree: 1.) "stealing" a key from a sibling and a parent(explained below), creating a 3-node, or 2.) fusing the node with a parent key and silbing key, creating a 4-node. We always attempt to barrow first, so we can fuse, if barrowing fails.
 
 **Case 1: Barrow a Key From Sibling**
 
-If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an item from the sibling by rotating items through the parent and moving the effected children. For example, if 4 is to be deleted from this tree
+If an adjacent sibling of the 2-node is a 3- or 4-node, we can "steal" an key from the sibling. It is moved up to the parent, and a parent key is moved into the 2-node making it a 3-node. The children affected are transfered accordingly. For example, if 4 is to be deleted from this tree
 
 .. todo:: **Use better examples**
 
@@ -117,7 +117,7 @@ If an adjacent sibling of the 2-node is a 3- or 4-node, we "steal" an item from 
 
    **Figure: Delete from 4 from 2-node by barrowing**
 
-we barrow the 2 from the left sibling, moving it into the parent, and we bring 3 down from the parent creating a 3-node. 
+we barrow the 2 from the left sibling, move it into the parent, and we bring 3 down from the parent creating a 3-node. 
 
 .. figure:: ../images/delete-barrow-2.jpg
    :align: center 
@@ -125,12 +125,12 @@ we barrow the 2 from the left sibling, moving it into the parent, and we bring 3
 
    **Figure: 2-node after barrowing**
  
-We then delete 4 from the leaf contain 3 and 4. This operation only shifts keys. No new nodes are created or deleted, and **the tree remains balanced**.
+We then delete 4 from the leaf contain 3 and 4, we only need shift keys with the node. No new nodes are created or deleted, and **the tree remains balanced**.
 
 **Case 2: Fuse with Parent and Sibling**
 
-If each adjacent sibling (there are at most two) is a 2-node, and if the parent is a 3- or 4-node, we steal a key from the parent and we steal key from a sibling, fusing these two stolen keys with the 2-node, turning it into a 4-node. The sibling is deleted, and its children adopted by
-the 4-node. The parent is down-sized. 
+If each adjacent sibling (there are at most two) is a 2-node, we steal a key from the parent and from a sibling and fuse these two keys with the 2-node, creating a 4-node. The sibling is deleted, and its children adopted by the 4-node. The parent is down-sized. We know the parent will be a
+3- or 4-node because we maintain the invariant that as we descend we eliminated the 2-nodes.
   
 For example, say, we wish to delete 6 from our first example:
 
@@ -150,17 +150,17 @@ Since there a no 3- or 4-node siblings, we fuse the 2-node containing 4 into the
 
 **Special Fuse Case: the root**
 
-If the parent is a 2-node with two 2-node children, the parent is the root. We know this because this situation is always handled first as a special case, and once handled the root becomes a 4-node. If a child of the root must be converted from a 2-node child, we know the parent, the root,
-is a 4-node. Similarly if a child of this child, in turn, needs to be converted, its parent will not be a 2-node. The same thing applies likewise for all subsequent children.
+If a 2-node has two 2-node children, the node is the root. We know this because this situation is always handled first as a special case, and once handled the root becomes a 4-node. If a child of the root must subsequently be converted from a 2-node, we know its parent, the root,
+is a 4-node. And if a child of this child, in turn, needs to be converted, its parent won't not be a 2-node and similarly for all subsequent children.
 
-Note that when a fusion occurs, the total number of nodes is decreased by one, but **the tree remains balanced**.
+Note that when a fusion occurs, the total number of nodes is decreased by one, but **the tree again remains balanced**.
 
 .. note::
    If the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.
 
 .. note::
     If the key is found in an internal node, the processes of finding its in order successor begins with the subtree rooted at the first child (to the right) that holds larger key(s). If this immediate child is a 2-node, it must be converted
-    to a 3-node, but this conversion may also move the original key\ |ndash|\ down into the converted 2-node. It may or may not move as a result of stealing a key from a sibling, but if it does it becomes the first key. If a fusion happens, it becomes
+    to a 3-node, but this conversion may also move the original key\ |ndash|\ down into the converted 2-node. It may or may not move as a result of stealing a key from a sibling, but if it does it becomes the first key. If on the other hand a fusion happens, it becomes
     the 2nd key. This is handled in member function **get_delete_successor()**.   
 
 Implementation of class tree234

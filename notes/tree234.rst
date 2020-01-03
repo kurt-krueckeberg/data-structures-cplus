@@ -108,8 +108,6 @@ There are two techniques for converting 2-nodes into 3-nodes as we descend the t
 
 If an adjacent sibling of the 2-node is a 3- or 4-node, we can "steal" an key from the sibling. It is moved up to the parent, and a parent key is moved into the 2-node making it a 3-node. The children affected are transfered accordingly. For example, if 4 is to be deleted from this tree
 
-.. todo:: **Use better examples**
-
 .. figure:: ../images/delete-barrow-1.jpg
    :align: center 
    :scale: 100 %

@@ -28,13 +28,12 @@ Insertion
 ^^^^^^^^^
 
 The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  New keys are inserted at leaf nodes. If the leaf node is a 4-node, we must first split it by pushing its middle key up a level
-to make room for the new key. To ensure the parent can always accomodate a key, we must first split the parent if it, too, is a 4-node. And to ensure the parent's parent can accomodate a new key, we split all 4-nodes as we descend the tree. 
+to make room for the new key. If the parent is a 2-node, we must first split the parent, so it accept a new. To ensure a parent can always accomodate a new key, we split all 4-nodes as we descend the tree. 
 
-If the root must be split (because it is the parent of a 4-node leaf or it is itself a 4-node leaf), the tree will grows upward when a new root node is inserted above the old.
+If the root must be split (because it is the parent of a 4-node leaf or it is itself a 4-node leaf), the tree will grow upward when a new root node is added above the old.
 
-The split algorithm converts the former 4-node into a 2-node that contains only its left key. This downsized node retains its two left-most children. The middle key is pushed into the parent, and the right key is moved into a brand new 2-node. This newly
-created 2-node takes ownership of the two right-most children of the former 4-node, and the newly created 2-node is made a child of the parent. The child indecies in the parent are adjusted as needed to properly reflect the new relationships between all these
-nodes.
+The split algorithm works by converting the 4-node into a 2-node containing only its left key and two left-most children. The middle key is pushed up into the parent, and the right key becomes a brand new 2-node. The new 2-node then takes ownership of the two right-most children of the
+former 4-node, and the newly created 2-node is made a child of the parent. The child indecies in the parent are adjusted as needed to properly reflect these new relationships between nodes.
 
 Here is an example. The key 73 will be inserted into this tree. Therefore the 4-node containing [59, 70, 75] must be split:
 
@@ -1722,10 +1721,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     {
        if (pcurrent->isFourNode()) { 
     
-           if (pcurrent->key(1) == new_key) // First check the middle key, before split() moves it up a level.
-                return {true, pcurrent, 1};
+           if (pcurrent->key(1) == new_key) // First check the middle key because split() will move it into its parent.
+                return {true, pcurrent, 1}; 
     
-           pcurrent = split(pcurrent, new_key);  
+           // split pcurrent into two 2-nodes and set pcurrent to the correct on for examining next.
+           pcurrent = split(pcurrent, new_key); 
        }
     
        auto i = 0;
@@ -1755,14 +1755,15 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     /* 
      *  split pseudocode: 
      *  
-     *  pnode is a 4-node that is is split follows:
-     *  
-     *  1. Create a new 2-node holding pnode's largest key and adopt pnode's two right-most children.
-     *  2. Convert pnode into a 2-node by setting totalItems to 1, effectively keeping only its smallest key and its two left-most chidren, 
-     *  3. Move the middle key up to the parent (which we know is not a 4-node. If it was, it has already been split), and connect the new
-     *    2-node step from #1 to it as a new child.
+     *  Input: pnode is a 4-node that is is split follows:
+     *  Output:  
+     *  1. A new 2-node containing pnode's largest key(the 3rd key) is created, it adopts pnode's two right-most children.
+     *  2. pnode is downsized to a 2-node (by setting totalItems to 1) containing its smallest key and its two left-most chidren, 
+     *  3. pnode's middle key moves up to its parent (which we know is not a 4-node, since, if it were, it has already been split), and we connect the new
+     *    2-node step from #1 to it as its right most child.
      *
-     *  Special case: if pnode is the root, we special case this by creating a new root above the current root.
+     *  Special case: if pnode is the root, we special case this and create a new root above the current root.
+     *
      */ 
     template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::split(Node *pnode, Key new_key) noexcept
     {
@@ -1792,12 +1793,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
        } else {
     
-         // The parent retains pnode, now downgraded to a 2-node, as its child in its current child position, and it takes ownership of largestNode
+         // Insert pnode's middle KeyValue pair into its parent, and make largestNode its child.
          pnode->parent->insert(std::move(pnode->keys_values[1]), std::move(largestNode)); 
        }
     
-       // Set descent cursor to next lower level.
-      Node *pnext =  (new_key < middle_key) ? pnode : pLargest;
+      // We already checked 'if (new_key == middle_key)' in the caller, in find_insert_node(), so we only need check 'new_key < middle_key' in order to set pnext.
+      Node *pnext = (new_key < middle_key) ? pnode : pLargest;
     
       return pnext;
     }

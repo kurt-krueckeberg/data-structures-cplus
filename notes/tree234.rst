@@ -168,8 +168,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
 
 .. code-block:: cpp
 
-    #ifndef	TREE234_H
-    #define	TREE234_H
+    #ifndef  TREE234_H
+    #define  TREE234_H
     #include <utility>
     #include <algorithm>
     #include <stdexcept>
@@ -304,9 +304,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           std::pair<bool, int> chooseSibling(int child_index) const noexcept;
           
           /* 
-          * Called during remove(Key keym, Node *) if a parent key needs to be merged with convert a 2-node to a 4-node.
-          */
-          Node *fuseWithChildren() noexcept; 
+           * Called during convert_if_needed.
+           */
+          Node *makeRoot4Node() noexcept; 
           
           public:
                
@@ -443,8 +443,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        Node *convert_if_needed(Node *node) noexcept;
        
        // These methods are called by convert_if_needed()
-       Node *fuseSiblings(Node *parent, int node2_id, int sibling_id) noexcept;
+       Node *make4Node(Node *parent, int node2_id, int sibling_id) noexcept;
        
+       Node *make3Node(Node *p2node, int child_index, int sibling_index) noexcept;
+    
+       // Two subroutines of make3Node():
        Node *leftRotation(Node *p2node, Node *psibling, Node *parent, int parent_key_index) noexcept;
        
        Node *rightRotation(Node *p2node, Node *psibling, Node *parent, int parent_key_index) noexcept;
@@ -732,11 +735,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<typename Key, typename Value> inline typename tree234<Key, Value>::KeyValue& tree234<Key, Value>::KeyValue::operator=(KeyValue&& lhs) noexcept
     {
-       if (this != &lhs) { 
+       pair() = std::move(lhs.pair());
        
-          pair() = std::move(lhs.pair());
-       
-       }
        return *this;
     }
     
@@ -842,45 +842,15 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       if (src_node != nullptr) { 
                                   
          dest_node = std::make_unique<Node>(src_node->keys_values, dest_parent, src_node->totalItems);
-         
-         switch (src_node->totalItems) {
-         
-            case 1: // 2-node
-            {    
-                 copy_tree(src_node->children[0], dest_node->children[0], dest_node.get()); 
-                 
-                 copy_tree(src_node->children[1], dest_node->children[1], dest_node.get()); 
-         
-                 break;
-            }   
-            case 2: // 3-node
-            {
-                 copy_tree(src_node->children[0], dest_node->children[0], dest_node.get());
-                 
-                 copy_tree(src_node->children[1], dest_node->children[1], dest_node.get());
-                 
-                 copy_tree(src_node->children[2], dest_node->children[2], dest_node.get());
-         
-                 break;
-            } 
-            case 3: // 4-node
-            {
-                 copy_tree(src_node->children[0], dest_node->children[0], dest_node.get());
-                 
-                 copy_tree(src_node->children[1], dest_node->children[1], dest_node.get());
-                 
-                 copy_tree(src_node->children[2], dest_node->children[2], dest_node.get());
-         
-                 copy_tree(src_node->children[3], dest_node->children[3], dest_node.get());
-         
-                 break;
-            } 
-         
-         }  // end switch
+    
+         for(auto i = 0; i < dest_node->getChildCount(); ++i) {    
+    
+              copy_tree(src_node->children[i], dest_node->children[i], dest_node.get()); 
+         }
      } else {
     
         dest_node = nullptr;
-     } 
+     }
     }
     
     // move constructor
@@ -1722,7 +1692,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            if (pcurrent->key(1) == new_key) // First check the middle key because split() will move it into its parent.
                 return {true, pcurrent, 1}; 
     
-           // split pcurrent into two 2-nodes and set pcurrent to the correct on for examining next.
+           // split pcurrent into two 2-nodes and set pcurrent to the correct one to examine next below.
            pcurrent = split(pcurrent, new_key); 
        }
     
@@ -2013,7 +1983,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        // Note: We DON'T convert the root unless BOTH children are also 2-nodes.
        if (pnode == root.get()) {
     
-            return (pnode->children[0]->isTwoNode() && pnode->children[1]->isTwoNode()) ? pnode->fuseWithChildren() : pnode;
+            return (pnode->children[0]->isTwoNode() && pnode->children[1]->isTwoNode()) ? pnode->makeRoot4Node() : pnode;
        }
     
        // Return the parent->children[node2_index] such that pnode is root of the left subtree of 
@@ -2022,57 +1992,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        // Determine if any adjacent sibling has a 3- or 4-node, giving preference to the right adjacent sibling first.
        auto [has3or4NodeSibling, sibling_index] = pnode->chooseSibling(child_index);
     
-       // Determine whether to rotate or fuse based on whether the parent is a two node, 
-    
-       // If all adjacent siblings are also 2-nodes...
-       Node *convertedNode = nullptr;
-    
-       if (has3or4NodeSibling == false) { 
-    
-            convertedNode = fuseSiblings(pnode->getParent(), child_index, sibling_index);
-    
-       } else { // it has a 3- or 4-node sibling.
-    
-          auto parent = pnode->getParent();
-    
-          Node *psibling = parent->children[sibling_index].get();
-        
-          Node *p2node = parent->children[child_index].get();
-          
-          // First we get the index of the parent's key value such that either 
-          // 
-          //   parent->children[child_index]->keys_values[0]  <  parent->keys_values[index] <  parent->children[sibling_id]->keys_values[0] 
-          // 
-          // or 
-          // 
-          //   parent->children[sibling_id]->keys_values[0]  <  parent->keys_values[index] <  parent->children[child_index]->keys_values[0]
-          //
-          // by taking the minimum of the indecies.
-          
-        
-          int parent_key_index = std::min(child_index, sibling_index); 
-    
-          /*   If sibling is to the left, then this relation holds
-           *
-           *      parent->children[sibling_id]->keys_values[0] < parent->keys_values[index] < parent->children[child_index]->keys_values[0]
-           * 
-           *   and we do a right rotation
-           */ 
-          if (child_index > sibling_index) { 
-                                      
-              convertedNode = rightRotation(p2node, psibling, parent, parent_key_index);
-        
-          } else { /* else sibling is to the right and this relation holds
-                    * 
-                    *    parent->children[child_index]->keys_values[0]  <  parent->keys_values[index] <  parent->children[sibling_id]->keys_values[0] 
-                    *
-                    * therefore we do a left rotation
-                    */ 
-              convertedNode = leftRotation(p2node, psibling, parent, parent_key_index);
-          }
-       }
-       
-       return convertedNode;
+       return has3or4NodeSibling ? make3Node(pnode, child_index, sibling_index) : make4Node(pnode->getParent(), child_index, sibling_index); 
     }
     
     /*
@@ -2089,7 +2009,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * 1. Absorbs its children's keys_values as its own. 
      * 2. Makes its grandchildren its children.
      */
-    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::Node::fuseWithChildren() noexcept
+    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::Node::makeRoot4Node() noexcept
     {
        // move key of 2-node 
        keys_values[1] = std::move(keys_values[0]);
@@ -2109,6 +2029,42 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        connectChild(3, std::move(rightOrphan->children[1]));
          
        return this;
+    }
+    
+    template<typename Key, typename Value> inline typename tree234<Key, Value>::Node *tree234<Key, Value>::make3Node(Node *p2node, int child_index, int sibling_index) noexcept
+    {
+      Node *convertedNode = nullptr;
+    
+      auto parent = p2node->getParent();
+    
+      Node *psibling = parent->children[sibling_index].get();
+     
+      // First we get the index of the parent's key value such that either 
+      // 
+      //   parent->children[child_index]->keys_values[0]  <  parent->keys_values[index] <  parent->children[sibling_id]->keys_values[0] 
+      // 
+      // or 
+      // 
+      //   parent->children[sibling_id]->keys_values[0]  <  parent->keys_values[index] <  parent->children[child_index]->keys_values[0]
+      //
+      // by taking the minimum of the indecies.
+     
+      int parent_key_index = std::min(child_index, sibling_index); 
+    
+      /*   If sibling is to the left, then this relation holds
+       *
+       *      parent->children[sibling_id]->keys_values[0] < parent->keys_values[index] < parent->children[child_index]->keys_values[0]
+       * 
+       *   and we do a right rotation
+       *
+       *   else sibling is to the right and this relation holds
+       *   
+       *      parent->children[child_index]->keys_values[0]  <  parent->keys_values[index] <  parent->children[sibling_id]->keys_values[0] 
+       *  
+       *   therefore we do a left rotation
+       */ 
+        
+      return  (child_index > sibling_index) ? rightRotation(p2node, psibling, parent, parent_key_index) : leftRotation(p2node, psibling, parent, parent_key_index);
     }
     
     /* 
@@ -2176,7 +2132,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * 4. The parent becomes either a 2-node, if it was a 3-node, or a 2-node if it was a 4-node?
      *
      */
-    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::fuseSiblings(Node *parent, int node2_index, int sibling_index) noexcept
+    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::make4Node(Node *parent, int node2_index, int sibling_index) noexcept
     {
       Node *p2node = parent->children[node2_index].get();
     

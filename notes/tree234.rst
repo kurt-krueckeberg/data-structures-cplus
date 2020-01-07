@@ -471,7 +471,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        int  depth(const Node *pnode) const noexcept;
        bool isBalanced(const Node *pnode) const noexcept;
        
-       bool find_(const Node *current, Key key) const noexcept; 
+       bool find(const Node *current, Key key) const noexcept; 
        
        std::tuple<bool, Node *, int> find_insert_node(Node *pnode, Key new_key) noexcept;  // Called during insert
     
@@ -1612,12 +1612,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      */
     template<typename Key, typename Value> inline bool tree234<Key, Value>::find(Key key) const noexcept
     {
-        return find_(root.get(), key); 
+        return find(root.get(), key); 
     } 
     /*
      * find helper method.
      */
-    template<typename Key, typename Value> bool tree234<Key, Value>::find_(const Node *pnode, Key key) const noexcept
+    template<typename Key, typename Value> bool tree234<Key, Value>::find(const Node *pnode, Key key) const noexcept
     {
        if (pnode == nullptr) return false;
        
@@ -1626,13 +1626,13 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        for (;i < pnode->getTotalItems(); ++i) {
     
           if (key < pnode->key(i)) 
-             return find_(pnode->children[i].get(), key); 
+             return find(pnode->children[i].get(), key); 
         
           else if (key == pnode->key(i)) 
              return true;
        }
     
-       return find_(pnode->children[i].get(), key);
+       return find(pnode->children[i].get(), key);
     }
     
     /*

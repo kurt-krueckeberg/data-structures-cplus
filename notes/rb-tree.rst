@@ -16,7 +16,7 @@ Helpful links to Red Black Trees are:
 * `Standford CS166 <https://web.stanford.edu/class/cs166/>`_  slides on `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_ and `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ 
   are very good. It explains the isometry between 2 3 4 tree4 and red black trees and how insertion and deletion algorithms of a 2-3-4 tree translate to a red black tree.
 
-* `Introduction to Algorithms 3rd Edition by CLRS <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_ dicusses B-trees and Red-Black Trees. Its Instructors Manual is available `here <https://cdn.manesht.ir/19908/Introduction%20to%20Algorithms.pdf>`_ and at `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_ and also at `CLRS Solution <https://walkccc.github.io/CLRS/>`_.
+* `Introduction to Algorithms 3rd Edition by CLRS <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_ dicusses B-trees and Red-Black Trees. Its Instructors Manual is available `here <https://cdn.manesht.ir/19908/Introduction%20to%20Algorithms.pdf>`_ and at `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_ and `CLRS Solution <https://walkccc.github.io/CLRS/>`_.
 
 * `Relationship between 2-, 3- and 4-nodes to Red and Black nodes <http://faculty.cs.niu.edu/~freedman/340/340notes/340redblk.htm>`_ from NIU. 
 

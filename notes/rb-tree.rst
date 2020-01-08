@@ -10,11 +10,13 @@ Red Black Trees (under develpment)
 
 **Contents Under Development...**
 
-The algorithms shown in :ref:`2-3-4-trees` ensure a tree structure that is always balanced, but a 2-3-4 tree wastes storage because its 3-node and 4-nodes are not always full. A red black tree is a way of representing a 2 3 4 tree as a nearly\ |apos|\ balanced
-binary search tree.  
+The algorithms of a :ref:`2-3-4-trees` ensure a balanced tree, but a 2-3-4 tree wastes storage when its 3-node and 4-nodes are not full. A red black tree represents a 2 3 4 tree as a \ |apos|\ balanced binary search tree.  
 
-* The `Standford CS166 page <https://web.stanford.edu/class/cs166/>`_ is very, very thorough and has excellent slides on `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_ and `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ that are very good. 
-They explain how a more memory efficient BST tree than multiway trees like 2 3 4 trees motivated the inventation of red black trees. It shows the isometry between 2 3 4 tree4 and red black trees and how the insertion and deletion algorithm that maintain a balanced 2 3 4 tree are implemented in a red black tree, something that involves many special cases.
+* The `Standford CS166 page <https://web.stanford.edu/class/cs166/>`_ is very thorough with excellent slides on `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_ and `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ 
+that are very good. The motivation for a memory efficient alternative to multiway trees like 2 3 4 spured the inventation of red black trees. The lecture slides show the isometry between 2 3 4 tree4 and red black trees and how the insertion and deletion algorithm that maintain a balanced
+2-3-4 tree translate to a red black tree.
+
+* `CLRS Chapers ? nad ? <>`_.
 
 * `B-Trees (2-3, 2-3-4) and Red/Black Trees <ee.usc.edu/~redekopp/cs104/slides/L19b_BalancedBST_BTreeRB.pdf>`_ slides 32-42 discuss 2-3-4 trees. Slides 34-75 discuss red-black trees and the realtionship to 2-3-4 tree.
 

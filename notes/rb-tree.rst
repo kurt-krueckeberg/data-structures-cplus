@@ -16,7 +16,7 @@ The algorithms of a :ref:`2-3-4-trees` ensure a balanced tree, but a 2-3-4 tree 
   that are very good. The motivation for a memory efficient alternative to multiway trees like 2 3 4 spured the inventation of red black trees. The lecture slides show the isometry between 2 3 4 tree4 and red black trees and how the insertion and deletion algorithm that maintain a balanced
   2-3-4 tree translate to a red black tree.
 
-* **Introduction to Algorithms 3rd Edition by 'CLRS'** textbook, which is available online as a pdf, discusses B-trees and Red-Black Trees, and its Instructors Manual is available `here <https://cdn.manesht.ir/19908/Introduction%20to%20Algorithms.pdf>`_ and at `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_
+* `Introduction to Algorithms 3rd Edition by CLRS <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_ dicusses B-trees and Red-Black Trees. Its Instructors Manual is available `here <https://cdn.manesht.ir/19908/Introduction%20to%20Algorithms.pdf>`_ and at `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_
    and also at `CLRS Solution <https://walkccc.github.io/CLRS/>`_.
 
 * `B-Trees (2-3, 2-3-4) and Red/Black Trees <ee.usc.edu/~redekopp/cs104/slides/L19b_BalancedBST_BTreeRB.pdf>`_ slides 32-42 discuss 2-3-4 trees. Slides 34-75 discuss red-black trees and the realtionship to 2-3-4 tree.

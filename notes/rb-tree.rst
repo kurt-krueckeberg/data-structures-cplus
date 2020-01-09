@@ -22,28 +22,26 @@ Helpful links to Red Black Trees are:
    2.  `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_ 
    3.  `Github <https://walkccc.github.io/CLRS/>`_.
 
-* `Relationship between 2-, 3- and 4-nodes to Red and Black nodes <http://faculty.cs.niu.edu/~freedman/340/340notes/340redblk.htm>`_ from NIU. 
+* `How to transform a 2 3 4 tree into a red black tree <http://smile.ee.ncku.edu.tw/old/Links/MTable/Course/DataStructure/2-3,2-3-4&red-blackTree_952.pdf>`_ from National Chung University, starting at slide 67 and following, is good.
 
-* `B-Trees (2-3, 2-3-4) and Red/Black Trees <ee.usc.edu/~redekopp/cs104/slides/L19b_BalancedBST_BTreeRB.pdf>`_ slides 32-75 discuss how red-black trees relate to 2-3-4 trees.
+* `Mapping 2-3-4 Trees into Red-Black Trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html>`_ .
+
+* USC lecture slides on `B-Trees (2-3, 2-3-4) and Red/Black Trees <https://ee.usc.edu/~redekopp/cs104/slides/L19b_BalancedBST_BTreeRB.pdf>`_. Slides 32-75 discuss how red-black trees relate to 2-3-4 trees.
+
+* `Red Black Tree Visualization <https://www.cs.usfca.edu/~galles/visualization/RedBlack.html>`_
+
+* `Isertion relationship between 2-, 3- and 4-trees and Red and Black trees <http://faculty.cs.niu.edu/~freedman/340/340notes/340redblk.htm>`_ from NIU. 
 
 * `Open Data structures article <http://opendatastructures.org/ods-java/9_2_RedBlackTree_Simulated_.html>`_ explains how 2-3-4 algorithms map to the red black tree algorithms.
 
-* `Red black lecture notes <https://www.usna.edu/Users/cs/crabbe/SI321/2003-08/red-black/red-black.html>`_ uses 2-3-4 trees as the basis for understanding red  black trees. 
-  It has proofs about 2 3 4 tree and red black tree equivalence--I believe. 
-
-* `Mapping 2-3-4 Trees into Red-Black Trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html>`_ shows the mapping from 2 3 4 trees to red black trees, and how splitting 4-nodes works in a red black tree.
-
-* `How to transform a 2 3 4 tree into a red black tree <http://smile.ee.ncku.edu.tw/old/Links/MTable/Course/DataStructure/2-3,2-3-4&red-blackTree_952.pdf>`_ from National Chung University, starting at slide 67 and following, is good.
-* `Red Black Tree Visualization <https://www.cs.usfca.edu/~galles/visualization/RedBlack.html>`_
+Links on Red Black Tree Insertion:
+* `Red black lecture notes <https://www.usna.edu/Users/cs/crabbe/SI321/2003-08/red-black/red-black.html>`_ discusses insertion and deletion. 
+* http://www.cs.tulane.edu/~carola/teaching/cmps2200/fall17/slides/RB-trees.pdf
+* https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic23RedBlackTrees.pdf
+* https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic23RedBlackTrees.pdf
 
 Other links of particular value:
 
 * This `stackoverflow explanation <https://stackoverflow.com/questions/35955246/converting-a-2-3-4-tree-into-a-red-black-tree>`_ has an excellent illustration of how 2 3 4 trees map to red black trees. It is very good.
 * These `Scribd slides <https://www.scribd.com/document/23817352/2-3-4-and-Red-Black-Tree>`_, especially the last half, really explain red black trees as a type of 2 3 4 trees, and how how the operations of 2 3 4 tree map to red black trees.
 * These `Digipen.edu slides <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_ give an overview of all types of trees--BST, 2-3 tree, and red black trees--and the general concept of rotations
-
-These links discuss insertion:
-
-* http://www.cs.tulane.edu/~carola/teaching/cmps2200/fall17/slides/RB-trees.pdf
-* https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic23RedBlackTrees.pdf
-* https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic23RedBlackTrees.pdf

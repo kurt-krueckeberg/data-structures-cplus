@@ -998,6 +998,145 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       }  
     }
     
+    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getPredecessor(const typename  tree234<Key, Value>::Node *current, int key_index) const noexcept
+    {
+      if (current->isLeaf()) { // If leaf node
+    
+         if (current == root.get()) { // root is leaf      
+    
+             if (key_index != 0) {
+                      
+                 return {current, key_index - 1};
+             } 
+             return {nullptr, 0};
+                
+         } else {
+    
+            return getLeafNodePredecessor(current, key_index);
+         }
+    
+      } else { // else internal node
+    
+          return getInternalNodePredecessor(current, key_index);
+      }
+    }
+    
+    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getInternalNodePredecessor(\
+         const typename tree234<Key, Value>::Node *pnode, int key_index) const noexcept	    
+    {
+     // Get next left child node of pnode based on key_index. This will be the child at pnode->children[index]. 
+     const Node *leftChild = pnode->children[key_index].get();
+    
+     for (const Node *cursor = leftChild; cursor != nullptr; cursor = cursor->children[cursor->getTotalItems()].get()) {
+    
+        pnode = cursor;
+     }
+    
+     return {pnode, pnode->totalItems - 1}; 
+    }
+    /* 
+    Finding the predecessor of a given node 
+    ---------------------------------------
+      If left child exists, predecessor is the right most node of the left subtree
+      Else we walk up the ancestor chain until you traverse the first right child pointer (find the first node that is a right child of its 
+      parent...that parent is the predecessor)
+      If you get to the root w/o finding a node that is a right child, there is no predecessor
+    */
+    
+    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getLeafNodePredecessor(const Node *pnode, int index) const 
+    {
+      // Handle trivial case: if the leaf node is not a 2-node (it is a 3-node or 4-node, and key_index is not the first key), simply set index of predecessor to index - 1. 
+      if (!pnode->isTwoNode() && index != 0) {
+    
+          return {pnode, index - 1}; 
+      }
+    
+      // Determine child_index such that pnode == pnode->parent->children[child_index]
+      int child_index = pnode->getChildIndex();
+    
+      if (child_index != 0) { // If pnode is not the left-most child, the predecessor is in the parent
+    
+          return  {pnode->parent, child_index - 1}; 
+    
+      } else {
+    
+       /* 
+        To find the next smallest node the logic is identical: We walk up the parent chain until we traverse the first parent that is not a left-most child 
+        of its parent. That parent is the predecessor. If we get to the root without finding a node that is a right child, there is no predecessor.
+        Note: In a 2 3 tree, a "right" child pointer will be either the second child of a 2-node or the second, the middle, or the third child of a 3-node. "right" child
+        pointer means a pointer to a subtree with larger keys. In a 2 3 tree, the middle child pointer of a 3-node parent is a "right child pointer" of the 1st key
+        because all the keys of the subtree whose root is the second (or middle) child pointer are greater than 1st key of the subtree's parent. 
+        So when we walk up the ancestor chain as long as the parent is the first child. For example, in the tree portion shown below
+                  [5,   10]  
+                  /   |   \                              
+              ...    ...  [27,       70]  
+                           /       |     \
+                          /        |      \   
+                       [20]       [45]    [80, 170]
+                       /   \      /  \     /  |  \
+                    [15]  [25]  [30] [60]  <-- pnode points to leaf node [20]. 
+                    / \   / \   / \  / \   
+                   0   0 0   0 0   0 0  0  ... 
+         
+        if [15] is the pnode leaf node, the predecessor of [15] is the second key of the 3-node [5, 10] because when we walk up the parent chain from [15], the first
+        right child pointer we encounter is the parent of [27, 70], which is [5, 10]. So [10] is the next smallest key. In this example
+                  [5,   10]  
+                  /   |   \                              
+              ...    ...  [27,       70]  
+                           /       |     \
+                          /        |      \   
+                       [20]       [45]     [80, 170]
+                      /   \       /  \      /  |  \
+                    [15]  [25]  [30] [60]  <-- pnode points to leaf node [20]. 
+                    / \   / \   / \  / \   
+                   0   0 0   0 0   0 0  0  ... 
+         
+          if [30] is the pnode leaf node, the predecessor of [30] is the first key of the 3-node [27, 70] because when we walk up the parent chain from [30], the first
+          non-first child pointer we encounter is the parent of [45], which is [27, 70]. So the key at index 0, which is [27], is the next smallest key. Therefore, if our
+          loop above terminates without encountering the root, we must determine the child index of prior_node in pnode. If pnode is a 2-node, it is trivial: the child
+          index is one. If pnode is a three node, the child index is either one or two:
+          int child_index = 1; // assume pnode is a 2-node.
+          if (pnode->isThreeNode()) { // if it is a 3-nodee, compare prior_node to children[1]
+              child_index = prior_node == pnode->children[1].get() ? 1 : 2;
+          }
+      
+          Now that we know the child_index such that
+                pnode->children[child_index] == prior_node;
+          
+          Determine which key is the predecessor. If child_index is one, the middle child, then the predecessor is pnode->keys_values[0]. If child_index is two, then
+          the predecessor is pnode->key(1). Thus, the predecessor is the key at child_index - 1.
+          */
+    
+          const Node *child = pnode;
+          const Node *parent = child->parent;
+          
+          Key current_key = child->key(index);
+    
+          // Ascend the parent pointer chain as long as child is the left most child of its parent.
+          for(; child == parent->children[0].get();  parent = parent->parent)  {
+          
+              // child is still the left most child of its parent, but if it is the root, there is no predecessor.  
+              if (parent == root.get()) {
+                    
+                  return {nullptr, 0};  // To indicate this we set current, the member of the pair, to nullptr and key_index, the second member, to 0.
+              }
+              child = parent;
+          }
+    
+          // The predecessor will be the first key, starting with the right most key, that is less than current_key. 
+          for (int pred_index = parent->getTotalItems() - 1; pred_index >= 0; --pred_index) {
+    
+               if (current_key > parent->key(pred_index)) {
+    
+                   return {parent, pred_index};
+               } 
+          } 
+    
+         throw std::logic_error("Error in getLeafNodePredecessor");
+      } // end else
+    }
+    
+    
     // copy assignment
     template<typename Key, typename Value> inline tree234<Key, Value>& tree234<Key, Value>::operator=(const tree234& lhs) noexcept 
     {
@@ -1853,56 +1992,14 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           // find min and convert 2-nodes as we search.
           auto[pdelete_new, key_index_new, pmin] = get_delete_successor(pdelete, key, key_index);
     
-          pdelete_new->keys_values[key_index_new] = pmin->keys_values[0]; // overwrite key to be deleted with its successor.
+          pdelete_new->keys_values[key_index_new] = pmin->keys_values[0]; // simply overwrite key to be deleted with its successor.
         
-          pmin->removeKeyValue(0); // Since successor is not in a 2-node, delete it from the leaf.
+          pmin->removeKeyValue(0); // Since successor is not in a 2-node, we can delete it from the leaf.
       }
     
       return true;
     }
-    /*
-     * Called by remove(Key key). Recursively searches for key to delete, converting, if not the root, 2-nodes to 3- or 4-node.
-     */
-    /*
-    template<class Key, class Value> std::tuple<bool, typename tree234<Key, Value>::Node *, int>   tree234<Key, Value>::find_delete_node(Node *pcurrent, Key delete_key) noexcept
-    {
-       if (pcurrent->isTwoNode()) { 
     
-           if (pcurrent != root.get())
-                 pcurrent = convert2Node(pcurrent);  
-    
-           else if (pcurrent->children[0]->isTwoNode() && pcurrent->children[1]->isTwoNode())
-    
-                 // If pnode's parent is a 2-node and its other sibling (whose child_index would be 'pnode == parent->children[0]) : 1 : 0) is also 2-node, 
-                 // then the parent is the root. This is the only case in which we convert a 2-node root. 
-                 // Note: We DON'T convert the root unless BOTH children are also 2-nodes.
-                 pcurrent = pcurrent->makeRoot4Node(); 
-       }
-       
-       auto i = 0; 
-       
-       for(;i < pcurrent->getTotalItems(); ++i) {
-    
-           if (delete_key == pcurrent->key(i)) {
-    
-               return {true, pcurrent, i}; // Key to be deleted is at pcurrent->key(i).
-           } 
-    
-           if (delete_key < pcurrent->key(i)) {
-    
-               if (pcurrent->isLeaf()) return {false, nullptr, 0}; // Key not in tree.
-     
-               return find_delete_node(pcurrent->children[i].get(), delete_key); // Recurse left subtree of pcurrent->key(i)
-           } 
-       }
-    
-       if (pcurrent->isLeaf()) { // key was not found in tree.
-          return {false, pcurrent, 0};
-       } 
-    
-       return find_delete_node(pcurrent->children[i].get(), delete_key); // key is greater than all values in pcurrent, search right-most subtree.
-    }
-    */
     /*
       Input: Node * and its child index in parent
       Return: {bool: found/not found, Node *pFound, int key_index within pFound}
@@ -1915,12 +2012,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
       if (pcurrent->isTwoNode()) {
     
-           if (pcurrent == root.get() && root->children[0]->isTwoNode() &&  root->children[1]->isTwoNode()) {
+           if (pcurrent == root.get() && root->children[0]->isTwoNode() && root->children[1]->isTwoNode()) {
     
-                /*pcurrent =*/ pcurrent->makeRoot4Node();
+                pcurrent->makeRoot4Node();
     
            } else if (pcurrent != root.get()) {
-                 /*pcurrent =*/ convert2Node(pcurrent, child_index);
+                convert2Node(pcurrent, child_index);
            }
       }
     
@@ -1929,22 +2026,20 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       
       for(;i < pcurrent->getTotalItems(); ++i) {
     
-          if (delete_key == pcurrent->key(i)) {
+          if (delete_key == pcurrent->key(i)) 
     
-              return {true, pcurrent, i}; // Found dlete_key to be deleted is at pcurrent->key(i).
-          } 
+             // Found dlete_key to be deleted is at pcurrent->key(i).
+              return {true, pcurrent, i}; 
     
-          if (delete_key < pcurrent->key(i)) {
+          if (delete_key < pcurrent->key(i)) 
     
               // Recurse with left child of pcurrent. 
               return find_delete_node(pcurrent->children[i].get(), delete_key, i);
-          } 
       }
     
       // If not found and delete_key is larger than all keys, recurse with right most child
       return find_delete_node(pcurrent->children[i].get(), delete_key, i);
     }
-    
     
     /*
      * Input: 
@@ -1970,11 +2065,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           Check if, when we converted the rightSubtree, delete_key moved.  
           Comments: If the root of the right subtree had to be converted, either a rotation occurred, or a fusion (with the parent, rightSubtree and a
           sibling occurred). If a left rotation occurred (that "stold" a key from the left sibling and brought down the delete_key), then delete_key
-          becomes the first key rightSubtree.
-          
-          If a right rotation occurred, delete_key is unaffected. This applies regardless whether pdelete is a 3-node or a 4-node.
+          becomes the first key rightSubtree. If a right rotation occurred, delete_key is unaffected. This applies regardless whether pdelete is a 3-node
+          or a 4-node.
     
-          If a fusion of a parent keye and a sibling key with righSubtree occurred, delete_key becomes the 2nd key in rightSubtree. 
+          If a fusion of the rightSubtree with a parent key and a sibling key occurred, delete_key becomes the 2nd key in rightSubtree. 
     
           Therefore we check if delete_key is now the first or second key of rightSubtree, and...
          */
@@ -2291,144 +2385,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       inOrderTraverse(lambda); 
     }
 	    
-    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getPredecessor(const typename  tree234<Key, Value>::Node *current, int key_index) const noexcept
-    {
-      if (current->isLeaf()) { // If leaf node
-    
-         if (current == root.get()) { // root is leaf      
-    
-             if (key_index != 0) {
-                      
-                 return {current, key_index - 1};
-             } 
-             return {nullptr, 0};
-                
-         } else {
-    
-            return getLeafNodePredecessor(current, key_index);
-         }
-    
-      } else { // else internal node
-    
-          return getInternalNodePredecessor(current, key_index);
-      }
-    }
-    
-    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getInternalNodePredecessor(\
-         const typename tree234<Key, Value>::Node *pnode, int key_index) const noexcept	    
-    {
-     // Get next left child node of pnode based on key_index. This will be the child at pnode->children[index]. 
-     const Node *leftChild = pnode->children[key_index].get();
-    
-     for (const Node *cursor = leftChild; cursor != nullptr; cursor = cursor->children[cursor->getTotalItems()].get()) {
-    
-        pnode = cursor;
-     }
-    
-     return {pnode, pnode->totalItems - 1}; 
-    }
-    /* 
-    Finding the predecessor of a given node 
-    ---------------------------------------
-      If left child exists, predecessor is the right most node of the left subtree
-      Else we walk up the ancestor chain until you traverse the first right child pointer (find the first node that is a right child of its 
-      parent...that parent is the predecessor)
-      If you get to the root w/o finding a node that is a right child, there is no predecessor
-    */
-    
-    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getLeafNodePredecessor(const Node *pnode, int index) const 
-    {
-      // Handle trivial case: if the leaf node is not a 2-node (it is a 3-node or 4-node, and key_index is not the first key), simply set index of predecessor to index - 1. 
-      if (!pnode->isTwoNode() && index != 0) {
-    
-          return {pnode, index - 1}; 
-      }
-    
-      // Determine child_index such that pnode == pnode->parent->children[child_index]
-      int child_index = pnode->getChildIndex();
-    
-      if (child_index != 0) { // If pnode is not the left-most child, the predecessor is in the parent
-    
-          return  {pnode->parent, child_index - 1}; 
-    
-      } else {
-    
-       /* 
-        To find the next smallest node the logic is identical: We walk up the parent chain until we traverse the first parent that is not a left-most child 
-        of its parent. That parent is the predecessor. If we get to the root without finding a node that is a right child, there is no predecessor.
-        Note: In a 2 3 tree, a "right" child pointer will be either the second child of a 2-node or the second, the middle, or the third child of a 3-node. "right" child
-        pointer means a pointer to a subtree with larger keys. In a 2 3 tree, the middle child pointer of a 3-node parent is a "right child pointer" of the 1st key
-        because all the keys of the subtree whose root is the second (or middle) child pointer are greater than 1st key of the subtree's parent. 
-        So when we walk up the ancestor chain as long as the parent is the first child. For example, in the tree portion shown below
-                  [5,   10]  
-                  /   |   \                              
-              ...    ...  [27,       70]  
-                           /       |     \
-                          /        |      \   
-                       [20]       [45]    [80, 170]
-                       /   \      /  \     /  |  \
-                    [15]  [25]  [30] [60]  <-- pnode points to leaf node [20]. 
-                    / \   / \   / \  / \   
-                   0   0 0   0 0   0 0  0  ... 
-         
-        if [15] is the pnode leaf node, the predecessor of [15] is the second key of the 3-node [5, 10] because when we walk up the parent chain from [15], the first
-        right child pointer we encounter is the parent of [27, 70], which is [5, 10]. So [10] is the next smallest key. In this example
-                  [5,   10]  
-                  /   |   \                              
-              ...    ...  [27,       70]  
-                           /       |     \
-                          /        |      \   
-                       [20]       [45]     [80, 170]
-                      /   \       /  \      /  |  \
-                    [15]  [25]  [30] [60]  <-- pnode points to leaf node [20]. 
-                    / \   / \   / \  / \   
-                   0   0 0   0 0   0 0  0  ... 
-         
-          if [30] is the pnode leaf node, the predecessor of [30] is the first key of the 3-node [27, 70] because when we walk up the parent chain from [30], the first
-          non-first child pointer we encounter is the parent of [45], which is [27, 70]. So the key at index 0, which is [27], is the next smallest key. Therefore, if our
-          loop above terminates without encountering the root, we must determine the child index of prior_node in pnode. If pnode is a 2-node, it is trivial: the child
-          index is one. If pnode is a three node, the child index is either one or two:
-          int child_index = 1; // assume pnode is a 2-node.
-          if (pnode->isThreeNode()) { // if it is a 3-nodee, compare prior_node to children[1]
-              child_index = prior_node == pnode->children[1].get() ? 1 : 2;
-          }
-      
-          Now that we know the child_index such that
-                pnode->children[child_index] == prior_node;
-          
-          Determine which key is the predecessor. If child_index is one, the middle child, then the predecessor is pnode->keys_values[0]. If child_index is two, then
-          the predecessor is pnode->key(1). Thus, the predecessor is the key at child_index - 1.
-          */
-    
-          const Node *child = pnode;
-          const Node *parent = child->parent;
-          
-          Key current_key = child->key(index);
-    
-          // Ascend the parent pointer chain as long as child is the left most child of its parent.
-          for(; child == parent->children[0].get();  parent = parent->parent)  {
-          
-              // child is still the left most child of its parent, but if it is the root, there is no predecessor.  
-              if (parent == root.get()) {
-                    
-                  return {nullptr, 0};  // To indicate this we set current, the member of the pair, to nullptr and key_index, the second member, to 0.
-              }
-              child = parent;
-          }
-    
-          // The predecessor will be the first key, starting with the right most key, that is less than current_key. 
-          for (int pred_index = parent->getTotalItems() - 1; pred_index >= 0; --pred_index) {
-    
-               if (current_key > parent->key(pred_index)) {
-    
-                   return {parent, pred_index};
-               } 
-          } 
-    
-         throw std::logic_error("Error in getLeafNodePredecessor");
-      } // end else
-    }
-    
     template<class Key, class Value> tree234<Key, Value>::iterator::iterator(tree234<Key, Value>& lhs_tree) : tree{lhs_tree} 
     {
       // If the tree is empty, there is nothing over which to iterate...
@@ -2517,8 +2473,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
       auto [successor, index] = tree.getSuccessor(cursor, key_index);
     
-      if (successor == nullptr) { // nullptr implies there is no successor to cursor->keys_values[key_index].key().
-                                 // Therefore cursor already points to last key/value in tree.
+      if (successor == nullptr) { // nullptr implies cursor->keys_values[key_index].key() is the max key,
+                                  // the last key/value in tree.
     
            current = nullptr; // We are now at the end. 
     

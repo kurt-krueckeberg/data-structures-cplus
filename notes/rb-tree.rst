@@ -13,8 +13,8 @@ Red Black Trees (under develpment)
 The insert and delete algorithms for  a `2-3-4-trees` ensure a balanced tree, but a 2-3-4 tree wastes storage. A red black tree represents a 2 3 4 tree as a \ |apos|\ balanced binary search tree.  
 Helpful links to Red Black Trees are:
 
-* `Standford CS166 <https://web.stanford.edu/class/cs166/>`_  slides on `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_ and `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ 
-  are very good. It explains the isometry between 2 3 4 tree4 and red black trees and how insertion and deletion algorithms of a 2-3-4 tree translate to a red black tree.
+* `Standford's CS166 <https://web.stanford.edu/class/cs166/>`_ lecture slides on `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_ has slides on **B-Trees** (slides 1-51) and 
+  **Red Black trees** (slides 52-77), Multi-way trees (slides 78-271), and the lecture slides for `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ has slides about analyzing Red Black tree performance (slides 1-86).
 
 * `Introduction to Algorithms 3rd Edition by CLRS <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_ dicusses B-trees and Red-Black Trees. Its Instructors Manual is available `here <https://cdn.manesht.ir/19908/Introduction%20to%20Algorithms.pdf>`_ and at `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_ and `CLRS Solution <https://walkccc.github.io/CLRS/>`_.
 
@@ -30,6 +30,7 @@ Helpful links to Red Black Trees are:
 * `Mapping 2-3-4 Trees into Red-Black Trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html>`_ shows the mapping from 2 3 4 trees to red black trees, and how splitting 4-nodes works in a red black tree.
 
 * `How to transform a 2 3 4 tree into a red black tree <http://smile.ee.ncku.edu.tw/old/Links/MTable/Course/DataStructure/2-3,2-3-4&red-blackTree_952.pdf>`_ from National Chung University, starting at slide 67 and following, is good.
+* `Red Black Tree Visualization <https://www.cs.usfca.edu/~galles/visualization/RedBlack.html>`_
 
 Other links of particular value:
 

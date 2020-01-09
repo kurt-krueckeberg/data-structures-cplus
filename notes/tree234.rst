@@ -344,9 +344,15 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           
              constexpr const Value& value(int i) const { return keys_values[i].value(); } 
                  
-             constexpr const std::pair<const Key, Value>& constkey_pair(int i) const { return keys_values[i].constkey_pair(); }
+             constexpr const std::pair<const Key, Value>& constkey_pair(int i) const
+             {
+               return keys_values[i].constkey_pair(); 
+             }
           
-             constexpr std::pair<const Key, Value>& constkey_pair(int i) { return keys_values[i]._constkey_pair(); }
+             constexpr std::pair<const Key, Value>& constkey_pair(int i) 
+             {
+                 return keys_values[i].constkey_pair(); 
+             }
           
              int getIndexInParent() const;
           
@@ -451,16 +457,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        Node *rightRotation(Node *p2node, Node *psibling, Node *parent, int parent_key_index) noexcept;
        
-       // Non recursive in-order traversal of tree methods
-       std::pair<const Node *, int> getSuccessor(const Node *current, int key_index) const noexcept;
-       std::pair<const Node *, int> getPredecessor(const Node *current, int key_index) const noexcept;
-       
-       // Subroutines of the two methods above.
-       std::pair<const Node *, int> getInternalNodeSuccessor(const Node *pnode,  int index_of_key) const noexcept;
-       std::pair<const Node *, int> getInternalNodePredecessor(const Node *pnode,  int index_of_key) const noexcept;
-       
-       std::pair<const Node *, int> getLeafNodeSuccessor(const Node *pnode, int key_index) const;
-       std::pair<const Node *, int> getLeafNodePredecessor(const Node *pnode, int key_index) const;
        
        // Returns node with smallest value of tree whose root is 'root'
        const Node *min(const Node* root) const noexcept; 
@@ -574,6 +570,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            const Node *current;
            const Node *cursor; //  points to "current" node.
            int key_index;
+           std::stack<int> child_indexes; 
            
            int getChildIndex(const typename tree234<Key, Value>::Node *p) const noexcept;
           
@@ -584,12 +581,46 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            iterator& decrement() noexcept;
           
            iterator(tree234<Key, Value>& lhs, int i);  // called by end()   
-          
-           constexpr reference dereference() noexcept 
+                // Non recursive in-order traversal of tree methods
+           std::pair<const Node *, int> getSuccessor(const Node *current, int key_index) noexcept;
+           std::pair<const Node *, int> getPredecessor(const Node *current, int key_index) noexcept;
+           
+           // Subroutines of the two methods above.
+           std::pair<const Node *, int> getInternalNodeSuccessor(const Node *pnode,  int index_of_key) noexcept;
+           std::pair<const Node *, int> getInternalNodePredecessor(const Node *pnode,  int index_of_key) noexcept;
+           
+           std::pair<const Node *, int> getLeafNodeSuccessor(const Node *pnode, int key_index);
+           std::pair<const Node *, int> getLeafNodePredecessor(const Node *pnode, int key_index);
+    
+           const Node *get_min() noexcept;
+    
+           const Node *get_max() noexcept;
+    
+           void push(int child_index)
+           {
+               child_indexes.push(child_index);
+           }
+    
+           int pop()
+           {
+              if (child_indexes.empty()) {
+                  throw(std::logic_error("iterator popping empty stack"));
+              }
+              auto i = child_indexes.top();
+              child_indexes.pop();
+              return i; 
+           }
+           /*
+           constexpr const std::pair<const Key, Value>& dereference() const noexcept 
            { 
                return cursor->constkey_pair(key_index); 
            } 
-          
+           */
+           constexpr reference dereference() noexcept 
+           { 
+               return const_cast<Node *>(cursor)->constkey_pair(key_index); 
+           } 
+       
           public:
           
            explicit iterator(tree234<Key, Value>&); 
@@ -601,12 +632,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            bool operator==(const iterator& lhs) const;
            
            constexpr bool operator!=(const iterator& lhs) const { return !operator==(lhs); }
-          
-           constexpr const std::pair<const Key, Value>& dereference() const noexcept 
-           { 
-               return cursor->constkey_pair(key_index); 
-           }
-           
+    
            iterator& operator++() noexcept 
            {
               increment();
@@ -632,9 +658,16 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
               decrement();
               return tmp;
            } 
-           std::pair<const Key, Value>& operator*() noexcept { return dereference(); } 
+           
+           reference /*std::pair<const Key, Value>&*/ operator*() noexcept 
+           { 
+               return dereference(); 
+           } 
           
-           const std::pair<const Key, Value>& operator*() const noexcept { return dereference(); }
+           const std::pair<const Key, Value>& operator*() const noexcept 
+           { 
+               return dereference(); 
+           }
            
            typename tree234<Key, Value>::KeyValue *operator->() noexcept;
        };
@@ -655,6 +688,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            iterator iter; 
           
            explicit const_iterator(const tree234<Key, Value>& lhs, int i);
+              
+           constexpr const std::pair<const Key, Value>& dereference() const noexcept 
+           { 
+               return iter.cursor->constkey_pair(iter.key_index); 
+           }
+           
           public:
            
            explicit const_iterator(const tree234<Key, Value>& lhs);
@@ -696,7 +735,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           
            const std::pair<const Key,Value>&  operator*() const noexcept 
            {
-             return iter.dereference(); 
+             return dereference(); 
            } 
           
            const std::pair<const Key, Value> *operator->() const noexcept { return &this->operator*(); } 
@@ -881,10 +920,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
         pair<const Node *, int>, where pnode->key(key_index) is next in-order key. Note, if the last key has already been visited, the pointer returned will be nullptr.
         The pseudo code for getting the successor is from: http://ee.usc.edu/~redekopp/cs104/slides/L19_BalancedBST_23.pdf:
     */
-    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getSuccessor(const Node *current, int key_index) const noexcept
+    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::iterator::getSuccessor(const Node *current, int key_index) noexcept
     {
       if (current->isLeaf()) { // If leaf node
-         
+    
+         const auto& root = tree.root; 
+    
          if (current == root.get()) { // special case: current is root, which is a leaf      
     
              // If root has more than one value--it is not a 2-node--and key_index is not the right-most key/value pair in the node,
@@ -911,8 +952,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        Requires: pnode is an internal node not a leaf node.
        Returns:  pointer to successor of internal node.
      */
-    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getInternalNodeSuccessor(const typename tree234<Key, Value>::Node *pnode, int key_index) const noexcept	    
+    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::iterator::getInternalNodeSuccessor(const typename tree234<Key, Value>::Node *pnode, int key_index) noexcept	    
     {
+    /*--
      // Get first right subtree of pnode, and descend to its left most left node.
      for (const Node *cursor =  pnode->children[key_index + 1].get(); cursor != nullptr; cursor = cursor->children[0].get()) {  
     
@@ -920,13 +962,29 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      }
     
      return {const_cast<Node *>(pnode), 0};
+    */
+     auto child_index = key_index + 1;
+    
+     // Get first right subtree of pnode, and descend to its left most left node.
+     for (const Node *pcurrent =  pnode->children[child_index].get(); pcurrent != nullptr; pcurrent = pcurrent->children[child_index].get()) {  
+    
+        push(child_index);
+    
+        pnode = pcurrent;
+    
+        child_index = 0; // Set only after push(child_index)
+     }
+    
+     return {pnode, 0};
     }
     
     /*
      Requires: pnode is a leaf node other than the root.
      */
-    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getLeafNodeSuccessor(const Node *pnode, int key_index) const 
+    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::iterator::getLeafNodeSuccessor(const Node *pnode, int key_index) 
     {
+     const auto& root = tree.root;
+    
       // Handle the easy case: a 3- or 4-node in which key_index is not the right most value in the node.
       if (!pnode->isTwoNode() && (pnode->getTotalItems() - 1) != key_index) { 
     
@@ -935,8 +993,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
       // Handle the harder case: pnode is a leaf node and pnode->keys_values[key_index] is the right-most key/value in this node.
     
-      // Determine the parent node's child index such that parent->children[child_index] == pnode.
-      auto child_index = pnode->getChildIndex(); 
+      // Get child_index such that parent->children[child_index] == pnode.
+      auto child_index = pop();
       
       auto current_key = pnode->key(key_index);
       
@@ -948,45 +1006,65 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        a value great than current_key. To find this ancester, we ascend the tree until we encounter the first ancestor node that is not a right-most child of its parent, that is, where
        ancester != ancestor->parent->getRightMostChild(). If the ancestor becomes equal to the root before this happens, there is no successor: pnode is the right most node in the tree and key_index is its right-most key.
        */
-         const Node *child = pnode;
-         const Node *parent = child->parent;
-       
-         // Ascend the parent pointer as long as the child continues to be the right most child (of its parent). 
-         for(;child == parent->getRightMostChild(); parent = parent->parent)  { 
+         const Node *parent = pnode->parent;
+    
+         // Ascend upward the parent pointer as long as the child continues to be the right most child (of its parent). 
+         for(;child_index == parent->getTotalItems(); parent = pnode->parent)  { 
             
-             // child is still the right most child, but if it is also the root, then, there is no successor. child holds the largest keys in the tree. 
+             // If child is still the right most child, and if it is also the root, then, there is no successor. pnode holds the largest key in the tree. 
              if (parent == root.get()) {
               
                  return {nullptr, 0};  // To indicate "no-successor" we return the pair: {nullptr, 0}. 
              }
-       
-             child = parent;
-         }
-         // We select the ancestor's smallest key that is larger than current_key.
-         auto successor_index = 0;
     
-         for (; successor_index < parent->getTotalItems() && current_key > parent->key(successor_index); ++successor_index);
-         
-         return {parent, successor_index};
+             child_index = pop();
+             pnode = parent;
+         }
+         /* 
+            We know that pnode now is NOT the right most child of its parent. 
+    
+            We need to ascertain the next index, next_index, such that parent->key(next_index) > current_key. We know 'pnode == parent->children[child_index]'. child_index is therefore
+            also the index of the successor key in the parent: successor-key == parent->key(child_index). We can see this by looking these possiblities. First, a 3-node. 
+            If we ascende from the leaf node of the right-most subtree of key 5,then 36 is the successor, and 36 == parent->key(child_index)
+               [3,       36]  
+               /        / \
+              /        /   \
+            [1, 2]  [4, 5]  [47]
+            /   \   / | \   / \
+    
+            and a 4-node can be viewed as three catenated 2-nodes in which the two middle child are shared
+              
+               [2,   4,   36]  
+              /     / \     \
+            [1]  [3]   [5]  [37] 
+            / \  / \   / \   / \
+    
+            Again, if ascend, say, the leaf of the right subtree root at key 3, then 4 is the successor; and if ascend, say, the leaf of the right subtree whose root is key 5, then 36 is the successor, and
+            36 = parent->key(child_index);
+          */
+    
+         return {parent, child_index};
     
       } else { // Handle the case: pnode is not the right-most child of its parent. 
           /* 
-            ...else we know that pnode is NOT the right most child of its parent (and it is a leaf). We also know that key_index is the right most value of pnode(in the case of a 2-node, key_index can only have the value zero, and it
-            is considered also as the "right-most" index).
+            ...else we know that pnode is NOT the right most child of its parent (and it is a leaf). We also know that key_index is the right most value of pnode (and in the case of a 2-node, key_index can only be zero, which is 
+            also the "right-most" index).
             We need to ascertain the next index, next_index, such that pnode->parent->key(next_index) > pnode->key(key_index). To determine next_index, we can view a 3-node as two catenated 2-nodes in which the the middle child is
             shared between these two "2-nodes", like this
           
-               [3,       5]  
+               [3,       6]  
                /  \     / \
               /    \   /   \
-            [1, 2]  [3, 4]  [6]
+            [1, 2]  [4, 5]  [7]
+    
             and a 4-node can be viewed as three catenated 2-nodes in which the two middle child are shared
               
                [2,   4,   6]  
               /  \  / \  / \
             [1]  [3]   [5]  [7] 
-            If the leaft node is a 3- or 4-node, we already know (from the first if-test) that the current key is the last, ie, pnode->getTotalItems() - 1. So the we simply go up on level to find the in order successor.    
-            We simply need to determine the index in the parent to choose.
+    
+            If the leaft node is a 3- or 4-node, we already know (from the first if-test) that the current key is the last, current_key == pnode->getTotalItems() - 1. So the we simply go up on level to find the in order successor.    
+            We know pnode == parent->children[child_index]. child_index also is index of the successor key in the parent: successor-key == parent->key(child_index).
           */
     
          if (child_index > static_cast<int>(Node::NodeType::four_node)) {
@@ -998,8 +1076,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       }  
     }
     
-    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getPredecessor(const typename  tree234<Key, Value>::Node *current, int key_index) const noexcept
+    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::iterator::getPredecessor(const typename  tree234<Key, Value>::Node *current, int key_index) noexcept
     {
+     const auto& root = tree.root;
+    
       if (current->isLeaf()) { // If leaf node
     
          if (current == root.get()) { // root is leaf      
@@ -1021,15 +1101,31 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       }
     }
     
-    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getInternalNodePredecessor(\
-         const typename tree234<Key, Value>::Node *pnode, int key_index) const noexcept	    
+    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::iterator::getInternalNodePredecessor(\
+         const typename tree234<Key, Value>::Node *pnode, int key_index) noexcept	    
     {
      // Get next left child node of pnode based on key_index. This will be the child at pnode->children[index]. 
+    
+     /*--
      const Node *leftChild = pnode->children[key_index].get();
     
      for (const Node *cursor = leftChild; cursor != nullptr; cursor = cursor->children[cursor->getTotalItems()].get()) {
     
         pnode = cursor;
+     }
+    
+     return {pnode, pnode->totalItems - 1}; 
+     */
+    
+     auto child_index = key_index;
+    
+     for (const Node *pcurrent = pnode->children[key_index].get(); pcurrent != nullptr; pcurrent = pcurrent->children[child_index].get()) {
+    
+        push(child_index);
+    
+        pnode = pcurrent;
+    
+        child_index = pcurrent->getTotalItems();  
      }
     
      return {pnode, pnode->totalItems - 1}; 
@@ -1043,7 +1139,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       If you get to the root w/o finding a node that is a right child, there is no predecessor
     */
     
-    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::getLeafNodePredecessor(const Node *pnode, int index) const 
+    template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::iterator::getLeafNodePredecessor(const Node *pnode, int index)
     {
       // Handle trivial case: if the leaf node is not a 2-node (it is a 3-node or 4-node, and key_index is not the first key), simply set index of predecessor to index - 1. 
       if (!pnode->isTwoNode() && index != 0) {
@@ -1051,8 +1147,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return {pnode, index - 1}; 
       }
     
-      // Determine child_index such that pnode == pnode->parent->children[child_index]
-      int child_index = pnode->getChildIndex();
+      // Get child_index such that pnode == pnode->parent->children[child_index]
+      auto child_index = pop();
     
       if (child_index != 0) { // If pnode is not the left-most child, the predecessor is in the parent
     
@@ -1061,8 +1157,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       } else {
     
        /* 
-        To find the next smallest node the logic is identical: We walk up the parent chain until we traverse the first parent that is not a left-most child 
-        of its parent. That parent is the predecessor. If we get to the root without finding a node that is a right child, there is no predecessor.
+        To find the next smallest node the logic is similar to finding the successor: We walk up the parent chain until we traverse the first parent that
+        is not a left-most child of its parent. That parent is the predecessor. If we get to the root without finding a node that is a right child, there is no predecessor.
         Note: In a 2 3 tree, a "right" child pointer will be either the second child of a 2-node or the second, the middle, or the third child of a 3-node. "right" child
         pointer means a pointer to a subtree with larger keys. In a 2 3 tree, the middle child pointer of a 3-node parent is a "right child pointer" of the 1st key
         because all the keys of the subtree whose root is the second (or middle) child pointer are greater than 1st key of the subtree's parent. 
@@ -1106,36 +1202,26 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           Determine which key is the predecessor. If child_index is one, the middle child, then the predecessor is pnode->keys_values[0]. If child_index is two, then
           the predecessor is pnode->key(1). Thus, the predecessor is the key at child_index - 1.
           */
+          const Node *parent = pnode->parent;
     
-          const Node *child = pnode;
-          const Node *parent = child->parent;
-          
-          Key current_key = child->key(index);
+         // Ascend upward the parent pointer as long as the child continues to be the left most child (of its parent). 
+         for(;child_index == 0; parent = pnode->parent)  { 
+            
+             // child is still the left most child, but if it is also the root, then, there is no predecessor. child holds the smallest key in the tree. 
+             if (parent == tree.root.get()) {
+              
+                 return {nullptr, 0};  // To indicate "no-predecessor" we return the pair: {nullptr, 0}. 
+             }
     
-          // Ascend the parent pointer chain as long as child is the left most child of its parent.
-          for(; child == parent->children[0].get();  parent = parent->parent)  {
-          
-              // child is still the left most child of its parent, but if it is the root, there is no predecessor.  
-              if (parent == root.get()) {
-                    
-                  return {nullptr, 0};  // To indicate this we set current, the member of the pair, to nullptr and key_index, the second member, to 0.
-              }
-              child = parent;
-          }
+             child_index = pop();
+             pnode = parent;
+         }
     
-          // The predecessor will be the first key, starting with the right most key, that is less than current_key. 
-          for (int pred_index = parent->getTotalItems() - 1; pred_index >= 0; --pred_index) {
+         // The predecessor will be the first key, starting with the right most key, that is less than current_key. 
+         return {parent, child_index - 1}; 
     
-               if (current_key > parent->key(pred_index)) {
-    
-                   return {parent, pred_index};
-               } 
-          } 
-    
-         throw std::logic_error("Error in getLeafNodePredecessor");
       } // end else
     }
-    
     
     // copy assignment
     template<typename Key, typename Value> inline tree234<Key, Value>& tree234<Key, Value>::operator=(const tree234& lhs) noexcept 
@@ -2395,14 +2481,54 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           current = nullptr;
       }
     */
-      current = (!tree.isEmpty()) ? tree.min(tree.root.get()) : nullptr;
+      current = (!tree.isEmpty()) ? get_min() : nullptr;
     
       cursor = current;
       key_index = 0;  
     }
     
+    template<typename Key, typename Value> inline const typename tree234<Key, Value>::Node *tree234<Key, Value>::iterator::get_max() noexcept
+    {
+       /*
+       while (current->getRightMostChild() != nullptr) {
+    
+            current = current->getRightMostChild();
+       }
+       return current;
+       */
+       const Node *pnode = tree.root.get();
+    
+       for (auto child_index = pnode->getTotalItems(); pnode->children[child_index] != nullptr; child_index = pnode->getTotalItems()) {
+    
+            push(child_index);
+            pnode = pnode->children[child_index].get();
+       }
+       
+       return pnode;
+    }
+    
+    template<typename Key, typename Value> inline const typename tree234<Key, Value>::Node *tree234<Key, Value>::iterator::get_min() noexcept
+    {
+      /*-- 
+       while (current->children[0].get() != nullptr) {
+            
+            current = current->children[0].get();
+       }
+       return current;
+       */
+    
+       const Node *pnode = tree.root.get();
+    
+       for(auto child_index = 0; pnode->children[child_index].get() != nullptr; pnode = pnode->children[child_index].get()) {
+    
+            push(child_index);
+       }
+    
+       return pnode;
+    }
+    
     template<class Key, class Value> inline tree234<Key, Value>::iterator::iterator(const iterator& lhs) : tree{lhs.tree}, current{lhs.current},\
-            cursor{lhs.cursor}, key_index{lhs.key_index}
+            cursor{lhs.cursor}, key_index{lhs.key_index}, child_indexes{lhs.child_indexes}
     {
     }
     
@@ -2412,7 +2538,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       // If the tree is empty, there is nothing over which to iterate...
        if (!tree.isEmpty()) {
     
-          cursor = tree.max(tree.root.get()); // Go to largest node.
+          cursor = get_max(); // Go to largest node.
           key_index = cursor->getTotalItems() - 1;
     
           current = nullptr; 
@@ -2471,7 +2597,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
          return *this;  // If tree is empty or we are at the end, do nothing.
       }
     
-      auto [successor, index] = tree.getSuccessor(cursor, key_index);
+      auto [successor, index] = getSuccessor(cursor, key_index);
     
       if (successor == nullptr) { // nullptr implies cursor->keys_values[key_index].key() is the max key,
                                   // the last key/value in tree.
@@ -2498,7 +2624,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return *this;
       }
       
-      auto [predecessor, index] = tree.getPredecessor(cursor, key_index);
+      auto [predecessor, index] = getPredecessor(cursor, key_index);
     
       if (predecessor != nullptr) { // nullptr implies there is no predecessor cursor->key(key_index).
           
@@ -2516,6 +2642,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
                  tree{lhs.tree}, current{lhs.current}, cursor{lhs.cursor}, key_index{lhs.key_index}  
     {
        lhs.cursor = lhs.current = nullptr; 
+       child_indexes = std::move(lhs.child_indexes);
     }
     /*
      */
@@ -2524,7 +2651,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     {
        //
        // The first if-test, checks for "at end".
-       // If current is nullptr, that signals the iterator is "one past the end.". If current is not nullptr, then current will equal cached_cursor.fist. current is either nullptr or cursor. cached_cursor never 
+       // If current is nullptr, that signals the iterator is "one past the end.". If current is not nullptr, then current will equal cursor.current is either nullptr or cursor. cursor never 
        // becomes nullptr.
        // In the else-if block block, we must check 'current == lhs.current' and not 'cursor == lhs.cursor' because 'cursor' never signals the end of the range, it never becomes nullptr,
        // but the iterator returned by tree234::end()'s iterator always sets current to nullptr (to signal "one past the end").
@@ -2706,3 +2833,4 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
         return true; // All Nodes were balanced.
     }
     #endif
+    

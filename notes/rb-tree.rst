@@ -13,10 +13,15 @@ Red Black Trees (under develpment)
 The insert and delete algorithms for  a `2-3-4-trees` ensure a balanced tree, but a 2-3-4 tree wastes storage. A red black tree represents a 2 3 4 tree as a \ |apos|\ balanced binary search tree.  
 Helpful links to Red Black Trees are:
 
-* `Standford's CS166 <https://web.stanford.edu/class/cs166/>`_ lecture slides on `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_ has slides on **B-Trees** (slides 1-51) and 
+* Standford `CS166 <https://web.stanford.edu/class/cs166/>`_ lecture slides on `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_ has slides on **B-Trees** (slides 1-51) and 
   **Red Black trees** (slides 52-77), Multi-way trees (slides 78-271), and the lecture slides for `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ has slides about analyzing Red Black tree performance (slides 1-86).
 
-* `Introduction to Algorithms 3rd Edition by CLRS <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_ dicusses B-trees and Red-Black Trees. Its Instructors Manual is available `here <https://cdn.manesht.ir/19908/Introduction%20to%20Algorithms.pdf>`_ and at `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_ and `CLRS Solution <https://walkccc.github.io/CLRS/>`_.
+* `Introduction to Algorithms 3rd Edition by CLRS <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_ dicusses B-trees and Red-Black Trees in chapters 12 and 13, repectively; and its Instructors Manual with solutions 
+   is available online:
+
+   1.  `here <https://cdn.manesht.ir/19908/Introduction%20to%20Algorithms.pdf>`_
+   2.  `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_ 
+   3.  `Github <https://walkccc.github.io/CLRS/>`_.
 
 * `Relationship between 2-, 3- and 4-nodes to Red and Black nodes <http://faculty.cs.niu.edu/~freedman/340/340notes/340redblk.htm>`_ from NIU. 
 

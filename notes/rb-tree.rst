@@ -25,9 +25,9 @@ Helpful links to Red Black Trees are:
    2.  `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_ 
    3.  `Github <https://walkccc.github.io/CLRS/>`_.
 
-* `Digipen.edu overiew of all types of trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_--BST, 2-3 tree, and red black trees. Concept of rotations.
+* `Digipen.edu: Overiew of all types of trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_--BST, 2-3 tree, and red black trees. Concept of rotations.
 
-* `Digipen: Mapping 2-3-4 Trees into Red-Black Trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html>`_ .
+* `Digipen.edu: Mapping 2-3-4 Trees into Red-Black Trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html>`_ .
 
 * USC `B-Trees (2-3, 2-3-4) and Red/Black Trees <https://ee.usc.edu/~redekopp/cs104/slides/L19b_BalancedBST_BTreeRB.pdf>`_ slides 32-75 relationship between 2-3-4 trees and Red-Black trees.
 

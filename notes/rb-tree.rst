@@ -13,7 +13,7 @@ Red Black Trees (under develpment)
 The insert and delete algorithms for  a `2-3-4-trees` ensure a balanced tree, but a 2-3-4 tree wastes storage. A red black tree represents a 2 3 4 tree as a \ |apos|\ balanced binary search tree.  
 Helpful links to Red Black Trees are:
 
-* Standford `CS166 <https://web.stanford.edu/class/cs166/>`_:
+* `Standford CS166 <https://web.stanford.edu/class/cs166/>`_:
 
   * `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_: **B-Trees** (slides 1-51) and **Red Black trees** (slides 52-77), **Multi-way trees** (slides 78-271).
   * `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ Red Black tree performance (slides 1-86).

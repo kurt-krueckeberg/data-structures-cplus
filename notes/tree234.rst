@@ -581,7 +581,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            iterator& decrement() noexcept;
           
            iterator(tree234<Key, Value>& lhs, int i);  // called by end()   
-                // Non recursive in-order traversal of tree methods
+    
            std::pair<const Node *, int> getSuccessor(const Node *current, int key_index) noexcept;
            std::pair<const Node *, int> getPredecessor(const Node *current, int key_index) noexcept;
            
@@ -610,12 +610,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
               child_indexes.pop();
               return i; 
            }
-           /*
-           constexpr const std::pair<const Key, Value>& dereference() const noexcept 
-           { 
-               return cursor->constkey_pair(key_index); 
-           } 
-           */
+    
            constexpr reference dereference() noexcept 
            { 
                return const_cast<Node *>(cursor)->constkey_pair(key_index); 
@@ -659,7 +654,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
               return tmp;
            } 
            
-           reference /*std::pair<const Key, Value>&*/ operator*() noexcept 
+           reference operator*() noexcept 
            { 
                return dereference(); 
            } 
@@ -677,7 +672,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           public:
           using difference_type   = std::ptrdiff_t; 
           using value_type        = tree234<Key, Value>::value_type; 
-          using reference	        = const value_type&; 
+          using reference	      = const value_type&; 
           using pointer           = const value_type*;
           
           using iterator_category = std::bidirectional_iterator_tag; 
@@ -954,15 +949,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      */
     template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::iterator::getInternalNodeSuccessor(const typename tree234<Key, Value>::Node *pnode, int key_index) noexcept	    
     {
-    /*--
-     // Get first right subtree of pnode, and descend to its left most left node.
-     for (const Node *cursor =  pnode->children[key_index + 1].get(); cursor != nullptr; cursor = cursor->children[0].get()) {  
-    
-        pnode = cursor;
-     }
-    
-     return {const_cast<Node *>(pnode), 0};
-    */
      auto child_index = key_index + 1;
     
      // Get first right subtree of pnode, and descend to its left most left node.
@@ -1104,19 +1090,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::iterator::getInternalNodePredecessor(\
          const typename tree234<Key, Value>::Node *pnode, int key_index) noexcept	    
     {
-     // Get next left child node of pnode based on key_index. This will be the child at pnode->children[index]. 
-    
-     /*--
-     const Node *leftChild = pnode->children[key_index].get();
-    
-     for (const Node *cursor = leftChild; cursor != nullptr; cursor = cursor->children[cursor->getTotalItems()].get()) {
-    
-        pnode = cursor;
-     }
-    
-     return {pnode, pnode->totalItems - 1}; 
-     */
-    
      auto child_index = key_index;
     
      for (const Node *pcurrent = pnode->children[key_index].get(); pcurrent != nullptr; pcurrent = pcurrent->children[child_index].get()) {
@@ -1125,7 +1098,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
         pnode = pcurrent;
     
-        child_index = pcurrent->getTotalItems();  
+        child_index = pcurrent->getTotalItems(); // Must do after push() 
      }
     
      return {pnode, pnode->totalItems - 1}; 
@@ -2297,7 +2270,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        *   therefore we do a left rotation
        */ 
         
-      p2node =  (child_index > sibling_index) ? rightRotation(p2node, psibling, parent, parent_key_index) : leftRotation(p2node, psibling, parent, parent_key_index);
+      (child_index > sibling_index) ? rightRotation(p2node, psibling, parent, parent_key_index) : leftRotation(p2node, psibling, parent, parent_key_index);
       return child_index;
     }
     
@@ -2473,14 +2446,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
 	    
     template<class Key, class Value> tree234<Key, Value>::iterator::iterator(tree234<Key, Value>& lhs_tree) : tree{lhs_tree} 
     {
-      // If the tree is empty, there is nothing over which to iterate...
-    /*
-       if (!tree.isEmpty()) {
-          current = tree.min(tree.root.get());
-      } else {
-          current = nullptr;
-      }
-    */
       current = (!tree.isEmpty()) ? get_min() : nullptr;
     
       cursor = current;
@@ -2489,13 +2454,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<typename Key, typename Value> inline const typename tree234<Key, Value>::Node *tree234<Key, Value>::iterator::get_max() noexcept
     {
-       /*
-       while (current->getRightMostChild() != nullptr) {
-    
-            current = current->getRightMostChild();
-       }
-       return current;
-       */
        const Node *pnode = tree.root.get();
     
        for (auto child_index = pnode->getTotalItems(); pnode->children[child_index] != nullptr; child_index = pnode->getTotalItems()) {
@@ -2509,14 +2467,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<typename Key, typename Value> inline const typename tree234<Key, Value>::Node *tree234<Key, Value>::iterator::get_min() noexcept
     {
-      /*-- 
-       while (current->children[0].get() != nullptr) {
-            
-            current = current->children[0].get();
-       }
-       return current;
-       */
-    
        const Node *pnode = tree.root.get();
     
        for(auto child_index = 0; pnode->children[child_index].get() != nullptr; pnode = pnode->children[child_index].get()) {
@@ -2833,4 +2783,3 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
         return true; // All Nodes were balanced.
     }
     #endif
-    

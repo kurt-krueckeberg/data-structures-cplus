@@ -177,6 +177,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     #include <memory>
     #include <array>
     #include <queue>
+    #include <deque>
     #include <stack>
     #include <sstream>
     #include <exception>
@@ -570,10 +571,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            const Node *current;
            const Node *cursor; //  points to "current" node.
            int key_index;
+    
            std::stack<int> child_indexes; 
            
-           int getChildIndex(const typename tree234<Key, Value>::Node *p) const noexcept;
-          
            std::pair<const typename tree234<Key, Value>::Node *, int> findLeftChildAncestor() noexcept;
           
            iterator& increment() noexcept; 
@@ -617,12 +617,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            } 
        
           public:
-          
-           explicit iterator(tree234<Key, Value>&); 
-          
-           iterator(const iterator& lhs); 
+    
+           iterator(const iterator& lhs) = default; 
           
            iterator(iterator&& lhs); 
+    
+           explicit iterator(tree234<Key, Value>&); 
           
            bool operator==(const iterator& lhs) const;
            
@@ -665,6 +665,13 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            }
            
            typename tree234<Key, Value>::KeyValue *operator->() noexcept;
+           
+           friend std::ostream& operator<<(std::ostream& ostr, const iterator& iter)
+           {
+              return iter.print(ostr);  
+           } 
+    
+           std::ostream& print(std::ostream& ostr) const noexcept;
        };
        
        class const_iterator {
@@ -682,7 +689,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           private:
            iterator iter; 
           
-           explicit const_iterator(const tree234<Key, Value>& lhs, int i);
+           const_iterator(const tree234<Key, Value>& lhs, int i); // called by end()
               
            constexpr const std::pair<const Key, Value>& dereference() const noexcept 
            { 
@@ -694,9 +701,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            explicit const_iterator(const tree234<Key, Value>& lhs);
           
            const_iterator(const const_iterator& lhs);
+           
            const_iterator(const_iterator&& lhs); 
           
-           // This ctor provide implicit conversion from iterator to const_iterator     
+           // This ctor provides the implicit conversion from iterator to const_iterator     
            const_iterator(const typename tree234<Key, Value>::iterator& lhs); 
           
            bool operator==(const const_iterator& lhs) const;
@@ -734,6 +742,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            } 
           
            const std::pair<const Key, Value> *operator->() const noexcept { return &this->operator*(); } 
+           
+           friend std::ostream& operator<<(std::ostream& ostr, const const_iterator& it)
+           {
+              return it.iter.print(ostr);  
+           } 
+    
        };
        
        iterator begin() noexcept;  
@@ -896,9 +910,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<typename Key, typename Value> inline tree234<Key, Value>::tree234(std::initializer_list<std::pair<Key, Value>> il) noexcept : root(nullptr), tree_size{0} 
     {
-        for (auto& x: il) { 
+        for (auto&& [key, value]: il) { 
                         
-             insert(x.first, x.second);
+             insert(key, value);
         }
     }
     
@@ -1008,7 +1022,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
          }
          /* 
             We know that pnode now is NOT the right most child of its parent. 
-    
             We need to ascertain the next index, next_index, such that parent->key(next_index) > current_key. We know 'pnode == parent->children[child_index]'. child_index is therefore
             also the index of the successor key in the parent: successor-key == parent->key(child_index). We can see this by looking these possiblities. First, a 3-node. 
             If we ascende from the leaf node of the right-most subtree of key 5,then 36 is the successor, and 36 == parent->key(child_index)
@@ -1017,14 +1030,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
               /        /   \
             [1, 2]  [4, 5]  [47]
             /   \   / | \   / \
-    
             and a 4-node can be viewed as three catenated 2-nodes in which the two middle child are shared
               
                [2,   4,   36]  
               /     / \     \
             [1]  [3]   [5]  [37] 
             / \  / \   / \   / \
-    
             Again, if ascend, say, the leaf of the right subtree root at key 3, then 4 is the successor; and if ascend, say, the leaf of the right subtree whose root is key 5, then 36 is the successor, and
             36 = parent->key(child_index);
           */
@@ -1042,13 +1053,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
                /  \     / \
               /    \   /   \
             [1, 2]  [4, 5]  [7]
-    
             and a 4-node can be viewed as three catenated 2-nodes in which the two middle child are shared
               
                [2,   4,   6]  
               /  \  / \  / \
             [1]  [3]   [5]  [7] 
-    
             If the leaft node is a 3- or 4-node, we already know (from the first if-test) that the current key is the last, current_key == pnode->getTotalItems() - 1. So the we simply go up on level to find the in order successor.    
             We know pnode == parent->children[child_index]. child_index also is index of the successor key in the parent: successor-key == parent->key(child_index).
           */
@@ -1332,10 +1341,15 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      
           f(current->pair(key_index)); 
     
-          std::pair<const Node *, int> pair = getSuccessor(current, key_index);  
+          //std::pair<const Node *, int> pair = getSuccessor(current, key_index);  
+          auto &&[pnode_next, next_index] = getSuccessor(current, key_index);  
       
+          /*
           current = pair.first;
           key_index = pair.second;
+           */
+          current = pnode_next; 
+          key_index = next_index;
       }
     }
     /*
@@ -1986,7 +2000,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * is converted, the key to be delete may move down into it (as its first or second key), so we check for this.
      * 
      * Conversion of 2-node has two cases:
-    
      * Case 1: If an adjacent sibling has is a 3- or 4-node, we "steal" a sibling key by rotating it into the parent and bringing down a parent key into the 2-node,
      *         
      * Case 2: If each adjacent sibling (there are at most two) is a 2-node, we canvert the 2-node into a 4-node by merging into it a sibling key and a key from parent (which we
@@ -2126,9 +2139,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           sibling occurred). If a left rotation occurred (that "stold" a key from the left sibling and brought down the delete_key), then delete_key
           becomes the first key rightSubtree. If a right rotation occurred, delete_key is unaffected. This applies regardless whether pdelete is a 3-node
           or a 4-node.
-    
           If a fusion of the rightSubtree with a parent key and a sibling key occurred, delete_key becomes the 2nd key in rightSubtree. 
-    
           Therefore we check if delete_key is now the first or second key of rightSubtree, and...
          */
          if (delete_key == rightSubtree->key(0) || delete_key == rightSubtree->key(1)) {              
@@ -2452,6 +2463,45 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       key_index = 0;  
     }
     
+    template<class Key, class Value> std::ostream& tree234<Key, Value>::iterator::print(std::ostream& ostr) const noexcept
+    {
+       ostr << "\n-------------------------------------\niterator settings:\ncurrent = " << current << "\n" << "cursor =  " << cursor <<  '\n';
+       ostr << *cursor;      // print the node
+       ostr << "\nkey_index = " << key_index << '\n';
+    
+       ostr << "stack = { "; 
+       std::deque<int> deque;
+    
+       //tree234<Key, Value>::iterator& nonconst = const_cast<iterator&>(*this);
+       tree234<int, int>::iterator& non_const = const_cast<tree234<Key, Value>::iterator&>(*this);
+       
+       while(!non_const.child_indexes.empty()) {
+    
+           auto top = non_const.child_indexes.top();
+    
+           ostr << top << ", ";
+    
+           deque.push_back(top);
+    
+           non_const.child_indexes.pop(); 
+       }
+    
+       ostr << " } " << '\n' << std::flush;
+    
+       // Push elements back onto stack in opposite order they were pop()'ed
+       while(!deque.empty()) {
+    
+           int i = deque.back();
+           
+            non_const.child_indexes.push(i);
+    
+            deque.pop_back();
+       }
+       
+       return ostr;
+    }
+    
+    
     template<typename Key, typename Value> inline const typename tree234<Key, Value>::Node *tree234<Key, Value>::iterator::get_max() noexcept
     {
        const Node *pnode = tree.root.get();
@@ -2475,11 +2525,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        }
     
        return pnode;
-    }
-    
-    template<class Key, class Value> inline tree234<Key, Value>::iterator::iterator(const iterator& lhs) : tree{lhs.tree}, current{lhs.current},\
-            cursor{lhs.cursor}, key_index{lhs.key_index}, child_indexes{lhs.child_indexes}
-    {
     }
     
     // non const tree234<Key, Value>& passed to ctor. Called only by end()
@@ -2615,27 +2660,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     }
     
     /*
-     int getChildIndex(Node *cursor)
-     Requires: cursor is not root, and  cursor is a node in the tree for which we want child_index such that
-          current->parent->children[child_index] == current
-     Returns: child_index as shown above. 
-     */
-    
-    template<class Key, class Value> int tree234<Key, Value>::iterator::getChildIndex(const typename tree234<Key, Value>::Node *p) const noexcept
-    {
-      // Determine child_index such that current == current->parent->children[child_index]
-      int child_index = 0;
-    
-      for (; child_index <= current->parent->getTotalItems(); ++child_index) {
-    
-           if (current == current->parent->children[child_index].get())
-                  break;
-      }
-    
-      return child_index;
-    }
-    
-    /*
      tree234<Key, Value>::const_iterator constructors
      */
     template<class Key, class Value> inline tree234<Key, Value>::const_iterator::const_iterator(const tree234<Key, Value>& lhs) : iter{const_cast<tree234<Key, Value>&>(lhs)} 
@@ -2645,7 +2669,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<class Key, class Value> inline tree234<Key, Value>::const_iterator::const_iterator(const tree234<Key, Value>& lhs, int i) : iter{const_cast<tree234<Key, Value>&>(lhs), i} 
     {
     }
-    
     
     template<class Key, class Value> inline tree234<Key, Value>::const_iterator::const_iterator::const_iterator(const typename tree234<Key, Value>::const_iterator& lhs) : iter{lhs.iter}
     {

@@ -1340,7 +1340,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      
           f(current->pair(key_index)); 
     
-          //std::pair<const Node *, int> pair = getSuccessor(current, key_index);  
           auto &&[next_pnode, next_index] = getSuccessor(current, key_index);  
       
           current = next_pnode; 

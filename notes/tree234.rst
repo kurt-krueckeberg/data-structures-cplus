@@ -430,7 +430,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        std::shared_ptr<Node>  root; 
        
-       int  tree_size; // adjusted by insert(), remove(), operator=(const tree234...), move ctor
+       int tree_size; // adjusted by insert(), remove(), operator=(const tree234...), move ctor
        
        // Implementations of the public depth-frist traversal methods    
        template<typename Functor> void DoInOrderTraverse(Functor f, const Node *proot) const noexcept;
@@ -472,8 +472,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        std::tuple<bool, Node *, int> find_insert_node(Node *pnode, Key new_key) noexcept;  // Called during insert
     
-       //std::tuple<bool, typename tree234<Key, Value>::Node *, int>  find_delete_node(Node *pcurrent, Key delete_key) noexcept; // New code
-       std::tuple<bool, typename tree234<Key, Value>::Node *, int>  find_delete_node(Node *pcurrent, Key delete_key, int child_index=0) noexcept; // New code
+       std::tuple<bool, typename tree234<Key, Value>::Node *, int>  find_delete_node(Node *pcurrent, Key delete_key, int child_index=0) noexcept; 
        
        Node *get_successor_node(Node *pnode, int child_index) noexcept; // Called during remove()
     
@@ -506,7 +505,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        constexpr int size() const;
     
-       ~tree234() = default; //TODO: Confirm this does post order recursive-like deletion
+       ~tree234() = default; 
        
        // Breadth-first traversal
        template<typename Functor> void levelOrderTraverse(Functor f) const noexcept;
@@ -704,7 +703,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            
            const_iterator(const_iterator&& lhs); 
           
-           // This ctor provides the implicit conversion from iterator to const_iterator     
+           // Provides the implicit conversion from iterator to const_iterator     
            const_iterator(const typename tree234<Key, Value>::iterator& lhs); 
           
            bool operator==(const const_iterator& lhs) const;
@@ -1192,7 +1191,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
              // child is still the left most child, but if it is also the root, then, there is no predecessor. child holds the smallest key in the tree. 
              if (parent == tree.root.get()) {
               
-                 return {nullptr, 0};  // To indicate "no-predecessor" we return the pair: {nullptr, 0}. 
+                 return {nullptr, 0};  //  {nullptr, 0} indicates "no predecessor".
              }
     
              child_index = pop();
@@ -1314,7 +1313,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
        while (!queue.empty()) {
     
-            auto [pnode, tree_level] = queue.front(); 
+            auto& [pnode, tree_level] = queue.front(); 
     
             f(pnode, tree_level); // Call functor 
              
@@ -1342,13 +1341,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           f(current->pair(key_index)); 
     
           //std::pair<const Node *, int> pair = getSuccessor(current, key_index);  
-          auto &&[pnode_next, next_index] = getSuccessor(current, key_index);  
+          auto &&[next_pnode, next_index] = getSuccessor(current, key_index);  
       
-          /*
-          current = pair.first;
-          key_index = pair.second;
-           */
-          current = pnode_next; 
+          current = next_pnode; 
           key_index = next_index;
       }
     }
@@ -1580,7 +1575,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
          }
       }
     
-      // It must be greater than the last key (because it is not less than or equal to it).
+      // lhs_key must be greater than the last key (because it is not less than or equal to it).
       // next = children[totalItems].get(); 
       return {false, children[getTotalItems()].get(), 0};
     }
@@ -1904,7 +1899,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            if (pcurrent->key(1) == new_key) // First check the middle key because split() will move it into its parent.
                 return {true, pcurrent, 1}; 
     
-           // split pcurrent into two 2-nodes and set pcurrent to the correct one to examine next below.
+           // split pcurrent into two 2-nodes and set pcurrent to the Node to examine next(int the loop below).
            pcurrent = split(pcurrent, new_key); 
        }
     
@@ -1914,7 +1909,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
            if (new_key < pcurrent->key(i)) {
     
-               if (pcurrent->isLeaf()) return {false, pcurrent, i};
+               if (pcurrent->isLeaf())
+                   return {false, pcurrent, i};
      
                return find_insert_node(pcurrent->children[i].get(), new_key); // Recurse left subtree of pcurrent->key(i)
            } 
@@ -2025,7 +2021,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
                  if (root->isEmpty()) {
     
                     destroy_tree(root); 
-                }  
+                 }  
     
                  --tree_size;
                  return true;
@@ -2084,6 +2080,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
       if (pcurrent->isTwoNode()) {
     
+           // Special case: root is a 2-node with two 2-node children.
            if (pcurrent == root.get() && root->children[0]->isTwoNode() && root->children[1]->isTwoNode()) {
     
                 pcurrent->makeRoot4Node();
@@ -2093,14 +2090,14 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            }
       }
     
-      // Search for it with loop, if found return it.
+      // Search for it, and if found, return it.
       auto i = 0; 
       
       for(;i < pcurrent->getTotalItems(); ++i) {
     
           if (delete_key == pcurrent->key(i)) 
     
-             // Found dlete_key to be deleted is at pcurrent->key(i).
+             // Found delete_key to be deleted is at pcurrent->key(i).
               return {true, pcurrent, i}; 
     
           if (delete_key < pcurrent->key(i)) 
@@ -2164,8 +2161,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       return {pdelete, delete_key_index, psuccessor};
     }
     /*
-     *  Converts 2-nodes to 3- or 4-nodes as we descend to the left-most leaf node of the substree rooted at pnode.
-     *  Return min leaf node.
+     *  Converts 2-nodes to 3- or 4-nodes as it descends to the left-most leaf node of the substree rooted at pnode.
+     *  Returns: min leaf node in subtree rooted at pnode.
      */
     template<class Key, class Value> inline typename tree234<Key, Value>::Node *tree234<Key, Value>::get_successor_node(Node *pnode, int child_index) noexcept
     {
@@ -2195,8 +2192,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      */
     template<typename Key, typename Value> int tree234<Key, Value>::convert2Node(Node *pnode, int child_index)  noexcept
     {   
-       // Return the parent->children[node2_index] such that pnode is root of the left subtree of 
-       // Determine if any adjacent sibling has a 3- or 4-node, giving preference to the right adjacent sibling first.
+       // Determine if any adjacent sibling has a 3- or 4-node, preferring the right adjacent sibling.
        auto [has3or4NodeSibling, sibling_index] = pnode->chooseSibling(child_index);
     
        return has3or4NodeSibling ? make3Node(pnode, child_index, sibling_index) : make4Node(pnode->getParent(), child_index, sibling_index); 

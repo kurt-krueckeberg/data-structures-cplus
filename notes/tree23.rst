@@ -23,6 +23,8 @@ The following sources discuss 2 3 Trees and their algorithms:
 3. `Balanced Search Trees <http://www.cs.sfu.ca/CourseCentral/225/ahadjkho/lecture-notes/balanced_trees.pdf>`_ from `Simon Frazer Univ. Data Structure and Programming <http://www2.cs.sfu.ca/CourseCentral/225/ahadjkho/>`_.
 4. `Deletion in 2 3 trees <http://www-bcf.usc.edu/~dkempe/CS104/11-19.pdf>`_ from `USC Data Structure and Object Oriented Design <http://bits.usc.edu/cs104/>`_.
 5. `Virgina Tech 2 3 Tree slides <http://courses.cs.vt.edu/cs2606/Fall07/Notes/T05B.2-3Trees.pdf>`_ from `Virgina Tech Data Structures and ObjectOriented Development <http://courses.cs.vt.edu/cs2606/>`_.
+6.  `Java 2 3 tree delete code <https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html>`_.
+7. `Cal Poly Detailed Algorithms for 2-3 Tree with Illustrations <https://www.cpp.edu/~ftang/courses/CS241/notes/b-tree.htm>`_
 
 Implementation Overview
 -----------------------

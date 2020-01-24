@@ -18,13 +18,11 @@ The complete source code is at https://github.com/kkruecke/23tree-in-cpp
 
 The following sources discuss 2 3 Trees and their algorithms: 
 
-1. `Balanced Trees <http://algs4.cs.princeton.edu/33balanced/>`_ from online book `Algorithms 4th Edition <http://algs4.cs.princeton.edu/home>`_.
-2. `Data Structures Balanced Trees <https://www.cse.unr.edu/~mgunes/cs302/Chapter19-BalancedSearchTrees.ppt>`_ from `Univ. of Nevada CS 302 Data Structures <https://www.cse.unr.edu/~mgunes/cs302/>`_. 
-3. `Balanced Search Trees <http://www.cs.sfu.ca/CourseCentral/225/ahadjkho/lecture-notes/balanced_trees.pdf>`_ from `Simon Frazer Univ. Data Structure and Programming <http://www2.cs.sfu.ca/CourseCentral/225/ahadjkho/>`_.
-4. `Deletion in 2 3 trees <http://www-bcf.usc.edu/~dkempe/CS104/11-19.pdf>`_ from `USC Data Structure and Object Oriented Design <http://bits.usc.edu/cs104/>`_.
-5. `Virgina Tech 2 3 Tree slides <http://courses.cs.vt.edu/cs2606/Fall07/Notes/T05B.2-3Trees.pdf>`_ from `Virgina Tech Data Structures and ObjectOriented Development <http://courses.cs.vt.edu/cs2606/>`_.
-6.  `Java 2 3 tree delete code <https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html>`_.
-7. `Cal Poly Detailed Algorithms for 2-3 Tree with Illustrations <https://www.cpp.edu/~ftang/courses/CS241/notes/b-tree.htm>`_
+* `Balanced Trees <http://algs4.cs.princeton.edu/33balanced/>`_ from online book `Algorithms 4th Edition <http://algs4.cs.princeton.edu/home>`_.
+* `Simon Frazer Univ: 2 3 Tree Slides, Helpful <http://www.cs.sfu.ca/CourseCentral/225/ahadjkho/lecture-notes/balanced_trees.pdf>`_ from `Simon Frazer Univ. Data Structure and Programming <http://www2.cs.sfu.ca/CourseCentral/225/ahadjkho/>`_.
+* `Virgina Tech 2 3 Tree slides, good <http://courses.cs.vt.edu/cs2606/Fall07/Notes/T05B.2-3Trees.pdf>`_ from `Virgina Tech Data Structures and ObjectOriented Development <http://courses.cs.vt.edu/cs2606/>`_.
+* `Java 2 3 tree delete code <https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html>`_.
+* `Cal Poly Detailed Algorithms for 2-3 Tree with Illustrations <https://www.cpp.edu/~ftang/courses/CS241/notes/b-tree.htm>`_
 
 Implementation Overview
 -----------------------

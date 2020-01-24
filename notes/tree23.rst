@@ -18,11 +18,12 @@ The complete source code is at https://github.com/kkruecke/23tree-in-cpp
 
 The following sources discuss 2 3 Trees and their algorithms: 
 
-* `Balanced Trees <http://algs4.cs.princeton.edu/33balanced/>`_ from online book `Algorithms 4th Edition <http://algs4.cs.princeton.edu/home>`_.
-* `Simon Frazer Univ: 2 3 Tree Slides, Helpful <http://www.cs.sfu.ca/CourseCentral/225/ahadjkho/lecture-notes/balanced_trees.pdf>`_ from `Simon Frazer Univ. Data Structure and Programming <http://www2.cs.sfu.ca/CourseCentral/225/ahadjkho/>`_.
-* `Virgina Tech 2 3 Tree slides, good <http://courses.cs.vt.edu/cs2606/Fall07/Notes/T05B.2-3Trees.pdf>`_ from `Virgina Tech Data Structures and ObjectOriented Development <http://courses.cs.vt.edu/cs2606/>`_.
-* `Java 2 3 tree delete code <https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html>`_.
-* `Cal Poly Detailed Algorithms for 2-3 Tree with Illustrations <https://www.cpp.edu/~ftang/courses/CS241/notes/b-tree.htm>`_
+* `Very, very good slides showing in detail Insert and Delete Use Cases <https://www.slideshare.net/sandpoonia/23-tree>`_
+* `Virgina Tech 2 3 Tree slides with Illustrations of all Use Cases <http://courses.cs.vt.edu/cs2606/Fall07/Notes/T05B.2-3Trees.pdf>`_ 
+* `Simon Frazer Univ: 2 3 Tree Slides, Helpful <http://www.cs.sfu.ca/CourseCentral/225/ahadjkho/lecture-notes/balanced_trees.pdf>`_ 
+   Insertion Algorithm slides 12-21. Deleteion Algorithm slides 21-36. 
+* `Java 2 3 tree insertion code and step-by-step illustration <https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html>`_.
+* `Cal Poly Has a Good Illustration of All Deletion Use Cases, but pseudo code doesn't have a working example <https://www.cpp.edu/~ftang/courses/CS241/notes/b-tree.htm>`_
 
 Implementation Overview
 -----------------------
@@ -33,6 +34,13 @@ Nested Union tree23<Key, Value>::KeyValue
 The key and value are stored in a KeyValue object that is a union of two ``std::pair``'s. KeyValue has a move assignement and move constructor to improve the efficiency of the tree insertion
 algorithm. Using a unions allows us to write to the ``std::pair<Key, Value>`` member without the need for constantly doing ``const_cast<Key&>(key) = k``, but also allow
 the  ``tree23<Key,Value>``'s iterators to return ``pair<const Key, Value>`` references, again without the need to use explicit ``const_cast<>`` throughout the code.
+
+Deletetion
+^^^^^^^^^^
+
+We always want to begin the deletion process from a leaf (it’s just easier this way). Hence, for deleting an internal node, we first exchange its value with the leaf inorder successor and then delete the key from the leaf.
+
+.. todo:: See ~/Documents/data-structures/2-3-Trees-2-3-4-Trees.pdf
 
 .. code-block:: cpp 
 

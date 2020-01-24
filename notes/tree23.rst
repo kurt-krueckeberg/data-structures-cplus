@@ -46,7 +46,6 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
 
     #ifndef tree23_h_18932492374
     #define tree23_h_18932492374
-    
     #include <initializer_list>
     #include <array>
     #include <memory>
@@ -175,13 +174,13 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
        
              constexpr const Node *getRightMostChild() const noexcept { return children[getTotalItems()].get(); }
        
-             constexpr std::shared_ptr<Node>& getNonNullChild() noexcept;
+             constexpr std::shared_ptr<Node>& getOnlyChild() noexcept;
        
              constexpr int getSoleChildIndex() const noexcept; // called from subroutine's of tree23<Key,Value>::remove(Key)
        
              std::ostream& test_parent_ptr(std::ostream& ostr, const Node *root) const noexcept;
        
-             std::pair<bool, int> siblingHasTwoItems(int child_index) const noexcept;
+             std::pair<bool, int> any3NodeSiblings(int child_index) const noexcept;
        
              std::ostream& test_3node_invariant(std::ostream& ostr, const Node *root) const noexcept;
        
@@ -351,15 +350,18 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
     
         void reassignRoot() noexcept;
     
-        void barrowSiblingKey(Node *pnode, int child_index, int sibling_index) noexcept;
+        void rotate_keys(Node *pnode, int child_index, int sibling_index) noexcept;
      
-        // Subroutines called by barrowSiblingKey()
+        // Subroutines called by rotate_keys()
         void shiftChildrenRight(Node *node, Node *sibling) noexcept;
         void shiftChildrenRight(Node *node, Node *middleChild, Node *sibling) noexcept;
     
         void shiftChildrenLeft(Node *node, Node *sibling) noexcept;
         void shiftChildrenLeft(Node *node, Node *middleChild, Node *sibling) noexcept;
     
+        bool merge_nodes(Node *pnode, int child_index) noexcept;
+    
+        // subroutines of merge_node()
         void  merge2Nodes(Node *pnode, int child_index) noexcept;
         void  merge3NodeWith2Node(Node *pnode, int child_index) noexcept;
     
@@ -696,7 +698,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
     /*
      "this" must be 2-node with only one non-nullptr child
      */
-    template<class Key, class Value> inline constexpr std::shared_ptr<typename tree23<Key, Value>::Node>& tree23<Key, Value>::Node::getNonNullChild() noexcept
+    template<class Key, class Value> inline constexpr std::shared_ptr<typename tree23<Key, Value>::Node>& tree23<Key, Value>::Node::getOnlyChild() noexcept
     {
       return (children[0] == nullptr) ?  children[1] : children[0];
     }
@@ -1535,7 +1537,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
         pnode->parent->children[child_index] == p3node_sibling
      
      */
-    template<class Key, class Value> std::pair<bool, int> tree23<Key, Value>::Node::siblingHasTwoItems(int child_index) const noexcept
+    template<class Key, class Value> std::pair<bool, int> tree23<Key, Value>::Node::any3NodeSiblings(int child_index) const noexcept
     {
      
      if (parent->isTwoNode()) { // In a recursive case, the parent has 0 totalItems, and it has only one non-nullptr child.
@@ -2175,7 +2177,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
      */
     template<class Key, class Value> std::tuple<bool, typename tree23<Key, Value>::Node *, int> tree23<Key, Value>::findNode(const Node *current, Key lhs_key, std::stack<int>& indecies) const noexcept
     {
-        // TODO: I want the leaf not.
+      // TODO: I want the leaf not.
       auto i = 0;
       
       for(; i < current->getTotalItems(); ++i) {
@@ -2635,15 +2637,20 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
     /*
      Overview
      ========
-     fixTree() is initially called when a leaf node becomes empty, and therefore the tree needs to be rebalanced. It first attempts to barrow a key from a 3-node sibling and calls 
-     silbingHasTwoItems() is called. If a 3-node sibling exits, barrowSiblingKey() returns its child_index such that
+     fixTree() is initially called when a leaf node becomes empty, and the tree needs to be rebalanced. It attempts:
     
-       p3node_sibling ==  pnode->parent->children[child_index]
+     1. first to barrow a key from a 3-node sibling and calls silbingHasTwoItems(), and if true, then rotate_keys(), passing the 'child_index' returned by any3NodeSiblings() such that
     
-     and passes child_index to then shift it left or right so that the tree is re-balanced, and the empty node is filled with a key/value.  
-     If no adjacent sibling is a 3-node, a key/value from the parent is brought down and merged with a sibling of pnode. Any non-empty children of pnode are moved to the 
-     sibling. Upon return, pnode is deleted from the tree by a calling to shared_ptr<Node>::reset().  
-     If the parent of pnode has now become empty (because merge2Nodes was called), a recursive call to fixTree is made.
+           p3node_sibling ==  pnode->parent->children[child_index]
+    
+        the ??? shift it left or right so that the tree is re-balanced, and the empty node is filled with a key/value.  
+    
+     2. If there is is a 3-node sibling, a key/value from the parent is brought down and merged with a sibling of pnode. Any non-empty children of pnode are moved to the 
+        sibling. Upon return, pnode's reference count is decreased by a calling to shared_ptr<Node>::reset(). <--- TODO: Double check  
+        If the parent of pnode has now become empty (because merge2Nodes was called), a recursive call to fixTree() is made.
+    
+     TODO: How and when does a node come to only have one non-nullptr child?
+    
      Parameters
      ==========
      1. pnode: an empty node, initially a leaf. During recursive calls to fixTree, pnode is an empty internal 2-node with only one non-nullptr child.  
@@ -2660,38 +2667,23 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
          return;
       }
     
-      int pnode_child_index = descent_indecies.top();
+      int child_index = descent_indecies.top();
     
       descent_indecies.pop();
     
+      auto parent = pnode->parent;
+    
       // case 1. If the empty node has a sibling with two keys, then we can shift keys and barrow a key for pnode from its parent. 
     
-      if (auto [has_two_items, sibling_index] = pnode->siblingHasTwoItems(pnode_child_index); has_two_items) { 
+      if (auto [bYes, index_3node] = pnode->any3NodeSiblings(child_index); bYes) { 
     
-          barrowSiblingKey(pnode, pnode_child_index, sibling_index);
-         
-      } else  { // No sibling has two items, so we merge a key/value from pnode's parent with the appropriate sibling. 
+          rotate_keys(pnode, child_index, index_3node);
     
-         Node *parent = pnode->parent;
-          
-         if (pnode->parent->isThreeNode()) { 
-             
-             // parent is a 3-node, but has only 2-node children. In this case, we can successfully rebalance the tree. We merge one of the parent keys (and
-             // its associated value) with a sibling. This now makes the parent a 2-node. We move the children affected by the merge appropriately, and then we can
-             // safely delete pnode from the tree.
-        
-             merge3NodeWith2Node(pnode, pnode_child_index);
-                        
-          } else { 
-        
-              // When the parent is a 2-node, then both pnode's sibling and the parent have one key. We merge the parent's sole key/value with
-              // pnode's sibling at pnode->parent->children[!pnode_child_index]. This leaves the parent empty, which we handle recursively below 
-              // by again calling fixTree(). 
-              merge2Nodes(pnode, !pnode_child_index); 
+      // case 2. No 3-node sibling exist, so we will merge nodes.
+      } else if (auto bFix_parent = merge_nodes(pnode, child_index); bFix_parent){ 
     
-              // recurse. parent is an internal empty 2-node with only one non-nullptr child.
-              fixTree(parent, descent_indecies);
-         }
+          // parent is now empty and has an empty child, too.
+          fixTree(parent, descent_indecies);
       }   
     }
     
@@ -2704,35 +2696,57 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
     
        } else {
        // recursive remove() case:
-       // The root has a sole non-empty child, make it the new root. shared_ptr's assignment operator will first delete the current empty root <-- TODO: NOT TRUE ANYMORE
+       // The root has a sole non-empty child, make it the new root.
        // node pointer before doing the assignment.
-          root = std::move(root->getNonNullChild());  
+          root = std::move(root->getOnlyChild());  
           root->parent = nullptr;   
        }
     }
     
-    /* Parameters 
-     * ==========
+    /* 
+     * Input parameters
+     * ================
      * 
-     *  1. node is the empty 2-node that needs a key/value.
-     *  2. child_index is such that node->parent->children[child_index] == node.
-     *  3. silbing_index is the sibling with two keys/values from which we barrow key/value.
-     *
-        Comments:
-        ---------
-        If the node parameter is not a leaf node, then barrowSiblingKey() was called during a recursive call to fixTree(), and node is an internal node.
+     *  1. pnode is the empty 2-node into which we will move a key, restoring balance to the tree.
+     *  2. child_index is such that: pnode->parent->children[child_index] == pnode.
+     *  3. silbing_index is a 3-node sibling from which we will remove a key as described below.
+      
+       Algorithm 
+       =========
+    
+        pnode is empty. We fix this and restore balance by moving a key into pnode. We redistribute keys between the 3-node sibling (TODO: is it on the left or right), its parent and pnode like this:
+    
+        case 1: parent is a 2-node
+    
+            [90 ]                       [80]    
+            /   \             ==>       / \    keys are rotated to rebalance the tree.   
+           /     \                     /   \   The sibling with two keys now has only one. 
+        [70, 80]  [empty pnode]     [70]  [90]
+    
+        case 2: parent is a 3-node
+    
+            [90,  120]                       [80, 110]             
+            /    |   \              ==>      /    |   \      We restribute keys by rotating them             
+           /     |    \                     /     |    \     The sibling that had two keys now has only one       
+       [70, 80] [110] [empty pnode]      [70]   [90]  [120]
+    
+        Funky special case:
+        -------------------
+    
+        If the node parameter is not a leaf node, then rotate_keys() was called during a recursive call to fixTree(), and node is an internal node.
         A recursive call only occurs after a 2-node is merged with one of its 2-node children. Its other child was deleted from the tree in the previous
         call to fixTree.  This means node has only one non-nullptr child, namely, the merged node created by merge2Nodes() in the prior call to fixTree(). 
         Recursion can be checked by testing if node is a leaf node (as remove always starts with a leaf). If it is an internal node, this is a recursive call,
         and we determine which child--0 or 1--is the non-nullptr child of node. This is done in the shiftChildrenXXX() routines. 
      *
      */                                                              
-    template<class Key, class Value> void tree23<Key, Value>::barrowSiblingKey(Node *pnode, int child_index, int sibling_index) noexcept
+    template<class Key, class Value> void tree23<Key, Value>::rotate_keys(Node *pnode, int child_index, int sibling_index) noexcept
     {
       Node *parent = pnode->parent; 
       Node *sibling = parent->children[sibling_index].get();
     
-     // If node is an internal node, this implies fixTree() has recursed, and node will have only subtree, one non-nullptr child.
+     // If node is an internal node, then we know fixTree() has recursed (because it is always first call for a leaf), and node will have only subtree(TODO: huh, what does only one
+     // subtree even mean--one child?), one non-nullptr child.
      if (parent->isTwoNode()) {
     
          // bring down parent key and its associated value. 
@@ -2968,6 +2982,36 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
       middleChild->connectChild(0 , std::move(sibling->children[2]));
     }
     /*
+     Calls either merge3NodeWith2Node() and returns true, meaning tree is now balances
+     or merge2Nodes() and returns false, meaning tree still not balanced, must call fixTree passing in the parent.
+     
+     */
+    template<class Key, class Value> inline bool tree23<Key, Value>::merge_nodes(Node *pnode, int child_index) noexcept
+    {
+       Node *parent = pnode->parent;
+       bool bRc = false;
+    
+       if (pnode->parent->isThreeNode()) { // If the parent is a 3-node, since we know the sibling(s) are both 2-node, too....
+           
+           // ...we merge one of the parent keys (and its associated value) with one of the sibling. This converts the 3-node parent into a 2-node. We also move the children affected by the
+           // merge appropriately. We can now safely delete pnode from the tree because its parent has been downsize to a 2-node.
+      
+           merge3NodeWith2Node(pnode, child_index);
+                      
+        } else { 
+    
+            // Recursive case.... 
+      
+            // When the parent is a 2-node and pnode's only sibling is a 2-node, we merge the parent's sole key/value with
+            // pnode's sibling locatied at pnode->parent->children[!child_index]. This leaves the parent empty, which we handle recursively 
+            // by calling fixTree() again. 
+            merge2Nodes(pnode, !child_index); 
+            bRc = true;
+        }
+    
+        return bRc; 
+    }
+    /*
      Overview
      ========
      
@@ -2978,15 +3022,19 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
      Promises: Merges one of the keys/values of pnode->parent with one of pnode's 2-node siblings to rebalance the tree. It shifts the children of the
      effected siblings appropriately, transfering ownership of the sole non-nullptr child of pnode, when pnode is an internal node, which only occurs during
      a recursive call to fixTree(). 
+    
+     TODO: How can pnode sometimes have only one non-nullptr child? Is there a way to improved the logic so we don't have such an "strange" case of a node with
+     only one real child when pnode is an internal node, and can we eliminate testing for this special case in each of switch case statements(near the end of each).
      
      */
     template<class Key, class Value> void  tree23<Key, Value>::merge3NodeWith2Node(Node *pnode, int child_index) noexcept
     {
         Node *parent = pnode->parent;
     
-        // If pnode is a leaf, then all children are nullptrs. The non-null child is only needed when pnode is an internal node.
-        std::shared_ptr<Node> soleChild = (!pnode->isLeaf()) ? std::move(pnode->getNonNullChild()) : nullptr; 
-    
+        // If pnode is a leaf, then all children are nullptrs. But if pnode is internal then (TODO: confirm it is a 2-node) has an empty child, and the other child (of the 2-node) is the only
+        // non-empty child.
+        std::shared_ptr<Node> soleChild = (!pnode->isLeaf()) ? std::move(pnode->getOnlyChild()) : nullptr; 
+        
         std::shared_ptr<Node> node2Delete;
     
         // In all three cases below, we are only moving the parent's grandchildren. We also need to move the immediate children of the
@@ -3006,13 +3054,14 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
               parent->children[1]->totalItems = Node::ThreeNode;
               parent->totalItems = Node::TwoNode;
     
-              node2Delete = std::move(parent->children[0]); 
+              node2Delete = std::move(parent->children[0]); // TODO: Can I just do parent->children[0].reset() instead ?
     
-              if (!parent->children[1]->isLeaf()) { // We need to shift the 2 right-most children (of the former 3-node) left since their
+              if (soleChild != nullptr) { // We need to shift the 2 right-most children (of the former 3-node) left since their
 		                                   // parent is now a 2-node.
 	           // move children appropriately. This is the recursive case when pnode is an internal node.
                    parent->children[1]->connectChild(2, std::move(parent->children[1]->children[1])); 
                    parent->children[1]->connectChild(1, std::move(parent->children[1]->children[0])); 
+    
                    parent->children[1]->connectChild(0, std::move(soleChild)); 
 	      }
               
@@ -3034,12 +3083,13 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
     
               node2Delete = std::move(parent->children[1]); 
     
-              if (!parent->children[0]->isLeaf()) {// We still need to shift the children[2] to be children[1] because its parent is now a 2-node.		  
+              if (soleChild != nullptr) {// We still need to shift the children[2] to be children[1] because its parent is now a 2-node.		  
     
 	          // This is the recursive case when pnode is an internal node. We move the sole child of the empty node to the parent's first child,
 	          // making it the 3rd child. 
                   parent->children[0]->connectChild(2, std::move(soleChild)); 
 	      }
+    
               // Move the parent's right children one position left, so the parent has only two children.
               parent->connectChild(1, std::move(parent->children[2]));
              } 
@@ -3056,8 +3106,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
         
               node2Delete = std::move(parent->children[2]); 
     
-              if (!parent->children[1]->isLeaf()) {// If it is a leaf, we don't need to shift the existing children of children[1] because there is no "gap"
-                                                   // to fill.
+              if (soleChild != nullptr) {// If it is a leaf, we don't need to shift the existing children of children[1] because there is no "gap" to fill.
     
                  // Adopt sole child of pnode.  This is the recursive case when pnode is an internal node.
                  parent->children[1]->connectChild(2,  std::move(soleChild)); 
@@ -3108,7 +3157,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
       } 
     
       // Recursive case: This only occurs if fixTree adopted the sole child of pnode. The other child was deleted from the tree and so sibling->children[!child_index] == nullptr.
-      std::shared_ptr<Node>& nonemptyChild = pnode->getNonNullChild();
+      std::shared_ptr<Node>& nonemptyChild = pnode->getOnlyChild();
     
       // Is sibling to the left? 
       if (sibling_index == 0) {

@@ -12,6 +12,9 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
 `github <https://github.com/kkruecke/binary-search-tree>`_.
 
 .. code-block:: cpp 
+
+    #ifndef bst_h_18932492374
+    #define bst_h_18932492374
     
     #include <memory>
     #include <utility>
@@ -20,6 +23,7 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     #include <algorithm>
     #include <stdlib.h>
     #include <initializer_list>
+    #include "value-type.h"
     #include <iostream>  
     #include <exception>
     
@@ -27,25 +31,59 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     template<class Key, class Value> class bstree; // forward declarations of template classes.
     
     template<class Key, class Value> class bstree {
-        
+    
+      public:
+    
+        // Container typedef's used by STL.
+        using key_type   = Key;
+        using mapped_type = Value;
+    
+        using value_type = __value_type<Key, Value>::value_type;// = std::pair<const Key, Value>;  
+        using difference_type = long int;
+        using pointer         = value_type*; 
+        using reference       = value_type&; 
+    
+      private:
        /*
-        * The tree consists of heap-allocated Node nodes managed by std::shared_ptr<Node>'s.
+        * The bstree consists of a tree Nodes managed by std::unique_ptr<Node>, and each Node contains left and right children and 
+          a pair<const Key, Value>. The pair is declared inside a wrapper class __value_type whose assignment operators provide
+          greater convenience. 
         */ 
        class Node {
-        public:   
     
             friend class bstree<Key, Value>;    
-            
-            Node(Key key, const Value& value, Node *ptr2parent=nullptr);
     
-            // We disallow copy construction and assignment...
-            Node(const Node&) = delete;  
-        
-            Node& operator=(const Node&) = delete; 
+        public:   
             
+            Node()
+            {
+                parent = nullptr;
+            }
+         
+            // The copy constructor 
+            Node(const Node& lhs);
+            
+            /* 
+              Do we need constructor or the one below it?
+    
+            Node(const Key& key, const Value& value, Node *parent_in=nullptr) : __vt{key, value}, parent{parent_in}
+            {
+               left = std::make_unique<Node>();    
+               right = std::make_unique<Node>(); 
+    
+               left->parent = right->parent = this;
+            }
+            */
+            
+            Node(const Key& key, const Value& value, Node *parent_in=nullptr) : __vt{key, value}, parent{parent_in}, left{nullptr}, right{nullptr} 
+            {
+            }
+          
+            Node& operator=(const Node&) noexcept; 
+    
             Node(Node&&); // ...but we allow move assignment and move construction.
     
-           ~Node() noexcept;  
+           ~Node() = default; // members __vt, __left and right are all implicitly deleted. 
     
             std::ostream& print(std::ostream& ostr) const noexcept; 
     
@@ -54,41 +92,45 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
                 node.print(ostr);
                 return ostr;
             }
-    
-            // For debugging purposes 
-            const std::shared_ptr<Node>& getLeft() const noexcept { return left; }         
-    
-            const std::shared_ptr<Node>& getRight() const noexcept { return right; }         
-        private:      
             
             Node& operator=(Node&&) noexcept;
             
-        public:    
             constexpr bool isLeaf() const noexcept { return (left == nullptr && right == nullptr) ? true : false; } 
     
-            /* 
-             * Note: Functors passed to bstree<Key, Value>::inOrderTraverse(Functor f) should use these two methods below.
-             * because the functor's function call operator will be passed 'const Node&'
-             */ 
-            constexpr const Key& key() const { return nc_pair.first; }  
-            constexpr       Key& key()       { return nc_pair.first; }  
-            constexpr const Value& value() const noexcept { return const_pair.second; }  
-            
-            constexpr const std::pair<const Key, Value>& pair() const { return const_pair; }  
-            constexpr       std::pair<const Key, Value>& pair()       { return nc_pair; }  
-            
         private:
     
-            Node *parent;
+            __value_type<Key, Value> __vt;  // Convenience wrapper for std::pair<const Key, Value>
+                                            // Has necessary constructors and assignment operators.
                                   
-            union {           
-               std::pair<Key, Value>        nc_pair;  // ...a union eliminates the need to constantly casti const_cast<Key>(p.first) = some_noconst_key
-               std::pair<const Key, Value>  const_pair;  // but allows us to always return this const_pair
-               
-            };   
-     
-            std::shared_ptr<Node> left;
-            std::shared_ptr<Node> right;
+            std::unique_ptr<Node> left;
+            std::unique_ptr<Node> right;
+    
+            Node *parent;
+    
+            const value_type& __get_pair() const
+            {
+                return __vt.__get_value();
+            }
+            
+            value_type& __get_pair() 
+            {
+                return __vt.__get_value();
+            }
+    
+            constexpr const Key& key() const noexcept 
+            {
+               return __get_pair().first; //  'template<typename _Key, typename _Value> struct __value_type' does not have members first and second.
+            } 
+    
+            constexpr const Value& value() const noexcept 
+            { 
+               return __get_pair().second; 
+            }  
+    
+            constexpr Value& value() noexcept 
+            {
+               return __get_pair().second; 
+            } 
         }; 
       
       class NodeLevelOrderPrinter {
@@ -134,47 +176,50 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
       };
     
       private: 
-        std::shared_ptr<Node> root; 
     
-        template<typename Functor> void DoInOrderTraverse(Functor f, const std::shared_ptr<Node>& root) const noexcept;
+        std::unique_ptr<Node> root; 
     
-        template<typename Functor> void DoPostOrderTraverse(Functor f,  const std::shared_ptr<Node>& root) const noexcept;
-        template<typename Functor> void DoPreOrderTraverse(Functor f, const std::shared_ptr<Node>& root) const noexcept;
+        int size;
     
-        void clone_tree(const std::shared_ptr<Node> &src, std::shared_ptr<Node>& dest, const Node *parent) noexcept; 
+        template<typename Functor> void DoInOrderTraverse(Functor f, const std::unique_ptr<Node>& root) const noexcept;
+        template<typename Functor> void DoPostOrderTraverse(Functor f,  const std::unique_ptr<Node>& root) const noexcept;
+        template<typename Functor> void DoPreOrderTraverse(Functor f, const std::unique_ptr<Node>& root) const noexcept;
     
+        void copy_tree(const bstree<Key, Value>& lhs) noexcept;
+    
+        void create_root(const key_type&, const mapped_type&) noexcept;
+     
         const Node *min(const Node *current) const noexcept;
        
         const Node *getSuccessor(const Node *current) const noexcept;
        
-        const std::shared_ptr<Node>& get_shared_ptr(const Node *pnode) const noexcept;
+        const std::unique_ptr<Node>& get_unique_ptr(const Node *pnode) const noexcept;
     
-        const Node *findNode(Key key, const Node *current) const noexcept; 
+        std::pair<bool, const Node *> findNode(const key_type& key, const Node *current) const noexcept; 
     
-        int height(const Node *pnode) const noexcept;
-        int depth(const Node *pnode) const noexcept;
+        int  height(const Node *pnode) const noexcept;
+        int  depth(const Node *pnode) const noexcept;
         bool isBalanced(const Node *pnode) const noexcept;
     
+        void move(bstree<Key, Value>&& lhs) noexcept;
+    
       public:
-        // Container typedef's used by STL.
     
-        using value_type      = std::pair<const Key, Value>; 
-        using difference_type = long int;
-        using pointer         = value_type*; 
-        using reference       = value_type&; 
+        // One other stl typedef.
         using node_type       = Node; 
+      
+        bstree() noexcept : root{nullptr}, size{0} { }
     
-        bstree() noexcept : root{nullptr} { }
-    
-       ~bstree() noexcept;
+       ~bstree() noexcept = default; // does post-order like member destruction
     
         bstree(std::initializer_list<value_type> list) noexcept; 
     
-        void test_invariant() const noexcept;
-    
         bstree(const bstree&) noexcept; 
     
-        bstree(bstree&& lhs) noexcept;
+        bstree(bstree&& lhs) noexcept
+        {
+            move(std::move(lhs)); 
+        }
     
         bstree& operator=(const bstree&) noexcept; 
     
@@ -184,11 +229,66 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     
         bool isEmpty() const noexcept;
     
+        void test_invariant() const noexcept;
+    
         const Value& operator[](Key key) const;
     
         Value& operator[](Key key);
     
-        void insert(Key key, const Value& value) noexcept;
+    /*
+    
+    Some of the std::map insert methods:
+    
+        template< class InputIt >
+        void insert( InputIt first, InputIt last );
+        
+        void insert( std::initializer_list<value_type> ilist );
+        
+        insert_return_type insert(node_type&& nh);
+        
+        iterator insert(const_iterator hint, node_type&& nh);
+        
+        void insert( std::initializer_list<value_type> ilist );
+        
+        insert_return_type insert(node_type&& nh);
+        
+        iterator insert(const_iterator hint, node_type&& nh);
+    
+        template< class InputIt >
+        void insert( InputIt first, InputIt last );
+    */
+    
+        //++std::pair<iterator,bool> insert( const value_type& value );
+        //++std::pair<iterator,bool> insert( value_type&& value );
+        
+    /*
+     From std::map insert_or_assign methods
+    
+        template <class M>
+        pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
+    
+        template <class M>
+        pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
+    
+        template <class M>
+        iterator insert_or_assign(const_iterator hint, const key_type& k, M&& obj);
+    
+        template <class M>
+        iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
+    
+    
+    */
+        void insert(std::initializer_list<value_type> list) noexcept; 
+    
+        void insert_or_assign(const key_type& key, const mapped_type& value) noexcept; // TODO: std::pair<cont Key, Value>
+      
+        // TODO: Add methods that take a pair<const Key, Value>
+    
+        Value& operator[](const Key& key) noexcept; 
+    
+        const Value& operator[](const Key& key) const noexcept; 
+    
+        // TODO: Add emplace() methods and other methods like std::map have, like insert_or_assign().
     
         void remove(Key key) noexcept;
     
@@ -206,35 +306,80 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     
         int height() const noexcept;
         bool isBalanced() const noexcept;
+    
+        friend std::ostream& operator<<(std::ostream& ostr, const bstree<Key, Value>& tree) noexcept
+        {
+           tree.printlevelOrder(ostr);  
+           return ostr;
+        }
     };
     
-    template<class Key, class Value> bstree<Key, Value>::Node::~Node() noexcept 
+    template<class Key, class Value>
+    bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr}, right{nullptr}
     {
-       std::cout << "~Node<Key, Value>: {" << key() << ", " << value() << "} " << std::endl;
+       if (lhs.parent == nullptr) // If lhs is the root, then set parent to nullptr.
+           parent = nullptr;
+    
+       // The make_unique<Node> calls will in turn recursively invoke the constructor again, resulting in the entire tree rooted at
+       // lhs being copied.
+       if (lhs.left  != nullptr) { 
+    
+           left = std::make_unique<Node>(*lhs.left);    
+           left->parent = this;
+       }
+       
+       if (lhs.right != nullptr) {
+    
+           right = std::make_unique<Node>(*lhs.right); 
+           right->parent = this;
+       }
     }
     
-    template<class Key, class Value> inline bstree<Key, Value>::bstree(std::initializer_list<value_type> list) noexcept 
+    template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key, Value>::Node::operator=(const typename bstree<Key, Value>::Node& lhs) noexcept
     {
-      for (auto& pair_ : list) {
+       if (&lhs == this) return *this;
     
-          insert(pair_.first, pair_.second);
-     }
+       __vt = lhs.__vt;
+    
+       if (lhs.parent == nullptr) // If we are copying a root pointer, then set parent.
+           parent = nullptr;
+    
+       // The make_unique<Node> calls below results in the entire tree rooted at lhs being copied.
+       if (lhs.left  != nullptr) { 
+    
+           left = std::make_unique<Node>(*lhs.left);    
+           left->parent = this;
+       }
+       
+       if (lhs.right != nullptr) {
+    
+           right = std::make_unique<Node>(*lhs.right); 
+           right->parent = this;
+       }
+      
+       return *this;
     }
     
-    template<class Key, class Value> inline bstree<Key, Value>::bstree(const bstree<Key, Value>& lhs) noexcept 
+    template<class Key, class Value> inline bstree<Key, Value>::bstree(std::initializer_list<value_type> list)  noexcept : bstree()
+    {
+       insert(list);
+    }
+    
+    template<class Key, class Value> inline bstree<Key, Value>::bstree(const bstree<Key, Value>& lhs) noexcept
     { 
-      root = lhs.root;
+       root = std::make_unique<Node>(*lhs.root); 
+       size = lhs.size;
     }
     
-    template<class Key, class Value> inline bstree<Key, Value>::bstree(bstree<Key, Value>&& lhs) noexcept : root{std::move(lhs.root)} // move constructor
+    template<class Key, class Value> inline void bstree<Key, Value>::move(bstree<Key, Value>&& lhs) noexcept  
     {
+      root = std::move(lhs.root); 
     
+      size = lhs.size;
+    
+      lhs.size = 0;
     }
     
-    template<class Key, class Value> inline bstree<Key, Value>::~bstree() noexcept 
-    {
-    
-    }
     
     template<class Key, class Value> bstree<Key, Value>& bstree<Key, Value>::operator=(const bstree<Key, Value>& lhs) noexcept
     {
@@ -243,8 +388,11 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
           return *this;
       }
     
-      root = lhs.root; 
-      
+      // This will implicitly delete all Nodes in 'this', and set root to a duplicate tree of Nodes.
+      root = std::make_unique<Node>(*lhs.root); 
+     
+      size = lhs.size; 
+    
       return *this;
     }
     
@@ -252,33 +400,12 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     {
       if (this == &lhs) return *this;
       
-      root = std::move(lhs.root);
+      move(std::move(lhs)); 
     
       return *this;
     }
     
-    template<class Key, class Value> bstree<Key, Value> bstree<Key, Value>::clone() const noexcept
-    {
-      bstree<Key, Value> tree;
-    
-      clone_tree(root, tree.root, nullptr); 
-    
-      return tree;
-    }
-    
-    // Do pre-order traversal, using recursion and clone the source node
-    template<class Key, class Value> void bstree<Key, Value>::clone_tree(const std::shared_ptr<Node>& src, std::shared_ptr<Node>& dest, const typename bstree<Key, Value>::Node *parent) noexcept
-    {
-      if (src == nullptr) return;
-      
-      dest = std::make_shared<Node>(src->key(), src->value(), const_cast<Node*>(parent));
-      
-      clone_tree(src->left, dest->left, dest.get());
-      clone_tree(src->right, dest->right, dest.get());
-    }
-    
-    
-    template<class Key, class Value> std::ostream& bstree<Key, Value>::Node::print(std::ostream& ostr) const noexcept
+    template<class Key, class Value> inline std::ostream& bstree<Key, Value>::Node::print(std::ostream& ostr) const noexcept
     {
       ostr << "[ " << key() << ", " << value() << "] " << std::flush;  
       return ostr; 
@@ -289,7 +416,7 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     {
        std::queue< std::pair<const Node*, int> > queue; 
     
-       auto proot = root.get();
+       Node* proot = root.get();
     
        if (proot == nullptr) return;
           
@@ -300,6 +427,12 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
        queue.push(std::make_pair(proot, initial_level));
     
        while (!queue.empty()) {
+    
+           /*
+            std::pair<const Node *, int> pair_ = queue.front();
+            const Node *current = pair_.first;
+            int current_level = pair_.second;
+           */
     
             auto[current, current_level] = queue.front(); // C++17 unpacking.
     
@@ -323,13 +456,13 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
       
       ostr << std::flush;
     }
-    
+    /*
     template<class Key, class Value> bstree<Key, Value>::Node::Node(Key key, const Value& value, Node *ptr2parent)  : parent{ptr2parent}, left{nullptr}, right{nullptr}, \
-            nc_pair{key, value}
+            __vt{key, value}
     {
     }
-    
-    template<class Key, class Value> inline bstree<Key, Value>::Node::Node(Node&& node) : parent{node.ptr2parent}, left{std::move(node.left)}, right{std::move(node.right)}, nc_pair{std::move(node.nc_pair)}
+    */
+    template<class Key, class Value> inline bstree<Key, Value>::Node::Node(Node&& node) : __vt{std::move(node.__vt)}, left{std::move(node.left)}, right{std::move(node.right)}, parent{node.ptr2parent} 
     {
     }
     
@@ -338,11 +471,13 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
       return root == nullptr ? true : false;
     }
     
-    template<class Key, class Value> const std::shared_ptr<typename bstree<Key, Value>::Node>& bstree<Key, Value>::get_shared_ptr(const Node *pnode) const noexcept
+    /*
+     * Input:  pnode is a raw Node *.
+     * Return: A reference to the unique_ptr that manages pnode.
+     */
+    template<class Key, class Value> const std::unique_ptr<typename bstree<Key, Value>::Node>& bstree<Key, Value>::get_unique_ptr(const Node *pnode) const noexcept
     {
-      // Get the shared_ptr<Node> that manages the raw pointer ancester. 
-    
-      if (pnode->parent == nullptr) { // Is ancestor the root? 
+      if (pnode->parent == nullptr) { // Is pnode the root? 
     
          return root; 
     
@@ -352,7 +487,7 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
       }
     }
     
-    template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoInOrderTraverse(Functor f, const std::shared_ptr<Node>& current) const noexcept
+    template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoInOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
     {
        if (current == nullptr) {
     
@@ -361,26 +496,26 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     
        DoInOrderTraverse(f, current->left);
     
-       f(std::const_pointer_cast<const Node>(current)->pair()); 
+       f(current->__get_pair()); 
     
        DoInOrderTraverse(f, current->right);
     }
     
-    template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoPreOrderTraverse(Functor f, const std::shared_ptr<Node>& current) const noexcept
+    template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoPreOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
     {
        if (current == nullptr) {
     
           return;
        }
     
-       f(std::const_pointer_cast<const Node>(current)->pair()); 
+       f(current->__get_pair()); 
     
        DoPreOrderTraverse(f, current->left);
     
        DoPreOrderTraverse(f, current->right);
     }
     
-    template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoPostOrderTraverse(Functor f, const std::shared_ptr<Node>& current) const noexcept
+    template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoPostOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
     {
        if (current == nullptr) {
     
@@ -391,28 +526,37 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     
        DoPostOrderTraverse(f, current->right);
     
-       f(std::const_pointer_cast<const Node>(current)->pair()); 
+       f(current->__get_pair()); 
     }
-    
     
     /*
       return a std::pair<bool, const Node *>: pair.first  is true, if found; and pair.second points to the found node; otherwise, <false, nullptr> is returned.
      */
     template<class Key, class Value> inline std::pair<bool, const typename bstree<Key, Value>::Node *> bstree<Key, Value>::find(Key key) const noexcept
     { 
-        const Node *node = findNode(key, root.get());
+        auto [bBool, pnode] = findNode(key, root.get());
     
-        return std::make_pair(node != nullptr, (node != nullptr) ? node : nullptr); 
+        return {pnode != nullptr, (pnode != nullptr) ? pnode : nullptr}; 
     }
-    
-    template<class Key, class Value> const typename bstree<Key, Value>::Node *bstree<Key, Value>::findNode(Key key, const typename bstree<Key, Value>::Node *current) const noexcept
+    /*
+     * Returns pair<bool, const Node *>, where
+     * If key found, {true, Node * of found node}
+     * If key not node found, {false, Node * of leadf node where insert should occur}
+    */
+    template<class Key, class Value> std::pair<bool, const typename bstree<Key, Value>::Node *> bstree<Key, Value>::findNode(const key_type& key, const typename bstree<Key, Value>::Node *current) const noexcept
     {
-      while (current != nullptr && key != current->key()) {
+      const Node *parent = nullptr;
+    
+      while (current != nullptr) {
+    
+         if (current->key() ==  key) return {true, current}; 
+    
+          parent = current;
     
           current = (key < current->key()) ? current->left.get() : current->right.get(); 
       }
       
-      return current;
+      return {false, parent}; 
     }
     
     template<class Key, class Value> const typename bstree<Key, Value>::Node *bstree<Key, Value>::min(const typename bstree<Key, Value>::Node *current) const noexcept
@@ -428,7 +572,6 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     /*
       If the right subtree of node current is nonempty, then the successor of x is just the left-most node in the right subtree, which is found by calling min(current.right.get()). 
       On the other hand, if the right subtree of node x is empty and x has a successor y, then y is the lowest ancestor of x whose left child is also an ancestor of x.
-    
       Returns: The pointer to successor node or nullptr if there is no successor (because the input node was the largest in the tree)
      
      */
@@ -447,60 +590,59 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
       }
       return ancestor;
     }
-    /*
-     * destroy_tree(shared_ptr<Node>&) Explicitly destroys tree during post order tree traversal; uses recursion and deleting nodes as they are visited. 
-     */
-    /*--
-    template<class Key, class Value> void bstree<Key, Value>::destroy_tree(std::shared_ptr<Node> &current) noexcept 
+    
+    template<class Key, class Value> void bstree<Key, Value>::insert(std::initializer_list<value_type> list) noexcept 
     {
-      if (current == nullptr) {
+       for (auto& [key, value] : list) 
     
-          return;
-      }
-      
-      destroy_tree(current->left);
-      destroy_tree(current->right);
-    
-      current.reset(); // deletes the underlying raw pointer. 
+          insert_or_assign(key, value);
     }
-    */
     
+    template<class Key, class Value> inline void bstree<Key, Value>::create_root(const key_type& key, const mapped_type& value) noexcept
+    {
+        root = std::make_unique<Node>(key, value);
+        ++size;    
+    }
     /*
      Like the procedure find(), insert() begins at the root of the tree and traces a path downward. The pointer x traces the path, and the pointer parent is maintained as the parent of current.
      The while loop causes these two pointers to move down the tree, going left or right depending on the comparison of key[pnode] with key[x], until current is set to nullptr. This nullptr
-     occupies the position where we wish to place the input item pnode. The subsequent lines et the pointers that cause pnode to be inserted.
+     occupies the position where we wish to place the input item pnode. 
     */
-    template<class Key, class Value> void bstree<Key, Value>::insert(Key key, const Value& value) noexcept
-    {  
-        Node *parent = nullptr;
-    
-        Node *current = root.get();
-    
-        while (current != nullptr) {
-    
-             if (current->key() == key) return;
-    
-             parent = current;
-              
-             current = key < current->key() ? current->left.get() : current->right.get();
+    template<class Key, class Value> void bstree<Key, Value>::insert_or_assign(const key_type& key, const mapped_type& value) noexcept
+    {
+        if (size == 0) { // tree is empty
+            
+            create_root(key, value);
+        
+            return; // TODO: return iterator?
         }
     
-        if (std::shared_ptr<Node> pnode = std::make_shared<Node>(key, value, parent); parent == nullptr) {
+        if (auto [bFound, pnode] = findNode(key, root.get()); bFound == true) {
     
-            root = std::move(pnode);
+             const_cast<Node *>(pnode)->value() = value;        
+             
+             return; // TODO: Return iterator?
     
-        } else if (pnode->key() < parent->key() ) {
-    
-              parent->left = std::move(pnode); 
-    
+        // else if Not found, insert. pnode is the leaf node that will be the parent of the new node.
         } else {
+            
+           auto parent = const_cast<Node *>(pnode);
+            
+           std::unique_ptr<Node> pnew_node = std::make_unique<Node>(key, value, parent); 
     
-            parent->right = std::move(pnode);
+           if (pnew_node->key() < parent->key()) 
+               parent->left = std::move(pnew_node); 
+           else 
+               parent->right = std::move(pnew_node);
         }
+    
+        ++size;
+    
+        // TODO: return iterator ??
     }
     /*
      * We handle three possible cases:
-     * 1. If the node to remove is a leaf, we simply delete it by calling shared_ptr<Node>'s reset method. 
+     * 1. If the node to remove is a leaf, we simply delete it by calling unique_ptr<Node>'s reset method. 
      * 2. If the node to remove is an internal node, we get its in-order successor and move its pair<Key, Value> into node, and then delete the leaf node successor
      * 3. If the node to remove has only one child, we adjust the child pointer of the parent so it will point to this child. We do this by using unqiue_ptr<Node>'s move assignment operator, which has the 
      *    side effect of also deleting the moved node's underlying memory. We then must adjust the parent pointer of the newly 'adopted' child.
@@ -511,32 +653,30 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
       
       if (pnode == nullptr) return;
     
-      // Get the managing shared_ptr<Node> whose underlying raw point is node? 
-      std::shared_ptr<Node>& node = const_cast<std::shared_ptr<Node>&>( get_shared_ptr(pnode) );
+      // Get the managing unique_ptr<Node> whose underlying raw point is node? 
+      std::unique_ptr<Node>& node = const_cast<std::unique_ptr<Node>&>( get_unique_ptr(pnode) );
     
-      //std::shared_ptr<Node>& node = (pnode->parent->left.get() == pnode) ? pnode->parent->left : pnode->parent->right;
-            
+      --size; 
+    
       // case 1: If the key is in a leaf, simply delete the leaf. 
       if (pnode->isLeaf()) { 
           
           node.reset();     
-          
           return;
       }  
     
       if (pnode->left != nullptr && pnode->right != nullptr) {// case 2: The key is in an internal node.   
     
-          std::shared_ptr<Node>& successor = getSuccessor(pnode);
+          std::unique_ptr<Node>& successor = getSuccessor(pnode);
     
-          node->nc_pair = std::move(successor->nc_pair);  // move the successor's key and value into node. Do not alter node's parent or left and right children.
+          node->__vt = std::move(successor->__vt);  // move the successor's key and value into node. Do not alter node's parent or left and right children.
     
           successor.reset(); // safely delete leaf node successor
              
       }  else { 
     
           // case 3: The key is in a node with only one child. 
-    
-          std::shared_ptr<Node>& successor = (node->left != nullptr) ? node->left : node->right;
+          std::unique_ptr<Node>& successor = (node->left != nullptr) ? node->left : node->right;
     
           Node *parent = node->parent;
                 
@@ -633,3 +773,5 @@ by Thomas H. Cormen, Charles E. Leiserson, and Ronald L. Rivest" has a complete 
     
        return true; // All Nodes were balanced.
     }
+    
+    #endif

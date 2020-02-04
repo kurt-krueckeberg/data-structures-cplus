@@ -202,20 +202,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           using pointer         = value_type*; 
           using reference       = value_type&; 
     
-    
-       /*
-       * This union eliminates repetitive const_cast<Node*>: const_cast<Key>(p.first) = some_noconst_key;
-       * by holding two different types of pairs: _constkey_pair, where member first is 'const Key'; and _pair, where  
-       * first is 'Key'.
-       *
-       * Note 1: Since anonymous unions do not implicitly destruct their members, we must explicitly call their destructors in 
-       *         KeyValue::~KeyValue().
-       * Note 2: Defining a user-declared destructor causes the default move constructor and move assignment to be created, so
-       *         we explictily declare and defined them.
-       */
-       
-      
-       class Node; // Forward feference. 
+     
+       class Node; // Forward reference. 
        
        class Node { 
           /*

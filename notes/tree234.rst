@@ -272,16 +272,16 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
                 // std::cout << "~Node(): " << *this << std::endl; 
              }
               
-             explicit Node(const Key& small, const Value& value, Node *in_parent=nullptr) noexcept : totalItems{1}, parent{in_parent}
+             Node(const Key& small, const Value& value, Node *in_parent=nullptr) noexcept : totalItems{1}, parent{in_parent}
              {
                 keys_values[0] = {small, value};      
     
                 // Note: This ctor implicitly set children to nullptr 
              } 
           
-             explicit Node(const Node& node) noexcept;
+             Node(const Node& node) noexcept;
     
-             Node(__value_type<Key, Value>&& key_value) noexcept;
+             explicit Node(__value_type<Key, Value>&& key_value) noexcept;
     
              Node(Node&&) = delete; 
         
@@ -539,18 +539,20 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
               return i; 
            }
     
-           constexpr reference dereference() noexcept 
+           constexpr reference dereference() const noexcept 
            { 
-               return const_cast<Node *>(cursor)->keys_values[key_index].__get_value(); 
+               auto non_const_current = const_cast<Node *>(current);
+    
+               return non_const_current->keys_values[key_index].__get_value(); 
            } 
        
           public:
     
+           explicit iterator(tree234<Key, Value>&); 
+    
            iterator(const iterator& lhs) = default; 
           
            iterator(iterator&& lhs); 
-    
-           explicit iterator(tree234<Key, Value>&); 
           
            bool operator==(const iterator& lhs) const;
            
@@ -582,17 +584,15 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
               return tmp;
            } 
            
-           reference operator*() noexcept 
+           reference operator*() const noexcept 
            { 
                return dereference(); 
            } 
           
-           const std::pair<const Key, Value>& operator*() const noexcept 
+           pointer operator->() const noexcept
            { 
-               return dereference(); 
-           }
-           
-           typename tree234<Key, Value>::value_type *operator->() noexcept;
+              return const_cast<const pointer>( &(dereference()) );
+           } 
            
            friend std::ostream& operator<<(std::ostream& ostr, const iterator& iter)
            {
@@ -607,8 +607,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           public:
           using difference_type   = std::ptrdiff_t; 
           using value_type        = tree234<Key, Value>::value_type; 
-          using reference	      = const value_type&; 
-          using pointer           = const value_type*;
+          using reference	      = const tree234<Key, Value>::value_type&; 
+          using pointer           = const tree234<Key, Value>::value_type*;
           
           using iterator_category = std::bidirectional_iterator_tag; 
 				              
@@ -619,10 +619,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           
            const_iterator(const tree234<Key, Value>& lhs, int i); // called by end()
               
-           constexpr const std::pair<const Key, Value>& dereference() const noexcept 
+           reference dereference() const noexcept 
            { 
-               
-               //return iter.cursor->constkey_pair(iter.key_index); 
                return iter.cursor->keys_values[iter.key_index].__get_value(); 
            }
            
@@ -640,6 +638,16 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            bool operator==(const const_iterator& lhs) const;
            bool operator!=(const const_iterator& lhs) const;
            
+           reference  operator*() const noexcept 
+           {
+              return dereference(); 
+           } 
+          
+           pointer operator->() const noexcept
+           {
+             return &this->operator*(); 
+           } 
+     
            const_iterator& operator++() noexcept 
            {
               iter.increment();
@@ -665,19 +673,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
               iter.decrement();
               return tmp;
            }
-          
-           const std::pair<const Key,Value>&  operator*() const noexcept 
-           {
-             return dereference(); 
-           } 
-          
-           const std::pair<const Key, Value> *operator->() const noexcept { return &this->operator*(); } 
-           
+                
            friend std::ostream& operator<<(std::ostream& ostr, const const_iterator& it)
            {
               return it.iter.print(ostr);  
            } 
-    
        };
        
        iterator begin() noexcept;  
@@ -786,7 +786,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<typename Key, typename Value> inline tree234<Key, Value>::tree234(const tree234<Key, Value>& lhs) noexcept
     {
        // The Node(const Node&) will copy the entire tree rooted at lhs.get(). 
-       
+    
        root = std::make_unique<Node>(*lhs.root); 
        tree_size = lhs.tree_size;
     }
@@ -1558,6 +1558,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            } else {
      
                keys_values[i + 1].__ref() = std::make_pair<const key_type&, const mapped_type&>(lhs_key, lhs_value);
+    
              ++totalItems;        // increase the total item count
                return i + 1;      // return index of inserted key.
            } 

@@ -11,6 +11,7 @@ Notes on Data Structures and Algorithms in C++
    notes/heap.rst
    notes/radix-sort.rst
    notes/bst.rst
+   notes/tree-iteration.rst
    notes/tree23.rst
    notes/tree234.rst
    notes/rb-tree.rst

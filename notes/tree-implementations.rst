@@ -15,7 +15,7 @@ double checked for accurracy):
 
 .. code-blocK:: cpp
 
-    template<typenameT> boolTree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
+    template<typenameT> bool Tree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
     {
         if (p != nullptr && x < p->key) 
            return remove(x, p->left);

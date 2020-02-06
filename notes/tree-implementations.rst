@@ -25,6 +25,8 @@ double checked for accurracy):
     
         else if (p != nullptr && p->key == x) { // found the key
     
+            // 1. If p has only one child (that is not nullptr), then we can remove node p immediately
+ 
             // If p doesn't have a left child, then...
             if (p->left == nullptr) 
 
@@ -36,17 +38,19 @@ double checked for accurracy):
 
                  // ...remove p by replacing it with left child
                  p = p->left; 
-    
+            
+            // 2. No, p has two children (htat aren't nullptr). Swap the key with its in-order predecessor
+
             else { // p is an internal node with two children. 
     
               std::shared_ptr<Node> q = p->left;
     
-              while (q->right != nullptr) 
+              while (q->right != nullptr) // locate predecessor
                      q = q->right;
     
-               p->key = q->key; // Swap successor with found key?
+               p->key = q->key; // Swap its key with p's key and...
     
-               remove(q->key, p->left);
+               remove(q->key, p->left); // delete the swapped key, which is x. Start searching at p->left, the root of the in-order predessor.  
             }
 
             return true;

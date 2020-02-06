@@ -1,8 +1,8 @@
 Tree Design Discussion Links
 ============================
 
-``std::shared_ptr` Use 
-~~~~~~~~~~~~~~~~~~~~~~
+Using ``std::shared_ptr`` Discussion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * `International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3: Implementation of Binary Search Trees ViaSmart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_
 * Bartosz Milewski's Red Black Tree Blog Post and Implementations:  

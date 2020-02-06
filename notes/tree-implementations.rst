@@ -17,30 +17,34 @@ double checked for accurracy):
 
     template<typenameT> bool Tree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
     {
-        if (p != nullptr && x < p->key) 
+        if (p != nullptr && x < p->key) // key is less than current node and we still have nodes to search 
            return remove(x, p->left);
     
-        else if (p != nullptr && x > p->key)
+        else if (p != nullptr && x > p->key)// key is greater than current node and we still have nodes to search 
            return remove(x, p->right);
     
-        else if (p != nullptr && p->key == x) {
+        else if (p != nullptr && p->key == x) { // found the key
     
+            // If p doesn't have a left child, then...
             if (p->left == nullptr) 
-    
-                p = p->right; // removes p
-    
+
+                // ...remove p by replacing it with right child
+                p = p->right; 
+
+            // If p doesn't have a right child, then...
             else if (p->right == nullptr) 
+
+                 // ...remove p by replacing it with left child
+                 p = p->left; 
     
-                 p = p->left; // removes p
-    
-            else {
+            else { // p is an internal node with two children. 
     
               std::shared_ptr<Node> q = p->left;
     
               while (q->right != nullptr) 
                      q = q->right;
     
-               p->key = q->key;
+               p->key = q->key; // Swap successor with found key?
     
                remove(q->key, p->left);
             }

@@ -5,7 +5,49 @@ Using ``std::shared_ptr`` Discussion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Implementation of Binary Search Trees Via Smart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses in-depth the pros and cons of using
-``std::unique_ptr`` versus ``std::shared_ptr``. It discusses how the recursive nature of a particular implementation of the remove algorithm implies ``unique_ptr`` won't work and ``shared_ptr`` must be used.
+``std::unique_ptr`` versus ``std::shared_ptr``. The article states::
+
+    In this particular case, however, it is necessary to start from the very beginning with shared_ptr, because being recursive
+    by definition, binary trees have to be implemented with smart pointers, and this you cannot do without shared ownership.
+
+This seems to mean that the particular recursive algorithm implementation used of the remove algorithm (which is the algorithm shown in the article) won't work with ``std::unique_ptr``. I haven't thought through his algorithm to confirm that this is true. The algorithm is (it needs to
+double checked for accurracy):
+
+.. code-blocK:: cpp
+
+    template<typenameT> boolTree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
+    {
+        if (p != nullptr && x < p->key) 
+           return remove(x, p->left);
+    
+        else if (p != nullptr && x > p->key)
+           return remove(x, p->right);
+    
+        else if (p != nullptr && p->key == x) {
+    
+            if (p->left == nullptr)
+    
+                p = p->right;
+    
+            else if (p->right == nullptr)
+    
+                 p = p->left;
+    
+            else {
+    
+              std::shared_ptr<Node> q = p->left;
+    
+              while (q->right != nullptr) 
+                     q = q->right;
+    
+               p->key = q->key;
+    
+               remove(q->key, p->left);
+            }
+            return true;
+        }
+        return false;
+    }
 
 Bartosz Milewski's blog post `Functional Data Structures in C++: Trees <https://.com/2013/11/25/functional-data-structures-in-c-trees/>`_ also suses ``std::shared_ptr`` in its implementation. The accompanying implementation is on `github <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_.
 

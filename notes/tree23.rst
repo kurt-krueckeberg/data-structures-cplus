@@ -40,8 +40,6 @@ Deletetion
 
 We always want to begin the deletion process from a leaf (it’s just easier this way). Hence, for deleting an internal node, we first exchange its value with the leaf inorder successor and then delete the key from the leaf.
 
-.. todo:: See ~/Documents/data-structures/2-3-Trees-2-3-4-Trees.pdf
-
 .. code-block:: cpp 
 
     #ifndef tree23_h_18932492374

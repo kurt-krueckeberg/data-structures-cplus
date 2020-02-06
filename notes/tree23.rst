@@ -78,7 +78,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
           using key_type   = Key;
           using mapped_type = Value;
       
-          using value_type = __value_type<Key, Value>::value_type;// = std::pair<const Key, Value>;  
+          using value_type = typename __value_type<Key, Value>::value_type;// = std::pair<const Key, Value>;  
           using difference_type = long int;
           using pointer         = value_type*; 
           using reference       = value_type&; 
@@ -177,6 +177,16 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
                 static const int NotFoundIndex = -1;
                     
                 std::array<__value_type<Key, Value>, 2> keys_values;
+    
+                value_type& get_value(int i) noexcept
+                {
+                   return keys_values[i].__get_value();
+                }
+    
+                const value_type& get_value(int i) const noexcept
+                {
+                   return keys_values[i].__get_value();
+                }
        
                 std::array<std::unique_ptr<Node>, 3> children;
        
@@ -373,8 +383,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
        void seekToLargest();    
     
       public:
-        // For STL compatibility, there are the required container "typedef's"/using.
-    
+         
         using node_type       = Node; 
     
        /*  enum iterator_position represents one of the three possible finite states: 
@@ -1852,7 +1861,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
           case 1: // two node
                 DoInOrderTraverse(f, current->children[0].get());
        
-                f(current->keys_values[0].__get_value());   
+                f(current->get_value(0));   
     
                 DoInOrderTraverse(f, current->children[1].get());
                 break;
@@ -1860,11 +1869,11 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
           case 2: // three node
                 DoInOrderTraverse(f, current->children[0].get());
     
-                f(current->keys_values[0].__get_value());
+                f(current->get_value(0));
     
                 DoInOrderTraverse(f, current->children[1].get());
      
-                f(current->keys_values[1].__get_value());
+                f(current->get_value(1));
     
                 DoInOrderTraverse(f, current->children[2].get());
                 break;
@@ -1880,7 +1889,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
        switch (current->getTotalItems()) {
     
           case 1: // two node
-                f(current->keys_values[0].__get_value());   
+                f(current->get_value(0));   
     
                 DoPreOrderTraverse(f, current->children[0].get());
      
@@ -1888,13 +1897,13 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
                 break;
     
           case 2: // three node
-                f(current->keys_values[0].__get_value());
+                f(current->get_value(0));
     
                 DoPreOrderTraverse(f, current->children[0].get());
     
                 DoPreOrderTraverse(f, current->children[1].get());
      
-                f(current->keys_values[1].__get_value());
+                f(current->get_value(1));
     
                 break;
        }
@@ -1914,7 +1923,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
     
                 DoPostOrderTraverse(f, current->children[1].get());
      
-                f(current->keys_values[0].__get_value());   
+                f(current->get_value(0));   
                 break;
     
           case 2: // three node
@@ -1922,11 +1931,11 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
     
                 DoPostOrderTraverse(f, current->children[1].get());
     
-                f(current->keys_values[0].__get_value());
+                f(current->get_value(0));
     
                 DoPostOrderTraverse(f, current->children[2].get());
      
-                f(current->keys_values[1].__get_value());
+                f(current->get_value(1));
                 break;
        }
     }
@@ -2243,7 +2252,7 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
      */
     template<class Key, class Value> void tree23<Key, Value>::Node::convertTo3Node(const Key& new_key, const Value& new_value, std::unique_ptr<Node> newChild) noexcept
     {
-      auto to_insert = make_pair<const int&, const int&>(new_key, new_value);
+      auto to_insert = std::pair<const int&, const int&>(new_key, new_value);
     
       if (key(0) > new_key) {
     

@@ -10,7 +10,7 @@ Using ``std::shared_ptr`` Discussion
     In this particular case, however, it is necessary to start from the very beginning with shared_ptr, because being recursive
     by definition, binary trees have to be implemented with smart pointers, and this you cannot do without shared ownership.
 
-This seems to mean that the particular recursive algorithm implementation used of the remove algorithm (which is the algorithm shown in the article) won't work with ``std::unique_ptr``. I haven't thought through his algorithm to confirm that this is true. The algorithm is (it needs to
+This seems to mean that the recursive algorithm implementation used for the remove algorithm (whose source code is in the article) won't work with ``std::unique_ptr``. I haven't thought through his algorithm to confirm that this is true. The algorithm is (it needs to
 double checked for accurracy):
 
 .. code-blocK:: cpp
@@ -25,13 +25,13 @@ double checked for accurracy):
     
         else if (p != nullptr && p->key == x) {
     
-            if (p->left == nullptr)
+            if (p->left == nullptr) 
     
-                p = p->right;
+                p = p->right; // removes p
     
-            else if (p->right == nullptr)
+            else if (p->right == nullptr) 
     
-                 p = p->left;
+                 p = p->left; // removes p
     
             else {
     
@@ -44,8 +44,10 @@ double checked for accurracy):
     
                remove(q->key, p->left);
             }
+
             return true;
         }
+
         return false;
     }
 

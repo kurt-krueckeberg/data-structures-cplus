@@ -4,7 +4,7 @@ Tree Design Discussion Links
 Using ``std::shared_ptr`` Discussion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Implementation of Binary Search Trees Via Smart Pointers (from International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ discusses in-depth the pros and cons of using
+`Implementation of Binary Search Trees Via Smart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses in-depth the pros and cons of using
 ``std::unique_ptr`` versus ``std::shared_ptr``. It discusses how the recursive nature of a particular implementation of the remove algorithm implies ``unique_ptr`` won't work and ``shared_ptr`` must be used.
 
 Bartosz Milewski's blog post `Functional Data Structures in C++: Trees <https://.com/2013/11/25/functional-data-structures-in-c-trees/>`_ also suses ``std::shared_ptr`` in its implementation. The accompanying implementation is on `github <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_.

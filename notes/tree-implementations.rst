@@ -149,7 +149,7 @@ and the **remove** method is implemented
 
 would not compile. But with ``shared_ptr`` a clear recursive remove algorithm like that able can easily be implemented.
 
-The complete code is on `github <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
+The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
 
 Tree Iterator Implementation Discussions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

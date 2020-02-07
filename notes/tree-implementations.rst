@@ -12,7 +12,7 @@ Bartosz Milewski's blog post `Functional Data Structures in C++: Trees <https://
 shared_ptr Implementation of Binary Search Tree
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Some recursive binary search tree algorithms cannot easily be implemented when the nest Node class uses ``unique_ptr`` for ``left`` and ``right``:
+Some recursive binary search tree algorithms cannot be as easily implemented when the Node class uses ``unique_ptr`` for ``left`` and ``right``, so ``shared_ptr`` is used, for example:
 
 .. code-block:: cpp
 
@@ -26,7 +26,7 @@ Some recursive binary search tree algorithms cannot easily be implemented when t
             //..snip
         };
         
-In the sbtree class below, in which Node uses ``shared_ptr`` instead, the **remove** method can be implemented recursively using ``std::shared_ptr<Node>&``. The sbtree class looks like this
+In the sbtree class, Node uses ``shared_ptr``, and the **remove** method can be easily implemented recursively using a ``std::shared_ptr<Node>&`` parameter. The sbtree class looks like this
 
 .. code-block:: cpp
 
@@ -76,7 +76,7 @@ In the sbtree class below, in which Node uses ``shared_ptr`` instead, the **remo
         const Node* find(const T&);
     };
     
-and the **remove** method is implemented
+and the **remove** method is implemented below
 
 .. code-block:: cpp
 
@@ -129,7 +129,7 @@ and the **remove** method is implemented
        return false;
     }
 
-**remove** could not be implemented like this if we had used ``unique_ptr`` instead. This section of its code
+**remove** could not be implemented like this if we had used ``unique_ptr`` instead. This section of its code, for example,
 
 .. code-block:: cpp
 
@@ -147,9 +147,15 @@ and the **remove** method is implemented
 
     return true;
 
-would not compile. But with ``shared_ptr`` a clear recursive remove algorithm like that able can easily be implemented.
+would not compile. But with ``shared_ptr`` a clear, recursive remove algorithm can easily be implemented.
 
 The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
+
+Downside
+^^^^^^^^
+
+The downside to ``shared_ptr`` is that trees which are copies are Node. This becomes a problem if the tree interface allows the associated value of a key to altered, as, for example, ``T& operator[]( const Key& key )``.
+Then a ``shared_ptr`` can't be used.
 
 Tree Iterator Implementation Discussions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

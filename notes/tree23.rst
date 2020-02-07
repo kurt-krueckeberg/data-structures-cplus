@@ -58,7 +58,6 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
     #include <utility>
     #include <algorithm>
     #include <tuple>
-    //#include "debug.h"
     #include "value-type.h"
     
     template<class Key, class Value> class tree23; // This forward declaration... 

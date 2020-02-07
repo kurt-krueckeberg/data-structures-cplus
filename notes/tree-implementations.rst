@@ -10,7 +10,7 @@ Using ``std::shared_ptr`` Discussion
 Bartosz Milewski's blog post `Functional Data Structures in C++: Trees <https://.com/2013/11/25/functional-data-structures-in-c-trees/>`_ also suses ``std::shared_ptr`` in its implementation. The accompanying implementation is on `github <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_.
 
 shared_ptr Implementation of Binary Search Tree
------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Some recursive binary search tree algorithms cannot easily be implemented when the nest Node class uses ``unique_ptr`` for ``left`` and ``right``:
 

@@ -4,62 +4,152 @@ Tree Design Discussion Links
 Using ``std::shared_ptr`` Discussion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Implementation of Binary Search Trees Via Smart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses in-depth the pros and cons of using
-``std::unique_ptr`` versus ``std::shared_ptr``. The article states::
-
-    In this particular case, however, it is necessary to start from the very beginning with shared_ptr, because being recursive
-    by definition, binary trees have to be implemented with smart pointers, and this you cannot do without shared ownership.
-
-This seems to mean that the recursive algorithm implementation used for the remove algorithm (whose source code is in the article) won't work with ``std::unique_ptr``. I haven't thought through his algorithm to confirm that this is true. The algorithm is (it needs to
-double checked for accurracy):
-
-.. code-blocK:: cpp
-
-    template<typenameT> bool Tree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
-    {
-        if (p != nullptr && x < p->key) // key is less than current node and we still have nodes to search 
-           return remove(x, p->left);
-    
-        else if (p != nullptr && x > p->key)// key is greater than current node and we still have nodes to search 
-           return remove(x, p->right);
-    
-        else if (p != nullptr && p->key == x) { // found the key
-    
-            // 1. If p has only one child (that is not nullptr), then we can remove node p immediately
- 
-            // If p doesn't have a left child, then...
-            if (p->left == nullptr) 
-
-                // ...remove p by replacing it with right child
-                p = p->right; 
-
-            // If p doesn't have a right child, then...
-            else if (p->right == nullptr) 
-
-                 // ...remove p by replacing it with left child
-                 p = p->left; 
-            
-            // 2. No, p has two children (htat aren't nullptr). Swap the key with its in-order predecessor
-
-            else { // p is an internal node with two children. 
-    
-              std::shared_ptr<Node> q = p->left;
-    
-              while (q->right != nullptr) // locate predecessor
-                     q = q->right;
-    
-               p->key = q->key; // Swap its key with p's key and...
-    
-               remove(q->key, p->left); // delete the swapped key, which is x. Start searching at p->left, the root of the in-order predessor.  
-            }
-
-            return true;
-        }
-
-        return false;
-    }
+`Implementation of Binary Search Trees Via Smart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses the advantage of using
+``std::shared_ptr`` to more easily implement recursive algorithms.
 
 Bartosz Milewski's blog post `Functional Data Structures in C++: Trees <https://.com/2013/11/25/functional-data-structures-in-c-trees/>`_ also suses ``std::shared_ptr`` in its implementation. The accompanying implementation is on `github <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_.
+
+shared_ptr Implementation of Binary Search Tree
+-----------------------------------------------
+
+Some recursive binary search tree algorithms cannot easily be implemented when the nest Node class uses ``unique_ptr`` for ``left`` and ``right``:
+
+.. code-block:: cpp
+
+    template<typename T> class sbtree {
+        struct Node{
+            T key;
+            Node *parent;
+            std::shared_ptr<Node> left; 
+            std::shared_ptr<Node> right;
+            Node();
+            //..snip
+        };
+        
+In the sbtree class below, in which Node uses ``shared_ptr`` instead, the **remove** method can be implemented recursively using ``std::shared_ptr<Node>&``. The sbtree class looks like this
+
+.. code-block:: cpp
+
+    // Basics of sbtree
+    template<typename T> class sbtree {
+    
+        struct Node{
+            T key;
+            Node *parent;
+    
+            std::shared_ptr<Node> left; 
+            std::shared_ptr<Node> right;
+    
+            Node();
+    
+            Node(const T& x, Node *parent_in = nullptr): key{x}, parent{parent_in} 
+            {
+            } 
+            Node(const Node& lhs); 
+            Node(Node&& lhs);     
+        };
+    
+       bool remove(const T& x, std::shared_ptr<Node>& p); 
+     
+       std::shared_ptr<Node> root; 
+       std::size_t size;
+       // ...snip
+    
+     public:
+        sbtree() : root{nullptr} {} 
+       ~sbtree() = default;
+        sbtree(const sbtree& lhs);
+        sbtree(const std::initializer_list<T>& list) noexcept;
+        sbtree& operator=(const sbtree& lhs);
+        sbtree& operator=(sbtree&& lhs);
+        
+        bool remove(const T& x)
+        {
+          bool bRc = remove(x, root); 
+          if (bRc) --size;
+        }
+    
+        template<typename Functor> void inorder(Functor f) const noexcept;
+        template<typename Functor> void preorder(Functor f) const noexcept; 
+        template<typename Functor> void postorder(Functor f) const noexcept; 
+        size_t height();
+        const Node* find(const T&);
+    };
+    
+and the **remove** method is implemented
+
+.. code-block:: cpp
+
+    template<typename T> bool sbtree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
+    {
+       // If p is not nullptr and... 
+       // ...if its key is less than current node and we still have nodes to search 
+       if (!p && x < p->key) 
+          return remove(x, p->left);
+    
+       // ...else if its key is greater than current node and we still have nodes to search  
+       else if (!p && x > p->key)
+          return remove(x, p->right);
+    
+       // ...else we found the key
+       else if (!p && p->key == x) { 
+    
+           // 1. If p has only one child (that is not nullptr), then we can remove node p immediately by...
+    
+           if (p->left == nullptr) 
+    
+               // ...remove p by replacing it with right child
+               p = p->right; 
+    
+           // ...else if p doesn't have a right child, then...
+           else if (p->right == nullptr) 
+    
+                // ...remove p by replacing it with left child
+                p = p->left; 
+           
+           // 2. Else if p has two non-nullptr children, swap x with its in-order predecessor
+    
+           else { 
+    
+             std::shared_ptr<Node> q = p->left; // Note: This line not possible with unique_ptr
+    
+             while (q->right != nullptr) // locate in-order predecessor leaf node.
+                    q = q->right;
+    
+             p->key = q->key; // Swap leaf node key with p's key and...
+
+             // ...now delete the swapped key, x. Start searching for x at p->left,
+             // the root node of the in-order predessor.  
+             remove(q->key, p->left);            
+           }
+
+           return true;
+       }
+       // Could not find x in p or any of its children
+       return false;
+    }
+
+**remove** could not be implemented like this if we had used ``unique_ptr`` instead. This section of its code
+
+.. code-block:: cpp
+
+      std::shared_ptr<Node> q = p->left; // <-- Error if unique_ptr used instead
+
+      while (q->right != nullptr) // locate in-order predecessor leaf node.
+           q = q->right;
+
+      p->key = q->key; // Swap leaf node key with p's key and...
+
+      // ...now delete the swapped key, x. Start searching for x at p->left,
+      // the root node of the in-order predessor.  
+      remove(q->key, p->left);  // Error: p->left would have already been moved from, if it was a unique_ptr.
+    }
+
+    return true;
+
+would not compile. But with ``shared_ptr`` a clear recursive remove algorithm like that able can easily be implemented.
+
+The complete code is on `github <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
 
 Tree Iterator Implementation Discussions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

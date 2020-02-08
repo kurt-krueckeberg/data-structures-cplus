@@ -135,19 +135,17 @@ and the **remove** method is implemented below
 
       std::shared_ptr<Node> q = p->left; // <-- Error if unique_ptr used instead
 
-      while (q->right != nullptr) // locate in-order predecessor leaf node.
+      while (q->right != nullptr) 
            q = q->right;          // <--- Error if unique_ptr used instead
 
-      p->key = q->key; // Swap leaf node key with p's key and...
+      p->key = q->key; 
 
-      // ...now delete the swapped key, x. Start searching for x at p->left,
-      // the root node of the in-order predessor.  
       remove(q->key, p->left);  // Error: p->left would have already been moved from, if it was a unique_ptr.
     }
 
     return true;
 
-would not compile. But with ``shared_ptr`` a clear, recursive remove algorithm can easily be implemented.
+would have to be changed as indicated by the comments. But with ``shared_ptr`` a clear, recursive remove algorithm can easily be implemented. Trying to convert the code to a ``unique_ptr`` is not straightforward.
 
 The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
 

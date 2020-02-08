@@ -136,7 +136,7 @@ and the **remove** method is implemented below
       std::shared_ptr<Node> q = p->left; // <-- Error if unique_ptr used instead
 
       while (q->right != nullptr) // locate in-order predecessor leaf node.
-           q = q->right;
+           q = q->right;          // <--- Error if unique_ptr used instead
 
       p->key = q->key; // Swap leaf node key with p's key and...
 

@@ -48,6 +48,15 @@ Red Black Tree Insertion:
 * https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic23RedBlackTrees.pdf
 * https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic23RedBlackTrees.pdf
 
-Other:
+Actual Implementations
+~~~~~~~~~~~~~~~~~~~~~~
 
-* `Scribd slides <https://www.scribd.com/document/23817352/2-3-4-and-Red-Black-Tree>`_, especially the last half, really explain red black trees as a type of 2 3 4 trees, and how how the operations of 2 3 4 tree map to red black trees.
+1. In `C# <http://www.jot.fm/issues/issue_2005_03/column6/>`__
+2. In
+   `C++ <http://samplecodebank.blogspot.com/2011/05/red-black-tree-example-c.html>`__
+3. In `Bartosz Milewski’s red-black tree in C++ using
+   shared_ptr <http://bartoszmilewski.com/2013/11/25/functional-data-structures-in-c-trees/>`__
+4. `Red Black Tree (RB-Tree) Using
+   C++ <http://www.coders-hub.com/2015/07/red-black-tree-rb-tree-using-c.html#.WOEj20cpD0p>`__
+5. In `C++ using a fixed key and value
+   type <https://github.com/csilva25/Red_Black_Tree>`__

@@ -51,7 +51,8 @@ Red Black Tree Insertion:
 Actual Implementations
 ~~~~~~~~~~~~~~~~~~~~~~
 
-* `Bartosz Milewski’s red-black tree in C++ using shared_ptr <http://bartoszmilewski.com/2013/11/25/functional-data-structures-in-c-trees/>`__
+* `Bartosz Milewski’s red-black tree article in C++ using shared_ptr <http://bartoszmilewski.com/2013/11/25/functional-data-structures-in-c-trees/>`__
+* `Bartosz Milewski’s red-black tree source code <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_
 * `C# Implementation <http://www.jot.fm/issues/issue_2005_03/column6/>`__ from Journal of Object Technology 
 * `C++ Implementation <http://samplecodebank.blogspot.com/2011/05/red-black-tree-example-c.html>`__ from a blog on sample source code.
 * `Red Black Tree (RB-Tree) Using C++ <http://www.coders-hub.com/2015/07/red-black-tree-rb-tree-using-c.html#.WOEj20cpD0p>`__ from coders-hub.com. 

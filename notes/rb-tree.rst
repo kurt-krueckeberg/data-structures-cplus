@@ -51,8 +51,8 @@ Red Black Tree Insertion:
 Actual Implementations
 ~~~~~~~~~~~~~~~~~~~~~~
 
-1. From Journal of Object Technology implementation in `C# <http://www.jot.fm/issues/issue_2005_03/column6/>`__
-2. From a blog on general source code, an implementation in  `C++ <http://samplecodebank.blogspot.com/2011/05/red-black-tree-example-c.html>`__
-3. `Bartosz Milewski’s red-black tree in C++ using shared_ptr <http://bartoszmilewski.com/2013/11/25/functional-data-structures-in-c-trees/>`__
-4. coders-hub.com `Red Black Tree (RB-Tree) Using C++ <http://www.coders-hub.com/2015/07/red-black-tree-rb-tree-using-c.html#.WOEj20cpD0p>`__
-5. Cristian Silva, III, github.com basic red-black tree code `C++ using a fixed key and value type <https://github.com/csilva25/Red_Black_Tree>`__
+* `Bartosz Milewski’s red-black tree in C++ using shared_ptr <http://bartoszmilewski.com/2013/11/25/functional-data-structures-in-c-trees/>`__
+* `C# Implementation <http://www.jot.fm/issues/issue_2005_03/column6/>`__ from Journal of Object Technology 
+* `C++ Implementation <http://samplecodebank.blogspot.com/2011/05/red-black-tree-example-c.html>`__ from a blog on sample source code.
+* `Red Black Tree (RB-Tree) Using C++ <http://www.coders-hub.com/2015/07/red-black-tree-rb-tree-using-c.html#.WOEj20cpD0p>`__ from coders-hub.com. 
+* `Basic red-black tree in C++ using a fixed key and value type <https://github.com/csilva25/Red_Black_Tree>`__ Cristian Silva, III, repository ongithub.com 

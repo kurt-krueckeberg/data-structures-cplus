@@ -145,8 +145,103 @@ and the **remove** method is implemented below
 
     return true;
 
-would have to be changed as indicated by the comments. But with ``shared_ptr`` a clear, recursive remove algorithm can easily be implemented. Trying to convert the code to a ``unique_ptr`` is not straightforward.
+would have to be changed as indicated by the comments. But with ``shared_ptr`` a clearer, more straight forward recursive remove algorithm can easily be implemented. Converting convert the code to use ``unique_ptr`` would look
+like this
 
+.. code-block:: cpp
+
+    template<typename T> 
+    bool bstree<T>::remove(const T& x, typename bstree<T>::Node *p) noexcept
+    {
+       // If p is not nullptr and... 
+       // ...if its key is less than current node and we still have nodes to search 
+       if (p && x < p->key) 
+          return remove(x, p->left.get());
+    
+       // ...else if its key is greater than current node and we still have nodes to search  
+       else if (p && x > p->key)
+          return remove(x, p->right.get());
+    
+       // ...else we found the key
+       else if (p && p->key == x) { 
+    
+           // 1. If p has only one child (that is not nullptr), then we can remove node p immediately by...
+           Node *parent = p->parent;
+    
+           // ...If p doesn't have a left child, then...
+           if (!p->left) { // TOD: Can we test !p->right first, too? 
+    
+               // ...remove p by replacing it with right child
+               if (root.get() == p) //....If p is root, we can't use parent pointer.
+                   reset(p->right, root);
+    
+                else { 
+                  // We need the actual unique_ptr. Use the parent to get it.
+                  std::unique_ptr<Node>& punique = (parent->left.get() == p) ? parent->left : parent->right;
+                  
+                  reset(p->right, punique);  // TODO: What if p->right is nullptr, too? Then punique 
+               }
+    
+            // ...else If p doesn't have a right child, then...
+            } else if (!p->right) {
+    
+                // ...remove p by replacing it with left child
+       
+                if (root.get() == p) //....If p is root, the we can't use parent pointer.
+                    reset(p->left, root); 
+    
+                else { 
+       
+                   // We need the actual unique_ptr. Use the parent to get it.
+                   std::unique_ptr<Node>& punique = (parent->left.get() == p) ? parent->left : parent->right;
+    
+                   reset(p->left, punique); 
+                }
+       
+             // 2. Else if p has two children (ttat aren't nullptr). Swap the found key with its in-order predecessor
+    
+             } else { // p is an internal node with two children. 
+       
+                Node *q = p->right.get(); 
+       
+                while (q->left != nullptr) // locate in-order successor
+                       q = q->left.get();
+       
+                 // Can't call std::swap here instead because the remove immediately following depends on q->key not changing
+                 //std::swap(p->key, q->key); // swap key with p's key and...
+                 p->key = q->key;
+       
+                 remove(q->key, p->right.get()); // delete the swapped key, which is x. Start searching for x at p->left,
+                                          // the root of the in-order predessor.  
+             }
+             return true;
+       }
+       return false;
+    }
+
+    /*
+     * reset deletes the Node managed by dest by move-assigning src to dest, which transfers ownership of the raw pointer managed by src to dest.
+     * It also reassigns the parent pointer after the move so the tree it is valid.
+     */
+     template<typename T>
+     void sbtree<T>::reset(std::unique_ptr<Node>& src, std::unique_ptr<Node>& dest) noexcept
+     {
+         if (!src)
+             
+             dest.reset();
+             
+         else {
+             
+            Node *parent = dest->parent; 
+    
+            // This deletes the Node managed by dest, and transfers ownership of the pointer managed by src to dest.
+           
+            dest = std::move(src); 
+     
+            dest->parent = parent; // Set the parent pointer to be the Node that had been the parent of dest (before it was delete immediately above).
+        }
+    }
+ 
 The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
 
 Downside

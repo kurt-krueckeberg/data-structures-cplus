@@ -28,4 +28,4 @@ Binary Search Tree contemporary transplant-based delete algorithm
 * `Coursera, Data Structures and Performance: Deleting from a BST <https://www.coursera.org/lecture/data-structures-optimizing-performance/core-deleting-from-a-bst-DW4NG>`_ discusses most efficient delete. 7-day free trial
    (credit card required).  |Leftarrow| 1.
 * `Introduction to Algorithms, 3rd Edition <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_  |Leftarrow| 5.
-* `Radford.edu <https://www.radford.edu/~nokie/classes/360/trees.bst.html>`_  |Leftarrow|-
+* `Radford.edu <https://www.radford.edu/~nokie/classes/360/trees.bst.html>`_  

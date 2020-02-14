@@ -15,7 +15,7 @@ Textbooks
 
 Successor-based
 
-* `Notes on Binary Search Trees <http://pages.cs.wisc.edu/~siff/CS367/Notes/bsts.html>`_ used the get-successor approach. Has succint pseudo code, but the article is brief.
+* `Notes on Binary Search Trees pdf by Sedgewick & Wayne <http://pages.cs.wisc.edu/~siff/CS367/Notes/bsts.html>`_ used the get-successor approach. Has succint pseudo code, but the article is brief.
 * `CLRS Chapter 13: Binary Search Trees (1990 Version of book) <http://staff.ustc.edu.cn/~csli/graduate/algorithms/book6/chap13.htm>`_ 
 
 Hibbard Delete Algorithm

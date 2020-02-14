@@ -16,7 +16,7 @@ Textbooks
 Successor-based
 
 * `Notes on Binary Search Trees pdf by Sedgewick & Wayne <http://pages.cs.wisc.edu/~siff/CS367/Notes/bsts.html>`_ used the get-successor approach. Has succint pseudo code, but the article is brief.
-* `CLRS Chapter 13: Binary Search Trees (1990 Version of book) <http://staff.ustc.edu.cn/~csli/graduate/algorithms/book6/chap13.htm>`_ 
+* `Cormen, et. al., 1990 version with successor-based algorithm: Chapter 13: Binary Search Trees (1990 Version of book) <http://staff.ustc.edu.cn/~csli/graduate/algorithms/book6/chap13.htm>`_ 
 
 Hibbard Delete Algorithm
 
@@ -26,6 +26,6 @@ Hibbard Delete Algorithm
 The CLRS "Algorithm" (the 3rd Edition seems to have changed to a different implementation)
 
 * `Chapter 12 of Introduction to Algorithms, 3rd Edition <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_
-* `Binary Search Trees <https://www.radford.edu/~nokie/classes/360/trees.bst.html>`_ . Uses CLRS Algorithm and its transplant helper.
+* `Radford.edu: Binary Search Trees with transplant-based delete algorithm <https://www.radford.edu/~nokie/classes/360/trees.bst.html>`_ . Uses CLRS Algorithm and its transplant helper.
 
 `Solutions to CLRS <https://github.com/gzc/CLRS>`_

@@ -20,7 +20,7 @@ Successor-based Algorithm
 
 Hibbard Delete Algorithm
 
-* `Sedgwich slides illustrating the Hibbard Deletion algorithm for BST <https://algs4.cs.princeton.edu/lectures/32BinarySearchTrees.pdf>`_
+* `Sedgwich slides illustrating the Hibbard Deletion algorithm for BST and why it is an unsatisfactory solution <https://algs4.cs.princeton.edu/lectures/32BinarySearchTrees.pdf>`_
 * `Emory Univ.: Hibbard delete algorithm for BST <http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/9-BinTree/BST-delete2.html>`_  Has illustrations and thorough code.
 
 Introduction to Algorithms, 3rd Edition, transplant-based Algorithm

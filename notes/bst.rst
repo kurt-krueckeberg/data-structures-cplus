@@ -7,7 +7,7 @@ Binary Search Trees
 Deletion from BST
 -----------------
 
-The original BST delete algoithm is known as Hibbard deletion, and it dates back to 1962. It's disadvantate is that the tree can become more and more unbalanced as deletes occur. A newer algorithm has since been deveoped that 
+The original BST delete algoithm dating from 1962 is known as Hibbard deletion. It's disadvantage is that the radom nature of the BST is lost, and it becomes more and more "unbalanced"???? as deletes occur. A newer algorithm has since been deveoped that 
 does not have this problem.
 
 Hibbard Deletion
@@ -23,6 +23,9 @@ for case one:wq
 
 Delete. We can proceed in a similar manner to delete any node that has one child (or no children), but what can we do to delete a node that has two children? We are left with two links, but have a place in the parent node for only one of them. An answer to this dilemma, first proposed by T. Hibbard in 1962, is to delete a node x by replacing it with its successor. Because x has a right child, its successor is the node with the smallest key in its right subtree. The replacement preserves order in the tree because there are no keys between x.key and the successor's key. We accomplish the task of replacing x by its successor in four (!) easy steps:
 
+.. raw:: html
+
+    <pre>
     Save a link to the node to be deleted in t
 
     Set x to point to its successor min(t.right).
@@ -30,6 +33,7 @@ Delete. We can proceed in a similar manner to delete any node that has one child
     Set the right link of x (which is supposed to point to the BST containing all the keys larger than x.key) to deleteMin(t.right), the link to the BST containing all the keys that are larger than x.key after the deletion.
 
     Set the left link of x (which was null) to t.left (all the keys that are less than both the deleted key and its successor). 
+    </pre>
 
 Textbooks
 

@@ -21,6 +21,8 @@ Discussion Links
 Source Code
 -----------
 
+.. code-block:: cpp
+
     #ifndef bst_h_18932492374
     #define bst_h_18932492374
     

@@ -86,19 +86,32 @@ Methods like ``find(Key key)`` can take advantage of the trees recursive structu
        if (lhs.parent == nullptr) // If lhs is the root, then set parent to nullptr.
            parent = nullptr;
     
-       // The make_unique<Node> calls will in turn recursively invoke the constructor again, resulting in the entire tree rooted at
+       // This will recursively invoke the constructor again, resulting in the entire tree rooted at
        // lhs being copied.
-       if (lhs.left  != nullptr) { 
-    
-           left = std::make_unique<Node>(*lhs.left);    
-           left->parent = this;
-       }
+       if (lhs.left  != nullptr) 
+           connectLeft(*lhs.left); 
        
-       if (lhs.right != nullptr) {
+       if (lhs.right != nullptr) 
+           connectRight(*lhs.right); 
+    }
     
-           right = std::make_unique<Node>(*lhs.right); 
-           right->parent = this;
-       }
+    template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key, Value>::Node::operator=(const typename bstree<Key, Value>::Node& lhs) noexcept
+    {
+       if (&lhs == this) return *this;
+    
+       __vt = lhs.__vt;
+    
+       if (lhs.parent == nullptr) // If we are copying a root pointer, then set parent.
+           parent = nullptr;
+    
+       // The make_unique<Node> calls below results in the entire tree rooted at lhs being copied.
+       if (lhs.left  != nullptr) 
+           connectLeft(*lhs.left); 
+       
+       if (lhs.right != nullptr)
+           connectRight(*lhs.right); 
+      
+       return *this;
     }
 
 Delete

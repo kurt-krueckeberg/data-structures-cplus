@@ -26,7 +26,7 @@ The implementation is on `gihub <https://github.com/kurt-krueckeberg/bst>`_.
 Nested Node class
 ~~~~~~~~~~~~~~~~~
 
- The tree nodes are of nested tree type ``unique_ptr<Node>``: 
+The tree nodes are of nested tree type ``unique_ptr<Node>``: 
 
 .. code-block:: cpp
     
@@ -56,18 +56,18 @@ Nested Node class
          std::unique_ptr<bstre<typename Key, typename Value>::Node> root;
     };
 
-Each node contains a __value_type member __vt, which a convenience wrapper for convenient access its private pair<const Key, Value>. See the ``value-type.h`` header file n the include directory on `github <https://github.com/kurt-krueckeberg/bst>`_.
+Each node contains a ``__value_type`` member __vt, ``struct __value_type`` is take from the **libc++** source code for ``std::map``. It is a convenience wrapper for convenient access its private pair<const Key, Value>. See the ``value-type.h`` header file in the include directory on `github <https://github.com/kurt-krueckeberg/bst>`_.
 
 Destructor
 ~~~~~~~~~~
 
 While the default ``~bstree`` destructor will successfully frees all tree nodes. This results in one huge recursive call that invokes every Node's destructor. To avoid stack overflow therefore, `destroy_tree()` is used instead to do a post-order
-tree traversal invoking `unique+ptr<Node>::reset()` for each node.
+tree traversal invoking ``unique_ptr<Node>::reset()`` for each node.
 
 Recursive methods
 ~~~~~~~~~~~~~~~~~
 
-Methods like `find(Key key)` can take advantage of the trees recursive structure to implement a recursive algorithm. The same is true for sveral other methods, like the Node copy constructor, which replicates the entire subtree of its input.
+Methods like ``find(Key key)`` can take advantage of the trees recursive structure to implement a recursive algorithm. The same is true for sveral other methods, like the Node copy constructor, which replicates the entire subtree of its input.
 
 .. code-block:: cpp
 
@@ -108,23 +108,21 @@ The overall strategy for deleting a node z from a binary search tree T has three
 as we shall see, one of the cases is a bit tricky (a sub case of the third case).
 
 1. If z has no children, then we simply remove it by modifying its parent to replace z with NIL as its child.
-
 2. If z has just one child, then we elevate that child to take z’s position in the tree
    by modifying z’s parent to replace z by z’s child.
-
 3. If z has two children, then we find z’s successor y—which must be in z’s right subtree—and have y
    take z’s position in the tree. The rest of z’s original right subtree becomes y’s new right subtree,
    and z’s left subtree becomes y’s new left subtree. This case is the tricky one because, as we shall
    see, it matters whether y is z’s right child.
 
 The procedure for deleting a given node z from a binary search tree T takes as arguments pointers to T and z.
-It organizes its cases a bit differently from the three cases outlined previously by considering the four
-cases shown in Figure 12.4.
+It organizes its cases a bit differently from the three cases outlined previously by considering four
+cases:
 
 1. If z has no left child (part (a) of the figure), then we replace z by its right child, which may or may not
-be NIL . When z’s right child is NIL , this case deals with the situation in which z has no children. When z’s
-right child is non- NIL , this case handles the situation in which z has just one child, which is its right
-child.
+   be NIL . When z’s right child is NIL , this case deals with the situation in which z has no children. When z’s
+   right child is non- NIL , this case handles the situation in which z has just one child, which is its right
+   child.
 
 2. If z has just one child, which is its left child (part (b) of the figure), then we replace z by its left
    child.
@@ -133,10 +131,10 @@ child.
    and has no left child (see Exercise 12.2-5). We want to splice y out of its current location and have it
    replace z in the tree.
 
-    1. If y is z’s right child, then we replace z by y, leaving y’s right child alone.
+   1. If y is z’s right child, then we replace z by y, leaving y’s right child alone.
 
-    2. Otherwise, y lies within z’s right subtree but is not z’s right child.  In this case, we first replace
-       y by its own right child, and then we replace z by y.
+   2. Otherwise, y lies within z’s right subtree but is not z’s right child.  In this case, we first replace
+      y by its own right child, and then we replace z by y.
 
 .. code-block:: cpp
 

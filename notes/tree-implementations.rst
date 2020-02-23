@@ -7,7 +7,7 @@ Using ``std::shared_ptr`` Discussion
 `Implementation of Binary Search Trees Via Smart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses the advantage of using
 ``std::shared_ptr`` to more easily implement recursive algorithms.
 
-Bartosz Milewski's blog post `Functional Data Structures in C++: Trees <https://.com/2013/11/25/functional-data-structures-in-c-trees/>`_ also suses ``std::shared_ptr`` in its implementation. The accompanying implementation is on `github <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_.
+`Bartosz Milewski's Functional Data Structures in C++: Trees <https://.com/2013/11/25/functional-data-structures-in-c-trees/>`_ also uses ``std::shared_ptr`` (implementation is at `github <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_).
 
 shared_ptr Implementation of Binary Search Tree
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -247,8 +247,7 @@ The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared
 Downside
 ^^^^^^^^
 
-The downside to ``shared_ptr`` is that trees which are copies are Node. This becomes a problem if the tree interface allows the associated value of a key to altered, as, for example, ``T& operator[]( const Key& key )``.
-Then a ``shared_ptr`` can't be used.
+The downside to ``shared_ptr`` is that tree copies share nodes, and if the tree interface allows the associated value of a key to altered, like ``T& operator[]( const Key& key )`` does, then a ``shared_ptr`` can't be used.
 
 Tree Iterator Implementation Discussions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

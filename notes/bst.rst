@@ -7,6 +7,7 @@ Binary Search Trees
 Discussion Links
 ----------------
 
+* `Virgina Tech: BST <http://courses.cs.vt.edu/~cs3114/Fall17/barnette/notes/T01_BinarySearchTrees.pdf>`_.
 * `Algorithms 4th Edition by Sedgewich & Wayne <https://algs4.cs.princeton.edu/32bst/>`_ performance problems of Hibbard deletion. 
 * `Sedgwich Powerpoint Slides <https://algs4.cs.princeton.edu/lectures/32BinarySearchTrees.pdf>`_ and why Hibbard deletion is an unsatisfactory solution. 
 * `Emory Univ.: Hibbard delete algorithm for BST, part 1 <https://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/9-BinTree/BST-delete.html>`_

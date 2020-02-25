@@ -22,8 +22,7 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
 repeatedly invokes itself with the input's left child until a null node is encountered, when it returns. It then visits the first non-null node (in the left children chain). It then repeats the process of recursing down the left children only it starts with the right child. 
 
 The iterative equivalent algorithm is to push the input node and its left children onto a stack. When a null left child is encountered, the push-loop exits and the stack is popped() and that node visited. The push-loop is then repeated starting with the right child as input node.
-The iterative algorithm is done when the stack is empty and the input node is null. The recursive algroithm is done which is [TODO: analyze this on paper]. Explain how they are equivalent.
-
+The only time the stack can become empty is when there are no more nodes to process and push onto it, and after the last node has been processed, its children will be null, so current will be null.
 
 .. code-block:: cpp
     
@@ -46,11 +45,11 @@ The iterative algorithm is done when the stack is empty and the input node is nu
         
             } else {  // Is current is null (and the stack is not empty), remove parent of current by poping stack.
         
-                auto pnode = stack.pop();
+                current = stack.pop();
         
-                f(*pnode);
+                f(*current);
         
-                current = pnode->right; // Start the process over with the right subtree
+                current = current->right; // Start the process over with the right subtree
             }
         }
      }

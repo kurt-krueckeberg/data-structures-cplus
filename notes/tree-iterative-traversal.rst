@@ -1,10 +1,10 @@
 Iterative Traversal Algorithms
 ==============================
 
-Stack Based
------------
+Stack Based Traversal
+---------------------
 
-The recursive in-order algorithm
+Recursive traversal algorithms can be converted to stack-based versions. The in-order recursive algorithm
 
 .. code-block:: cpp
 
@@ -19,7 +19,7 @@ The recursive in-order algorithm
          in_order(current->right);
      }
 
-repeatedly invokes itself passing current's left child until it is null when it returns. It then visits the parent. It next repeats this process (of recursing down the left child until null) with the the right child.
+repeatedly invokes itself passing current's left child until it is null, when it returns. It then visits the parent. It next repeats this process (of recursing down the left child until null) with the the right child.
 
 This can be converted to an iterative algorithm using a stack:
 
@@ -31,19 +31,19 @@ This can be converted to an iterative algorithm using a stack:
     { 
         if (!current) return;
         
-        std::stack<const node_type *> st;
+        std::stack<const node_type *> stack;
         
-        while(!st.empty() || current) {
+        while(!stack.empty() || current) {
         
             if (current) { // If not null, push all current's left children until a null child is encountered.
         
-                st.push(current);
+                stack.push(current);
         
                 current = current->left;
         
             } else {  // Is current is null (and the stack is not empty), remove parent of current by poping stack.
         
-                auto pnode = st.pop();
+                auto pnode = stack.pop();
         
                 f(*pnode);
         

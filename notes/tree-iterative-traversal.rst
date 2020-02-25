@@ -21,7 +21,9 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
 
 repeatedly invokes itself with the input's left child until a null node is encountered, when it returns. It then visits the first non-null node (in the left children chain). It then repeats the process of recursing down the left children only it starts with the right child. 
 
-The iterative equivalent is to push the input node and its left children onto a stack.  When a null left child is encountered, the push-loop exits and the stack is popped() and that node visited. The push-loop is then repeated starting with the the right child.
+The iterative equivalent algorithm is to push the input node and its left children onto a stack. When a null left child is encountered, the push-loop exits and the stack is popped() and that node visited. The push-loop is then repeated starting with the right child as input node.
+The iterative algorithm is done exactly when the recursive algroithm is done which is [TODO: analyze this on paper].
+
 
 .. code-block:: cpp
     

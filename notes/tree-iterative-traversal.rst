@@ -25,6 +25,7 @@ This can be converted to an iterative algorithm using a stack. The first two lin
 
 .. code-block:: cpp
     
+    // From https://java2blog.com/binary-tree-inorder-traversal-in-java/
     template<typename Key, typename Value> 
     template<typename Functor>
     void bstree<Key, Value::inOrder(Functor f, const typename node_type *current) const noexcept
@@ -57,6 +58,16 @@ This can be converted to an iterative algorithm using a stack. The first two lin
     {
         inOrder(current.get());
     }
+
+Steps for iterative solution:
+
+1. Create an empty stack 
+2. Push the current node to stack and set current = current->left until current is null
+3. If current is NULL and s is not empty then
+   *  Pop the top node from stack s and print it
+   *  set currentNode = currentNode.right
+   *  go to step 2
+4.If stack is empty and currentNode is also null then we are done with it
 
 Initally, if  ``current`` is not null, it's left children are pushed onto the stack until a null child is encountered. This corresponds to the first two lines of the recursive algorithm
 

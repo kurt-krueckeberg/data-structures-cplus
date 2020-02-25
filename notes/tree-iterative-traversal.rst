@@ -21,7 +21,7 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
 
 repeatedly invokes itself passing current's left child until it is null, when it returns. It then visits the parent. It next repeats this process (of recursing down the left child until null) with the the right child.
 
-This can be converted to an iterative algorithm using a stack:
+This can be converted to an iterative algorithm using a stack. The first two lines of the recursive algorithm are replaced with pushing nodes onto a stack.
 
 .. code-block:: cpp
     
@@ -58,19 +58,5 @@ This can be converted to an iterative algorithm using a stack:
         inOrder(current.get());
     }
 
-Initally, if  ``current`` is not null, it's left children are pushed onto the stack. This corresponds to the first two lines of the recursive algorithm
+Initally, if  ``current`` is not null, it's left children are pushed onto the stack until a null child is encountered. This corresponds to the first two lines of the recursive algorithm
 
-.. code-block:: cpp
-    
-    template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoInOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
-    {
-       if (!current) return;
-    
-       DoInOrderTraverse(f, current->left);
-
-       //...snip
-    }
-
-Next, since ``current`` is now null, we pop the stack and visit the node. Then we repeat the same process but with the right child of the node just visited. 
-
-This iterative approach can be converted into an STL compatible forward iterator:

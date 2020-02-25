@@ -60,6 +60,8 @@ This can be converted to an iterative algorithm using a stack:
 
 Initally, if  ``current`` is not null, it's left children are pushed onto the stack. This corresponds to the first two lines of the recursive algorithm
 
+.. code-block:: cpp
+    
     template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoInOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
     {
        if (!current) return;

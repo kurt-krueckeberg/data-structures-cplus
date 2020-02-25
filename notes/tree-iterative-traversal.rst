@@ -19,9 +19,9 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
          in_order(current->right);
      }
 
-repeatedly invokes itself passing current's left child until it is null, when it returns. It then visits the parent. It next repeats this process (of recursing down the left child until null) with the the right child.
+repeatedly invokes itself with the input's left child until a null node is encountered, when it returns. It then visits the first non-null node (in the left children chain). It then repeats the process of recursing down the left children only it starts with the right child. 
 
-This can be converted to an iterative algorithm using a stack. The first two lines of the recursive algorithm are replaced with pushing nodes onto a stack.
+The iterative equivalent is to push the input node and its left children onto a stack.  When a null left child is encountered, the push-loop exits and the stack is popped() and that node visited. The push-loop is then repeated starting with the the right child.
 
 .. code-block:: cpp
     

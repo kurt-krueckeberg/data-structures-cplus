@@ -21,8 +21,8 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
 
 repeatedly invokes itself with the input's left child until a null node is encountered, when it returns. It "goes left" in order to visit nodes in ascending order. After visiting a node, it takes the just-visited node's right child, and it repeats the recursion of its left-most children.
 
-An iterative equivalent algorithm first pushes the root and its left-most non-null children onto a stack. Next stack is popped() and the node visited. The push-loop then repeats with the right child of the node. It pushed it and its non-null left-most children.
-just visited.
+An iterative equivalent algorithm first pushes the root and its left-most non-null children onto a stack. Next stack is popped() and the node visited. The push-loop again repeats with the right subtree the just-visited node. It pushes the right child and its non-null left-most children
+onto the stack. Pushing in the order just described--first the root and its left-most children, then after popping and visiting the current node, its right child follow by its left-most children--ensures nodes are visited in order.
 
 After we have popped the last node (the one with the largest key) from the stack. It stack will be empty, and there are no more non-null children to visist.
 

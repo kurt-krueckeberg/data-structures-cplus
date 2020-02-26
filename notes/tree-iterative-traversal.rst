@@ -24,7 +24,7 @@ repeatedly invokes itself with the input's left child until a null node is encou
 An iterative equivalent algorithm first pushes the root and its left-most non-null children onto a stack. Next stack is popped and the node visited. The push-loop then again repeats with the right subtree of the just-visited node: the right child and its non-null left-most children are
 pushed onto the stack. Pushing nodes in the order just described--first the root and its left-most children, then after popping and visiting the current node, the just-visited node's right child follow by its left-most children--matches exactly the in order visiting of nodes.
 
-The right subtree, if it exists, is not processed until the current node has been visited. After we have popped the last node (the one with the largest key) from the stack. It stack will be empty, and there are no more non-null children to visist.
+The right subtree, if it exists, is not processed until the current node has been visited. After we have popped the last node (the one with the largest key) from the stack, the stack will be empty. There will be no more non-null children to visist.
 
 .. code-block:: cpp
     

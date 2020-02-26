@@ -1,4 +1,8 @@
 #!/usr/bin/env php
+/*
+ This isn't workingdd 'updates'
+
+ */
 <?php declare(strict_types=1);
   
 class HtmlRecursiveFilterIterator extends RecursiveFilterIterator {
@@ -9,14 +13,11 @@ class HtmlRecursiveFilterIterator extends RecursiveFilterIterator {
 
     public function accept() {
          
-            var_dump($this->current());
-
-            echo "Extension is: " . $this->current()->getExtension() . "\n";
-
             if ($this->current()->getExtension() == "html") {
-              echo "Extension is html\n";
+              echo "Filter found file-name = " . $this->current()->getFilename() . PHP_EOL;   
               return true;
-            } else return false;
+            } else
+              return false;
 /*
         return in_array(
             $this->current()->getFilename(),
@@ -46,9 +47,7 @@ class HtmlRecursiveFilterIterator extends RecursiveFilterIterator {
 
  $iter       = new RecursiveIteratorIterator($filterIter, RecursiveIteratorIterator::SELF_FIRST);
 
-
-// foreach ($iter as $filePath => $fileInfo) {
    foreach ($iter as $filePath => $fileInfo) {
-     echo 'Path name = ' .  $fileInfo->getPathName() . PHP_EOL;
+     echo 'Path name without file-name = ' .  $fileInfo->getPath() . PHP_EOL;
      echo '   File name = ' . $fileInfo->getFilename() . PHP_EOL;
  }

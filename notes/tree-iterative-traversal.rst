@@ -19,12 +19,12 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
          in_order(current->right);
      }
 
-repeatedly invokes itself with the input's left child until a null node is encountered, when it returns. It "goes left" to visits nodes in ascending order. After visiting a node, it begins with the node's right child and it repeats the recursion of its left-most children.
+repeatedly invokes itself with the input's left child until a null node is encountered, when it returns. It "goes left" in order to visit nodes in ascending order. After visiting a node, it takes the just-visited node's right child, and it repeats the recursion of its left-most children.
 
-An iterative equivalent algorithm pushes the root and its left-most non-null children onto a stack. When a null left child is encountered, it stops the push-loop, when the stack is popped() and the node visited. The push-loop then repeats starting with the right child of the node
+An iterative equivalent algorithm first pushes the root and its left-most non-null children onto a stack. Next stack is popped() and the node visited. The push-loop then repeats with the right child of the node. It pushed it and its non-null left-most children.
 just visited.
 
-The only time the stack can become empty is when there are no more nodes to process (and push on the stack). This occurs after the last node has been visited whose children will be null.
+The only time the stack can become empty is when there are no more nodes to process, no more children of the visited node. This occurs after the last node has been visited whose children are null.
 
 .. code-block:: cpp
     
@@ -62,7 +62,4 @@ The only time the stack can become empty is when there are no more nodes to proc
         inOrder(current.get());
     }
 
-4.If stack is empty and currentNode is also null then we are done with it
-
 Initally, if  ``current`` is not null, it's left children are pushed onto the stack until a null child is encountered. This corresponds to the first two lines of the recursive algorithm
-

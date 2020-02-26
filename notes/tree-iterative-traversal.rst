@@ -24,7 +24,7 @@ repeatedly invokes itself with the input's left child until a null node is encou
 An iterative equivalent algorithm first pushes the root and its left-most non-null children onto a stack. Next stack is popped() and the node visited. The push-loop then repeats with the right child of the node. It pushed it and its non-null left-most children.
 just visited.
 
-The only time the stack can become empty is when there are no more nodes to process, no more children of the visited node. This occurs after the last node has been visited whose children are null.
+After we have popped the last node (the one with the largest key) from the stack. It stack will be empty, and there are no more non-null children to visist.
 
 .. code-block:: cpp
     

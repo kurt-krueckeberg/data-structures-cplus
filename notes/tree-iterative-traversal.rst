@@ -21,10 +21,10 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
 
 repeatedly invokes itself with the input's left child until a null node is encountered, when it returns. It "goes left" in order to visit nodes in ascending order. After visiting a node, it takes the just-visited node's right child, and it repeats the recursion of its left-most children.
 
-An iterative equivalent algorithm first pushes the root and its left-most non-null children onto a stack. Next stack is popped() and the node visited. The push-loop again repeats with the right subtree the just-visited node. It pushes the right child and its non-null left-most children
-onto the stack. Pushing in the order just described--first the root and its left-most children, then after popping and visiting the current node, its right child follow by its left-most children--matches an in order visiting of nodes.
+An iterative equivalent algorithm first pushes the root and its left-most non-null children onto a stack. Next stack is popped and the node visited. The push-loop then again repeats with the right subtree of the just-visited node: the right child and its non-null left-most children are
+pushed onto the stack. Pushing nodes in the order just described--first the root and its left-most children, then after popping and visiting the current node, the just-visited node's right child follow by its left-most children--matches exactly the in order visiting of nodes.
 
-After we have popped the last node (the one with the largest key) from the stack. It stack will be empty, and there are no more non-null children to visist.
+The right subtree, if it exists, is not processed until the current node has been visited. After we have popped the last node (the one with the largest key) from the stack. It stack will be empty, and there are no more non-null children to visist.
 
 .. code-block:: cpp
     

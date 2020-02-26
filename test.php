@@ -1,9 +1,8 @@
 #!/usr/bin/env php
-/*
- This isn't workingdd 'updates'
-
- */
 <?php declare(strict_types=1);
+
+/*
+This code never finds the notes subdir of _/build/html
   
 class HtmlRecursiveFilterIterator extends RecursiveFilterIterator {
 
@@ -11,20 +10,15 @@ class HtmlRecursiveFilterIterator extends RecursiveFilterIterator {
         '.html',
     );
 
-    public function accept() {
-         
+    public function accept() 
+    {
+            echo "In accept() getPath() = " . $this->current()->getPath() . PHP_EOL;   
+
             if ($this->current()->getExtension() == "html") {
-              echo "Filter found file-name = " . $this->current()->getFilename() . PHP_EOL;   
               return true;
             } else
               return false;
-/*
-        return in_array(
-            $this->current()->getFilename(),
-            self::$FILTERS,
-            true
-        );
-*/
+
     }
 }
  

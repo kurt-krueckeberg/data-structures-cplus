@@ -24,6 +24,8 @@ left. After visiting the current node, it takes the current node's right child, 
 
 The recursive algorithm uses the built-in activation stack. What does it hold? ....
 
+.. todo: add a drawing of the stack and how it changes. This is the basis for the iterative algorithm.
+
 An iterative equivalent algorithm first pushes the root and its left-most non-null children onto a stack. Next stack is popped and the node visited. The push-loop then again repeats with the right subtree of the just-visited node: the right child and its non-null left-most children are
 pushed onto the stack. Pushing nodes in the order just described--first the root and its left-most children, then after popping and visiting the current node, the just-visited node's right child follow by its left-most children--matches exactly the in order visiting of nodes.
 

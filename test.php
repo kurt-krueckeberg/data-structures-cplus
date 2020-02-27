@@ -3,22 +3,35 @@
 
 /*
 This code never finds the notes subdir of _/build/html
-  
+*/  
 class HtmlRecursiveFilterIterator extends RecursiveFilterIterator {
 
     private static $FILTERS = array(
         '.html',
     );
-
+/*
     public function accept() 
     {
-            echo "In accept() getPath() = " . $this->current()->getPath() . PHP_EOL;   
+            echo "In accept() getPath()/getFilename() = " . $this->current()->getPath() . '/' . $this->current()->getFilename() . PHP_EOL;   
 
             if ($this->current()->getExtension() == "html") {
               return true;
             } else
               return false;
 
+
+    }
+*/
+    public function accept() 
+    {
+        $file = parent::current();
+
+        if ($file->isDir()) 
+              return true;
+        
+        $name = $file->getFilename();
+
+        return (substr($name, -5) == '.html');
     }
 }
  
@@ -37,9 +50,10 @@ class HtmlRecursiveFilterIterator extends RecursiveFilterIterator {
 */
  $dirIter    = new RecursiveDirectoryIterator($dir);
 
- $filterIter = new \HtmlRecursiveFilterIterator($dirIter);
+ //$filterIter = new \HtmlRecursiveFilterIterator($dirIter);
 
- $iter       = new RecursiveIteratorIterator($filterIter, RecursiveIteratorIterator::SELF_FIRST);
+ //$iter       = new RecursiveIteratorIterator($filterIter, RecursiveIteratorIterator::SELF_FIRST);
+$iter       = new RecursiveIteratorIterator($dirIter, RecursiveIteratorIterator::SELF_FIRST);
 
    foreach ($iter as $filePath => $fileInfo) {
      echo 'Path name without file-name = ' .  $fileInfo->getPath() . PHP_EOL;

@@ -74,7 +74,7 @@ Next the top item is popped from the stack and the node visited.
 The push-loop then again repeats with the process with the right child (of the just-visited node): it and its non-null left-most children are pushed onto the stack. Pushing nodes in the order just described--first the root and its left-most children, then after popping and visiting
 a node, pusing its right child followed by its left-most children--exactly mimics the recursive algorithm. We now add the main while loop.
 
-.. code-bloc:: cpp
+.. code-block:: cpp
 
     template<class Key, class Value>
     template<typename Functor>

@@ -71,8 +71,8 @@ Next the top item is popped from the stack and the node visited.
        } 
    }
 
-The push-loop then again repeats with the process with the right child (of the just-visited node): it and its non-null left-most children are pushed onto the stack. Pushing nodes in the order just described--first the root and its left-most children, then after popping and visiting
-a node, pusing its right child followed by its left-most children--exactly mimics the recursive algorithm. We now add the main while loop.
+The push-loop then again repeats the process with the right child (of the just-visited node). It and its non-null left-most children are pushed onto the stack. Pushing nodes in the order just described--first the root and its left-most children, then after popping and visiting
+a node, pusing its right child followed by its left-most children--exactly mimics the recursive algorithm. We now add the outer while loop condition.
 
 .. code-block:: cpp
 
@@ -105,5 +105,5 @@ a node, pusing its right child followed by its left-most children--exactly mimic
     }
     
 In the main loop we need to check whether y is non-null and whether the stack is empty. We loop as long one of these conditions is met. In certain conditions the stack will become empty before all nodes have been visited. To see this, consider a tree in which each node (including the
-root) has only a right child (and no left child). In this case, the inner while loop will only push one node at a time, which will then be popped and visited.  The stack will be empty, but the next node to visit, y->right, will not be null. On the other hand, ``y->right.get()`` will
-be null whenever it is a leaf node. But in this case, the stack will not be null because y will always be in a subtree that contains a left child pointer, unless it is the last node in the tree. At which point, ``y->right`` will be null and the stack will be empty.
+root) has only a right child (and no left child). In this case, the inner while loop will only push one node at a time, which will then be popped and visited.  The stack will become empty, but the next node to visit, y->right, will not be null. On the other hand, ``y->right.get()`` will
+be null whenever it is a leaf node. But in this case, the stack will not be null because y will always be in a subtree that contains a left child pointer, unless y is the last node in the tree. At that point, ``y->right`` will be null and the stack will be empty.

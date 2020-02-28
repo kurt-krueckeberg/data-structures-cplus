@@ -26,7 +26,7 @@ implicitly onto the system-maintained stack.
 
 The recursive version uses the built-in activation stack. We can convert the algorithm to an iterative version with an explicit stack. Like the recursive version, it first pushes the input node and all its left-most non-null children onto the stack. 
 
-.. code-bloc:: cpp
+.. code-block:: cpp
 
     void in_order_iterative(Functor f, const std::unique_ptr<Node>& root_in) const noexcept
     {
@@ -44,7 +44,7 @@ The recursive version uses the built-in activation stack. We can convert the alg
 
 Next the top item is popped from the stack and the node visited.
 
-.. code-bloc:: cpp
+.. code-block:: cpp
 
     void in_order_iterative(Functor f, const std::unique_ptr<Node>& root_in) const noexcept
     {

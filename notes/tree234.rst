@@ -53,7 +53,7 @@ Following the split, the tree looks like this:
 
    **Figure: 4-node split into two 2-nodes**
 
-And after the split, the search for the proper leaf node resumes with the parent of the node just split. Note: if the parent node has now also become a 4-node, it is is **not split** (since we know it is not a leaf node). The final tree looks like this:
+And after the split, the search for the proper leaf node resumes with the middle key in the parent of the node just split. The split pushed this key up into the parent, Note: if the parent node has now also become a 4-node, it is is **not split** (since we know it is not a leaf node). The final tree looks like this:
 
 .. figure:: ../images/4-node-split-3.jpg
    :alt: Tree after 73 inserted

@@ -5,7 +5,7 @@ Stack Based Traversal
 ---------------------
 
 In Order
-~~~~~~~~ 
+^^^^^^^^ 
 
 Recursive traversal algorithms can be converted to stack-based versions. The in-order recursive algorithm
 
@@ -112,6 +112,6 @@ root) has only a right child (and no left child). In this case, the inner while 
 be null whenever it is a leaf node. But in this case, the stack will not be null because y will always be in a subtree that contains a left child pointer, unless y is the last node in the tree. At that point, ``y->right`` will be null and the stack will be empty.
 
 Pre Order
-~~~~~~~~~
+^^^^^^^^^
 
 .. todo:: Complete

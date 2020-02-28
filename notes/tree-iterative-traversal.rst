@@ -27,6 +27,19 @@ repeatedly invokes itself with current's left child until a null node is encount
 non-null left-most child. After visiting the node, it takes current node's right child and it calls itself and repeats the recursion of the left-most children, pushing itself, the just-visited node's right child, and its left-most descendants onto the stack. The "pushing" is done
 implicitly onto the system-maintained stack. 
 
+    template<typename Functor>
+    void in_order(std::unique_ptr<Node>& current, int depth = 1) const noexcept
+    {
+        if (!current) return;
+   
+        in_order(current->left);
+   
+        f(current->__get_value(), depth + 1);
+   
+        in_order(current->right, depth + 1);
+    }
+
+
 The recursive version uses the built-in activation stack. We can convert the algorithm to an iterative version with an explicit stack. Like the recursive version, it first pushes the input node and all its left-most non-null children onto the stack. 
 
 .. code-block:: cpp

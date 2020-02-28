@@ -4,6 +4,9 @@ Iterative Traversal Algorithms
 Stack Based Traversal
 ---------------------
 
+In Order
+~~~~~~~~ 
+
 Recursive traversal algorithms can be converted to stack-based versions. The in-order recursive algorithm
 
 .. code-block:: cpp
@@ -107,3 +110,8 @@ a node, pusing its right child followed by its left-most children--exactly mimic
 In the main loop we need to check whether y is non-null and whether the stack is empty. We loop as long one of these conditions is met. In certain conditions the stack will become empty before all nodes have been visited. To see this, consider a tree in which each node (including the
 root) has only a right child (and no left child). In this case, the inner while loop will only push one node at a time, which will then be popped and visited.  The stack will become empty, but the next node to visit, y->right, will not be null. On the other hand, ``y->right.get()`` will
 be null whenever it is a leaf node. But in this case, the stack will not be null because y will always be in a subtree that contains a left child pointer, unless y is the last node in the tree. At that point, ``y->right`` will be null and the stack will be empty.
+
+Pre Order
+~~~~~~~~~
+
+.. todo:: Complete

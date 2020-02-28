@@ -19,8 +19,9 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
          in_order(current->right);
      }
 
-repeatedly invokes itself with the input's left child until a null node is encountered, when it returns. It then visits the current node, the last non-null left-most child. The reason the recusion begins in the left-most children is the smaller nodes are the ones to the
-left. After visiting the current node, it takes the current node's right child, and it repeats the recursion of its left-most children.
+repeatedly invokes itself with the input's left child. When a null node is encountered, it immeidately returns. It then visits the prior node on the stack, the last non-null left-most child. The reason the recusion starts with the left-most children is it visits the smallest
+keys first, and they are in the left-most nodes.  After visiting the current node, it takes the current node's right child, and it repeats the recursion of its left-most children, pusing itself (the visited-node's right child) and its left-most descendants
+onto the stack. Here "pushing" is done implicitly (onto the system-maintained stack). 
 
 The recursive algorithm uses the built-in activation stack. We can convert the algorithm to an iterative version in which we must provide the stack.
 An iterative equivalent algorithm first pushes the root and its left-most non-null children onto a stack. Next stack is popped and the node visited. The push-loop then again repeats with the right subtree of the just-visited node: the right child and its non-null left-most children are

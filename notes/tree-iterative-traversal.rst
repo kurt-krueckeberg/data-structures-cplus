@@ -27,20 +27,60 @@ repeatedly invokes itself with current's left child until a null node is encount
 non-null left-most child. After visiting the node, it takes current node's right child and it calls itself and repeats the recursion of the left-most children, pushing itself, the just-visited node's right child, and its left-most descendants onto the stack. The "pushing" is done
 implicitly onto the system-maintained stack. 
 
-    template<typename Functor>
-    void in_order(std::unique_ptr<Node>& current, int depth = 1) const noexcept
-    {
-        if (!current) return;
-   
-        in_order(current->left);
-   
-        f(current->__get_value(), depth + 1);
-   
-        in_order(current->right, depth + 1);
-    }
+The recursive algorithm uses the built-in activation stack. If have this tree
 
+.. figure:: ../images/level-order-tree.jpg
+   :alt: binary search tree
+   :align: center 
+   :scale: 50 %
 
-The recursive version uses the built-in activation stack. We can convert the algorithm to an iterative version with an explicit stack. Like the recursive version, it first pushes the input node and all its left-most non-null children onto the stack. 
+the results of tracing the in-order recursive algorithm look like this:
+
+.. raw:: html
+
+   <pre>
+    depth = 1. key = 7
+     depth = 2. key = 1
+      depth = 3. key = 0
+       depth = 4. Return
+	    f(0)
+       depth = 4. Return
+	    f(1)
+      depth = 3. key = 3
+       depth = 4. key = 2
+        depth = 5. Return
+	    f(2)
+        depth = 5. Return
+	    f(3)
+       depth = 4. key = 5
+        depth = 5. key = 4
+         depth = 6. Return
+	    f(4)
+         depth = 6. Return
+	    f(5)
+        depth = 5. key = 6
+         depth = 6. Return
+	    f(6)
+         depth = 6. Return
+	    f(7)
+     depth = 2. key = 10
+      depth = 3. key = 8
+       depth = 4. Return
+	    f(8)
+       depth = 4. key = 9
+        depth = 5. Return
+	    f(9)
+        depth = 5. Return
+	    f(10)
+      depth = 3. key = 12
+       depth = 4. Return
+	    f(12)
+       depth = 4. Return
+   </pre>
+
+.. todo:: Add comments
+
+We can convert the algorithm to an iterative version with an explicit stack. Like the recursive version, it first pushes the input node and all its left-most non-null children onto the stack. 
 
 .. code-block:: cpp
 

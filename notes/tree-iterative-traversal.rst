@@ -42,7 +42,16 @@ the results of tracing the in-order recursive algorithm look like this:
     depth = 1. key = 7
      depth = 2. key = 1
       depth = 3. key = 0
-       depth = 4. Return
+       depth = 4. key = -10
+        depth = 5. key = -20
+         depth = 6. Return
+	    f(-20)
+         depth = 6. Return
+	    f(-10)
+        depth = 5. key = -5
+         depth = 6. Return
+	    f(-5)
+         depth = 6. Return
 	    f(0)
        depth = 4. Return
 	    f(1)
@@ -63,19 +72,37 @@ the results of tracing the in-order recursive algorithm look like this:
 	    f(6)
          depth = 6. Return
 	    f(7)
-     depth = 2. key = 10
+     depth = 2. key = 30
       depth = 3. key = 8
        depth = 4. Return
 	    f(8)
-       depth = 4. key = 9
-        depth = 5. Return
+       depth = 4. key = 20
+        depth = 5. key = 9
+         depth = 6. Return
 	    f(9)
+         depth = 6. Return
+	    f(20)
         depth = 5. Return
-	    f(10)
-      depth = 3. key = 12
-       depth = 4. Return
-	    f(12)
-       depth = 4. Return
+	    f(30)
+      depth = 3. key = 50
+       depth = 4. key = 40
+        depth = 5. Return
+	    f(40)
+        depth = 5. Return
+	    f(50)
+       depth = 4. key = 60
+        depth = 5. key = 55
+         depth = 6. key = 54
+          depth = 7. Return
+	    f(54)
+          depth = 7. Return
+	    f(55)
+         depth = 6. Return
+	    f(60)
+        depth = 5. key = 65
+         depth = 6. Return
+	    f(65)
+         depth = 6. Return
    </pre>
 
 .. todo:: Add comments

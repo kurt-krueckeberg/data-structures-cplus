@@ -32,7 +32,7 @@ The recursive algorithm uses the built-in activation stack. If have this tree
 .. figure:: ../images/level-order-tree.jpg
    :alt: binary search tree
    :align: center 
-   :scale: 50 %
+   :scale: 40 %
 
 the results of tracing the in-order recursive algorithm look like this:
 

@@ -36,6 +36,8 @@ The recursive algorithm uses the built-in activation stack. If have this tree
 
 the results of tracing the in-order recursive algorithm look like this:
 
+.. todo:: See recursion-stack-bst.txt
+
 .. raw:: html
 
    <pre>
@@ -248,5 +250,3 @@ todo....
                 stack.push(node->left.get()); 
         } 
     }
-    
-todo.... why is right push first?

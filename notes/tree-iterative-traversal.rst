@@ -34,77 +34,16 @@ The recursive algorithm uses the built-in activation stack. If have this tree
    :align: center 
    :scale: 40 %
 
-the results of tracing the in-order recursive algorithm look like this:
-
-.. todo:: See recursion-stack-bst.txt
+the results of tracing the in-order recursive algorithm are below. The stack of values is shown in brackets (the top element is on the left), followed by the value popped from the stack and visited. 
 
 .. raw:: html
 
    <pre>
-    depth = 1. key = 7
-     depth = 2. key = 1
-      depth = 3. key = 0
-       depth = 4. key = -10
-        depth = 5. key = -20
-         depth = 6. Return
-	    f(-20)
-         depth = 6. Return
-	    f(-10)
-        depth = 5. key = -5
-         depth = 6. Return
-	    f(-5)
-         depth = 6. Return
-	    f(0)
-       depth = 4. Return
-	    f(1)
-      depth = 3. key = 3
-       depth = 4. key = 2
-        depth = 5. Return
-	    f(2)
-        depth = 5. Return
-	    f(3)
-       depth = 4. key = 5
-        depth = 5. key = 4
-         depth = 6. Return
-	    f(4)
-         depth = 6. Return
-	    f(5)
-        depth = 5. key = 6
-         depth = 6. Return
-	    f(6)
-         depth = 6. Return
-	    f(7)
-     depth = 2. key = 30
-      depth = 3. key = 8
-       depth = 4. Return
-	    f(8)
-       depth = 4. key = 20
-        depth = 5. key = 9
-         depth = 6. Return
-	    f(9)
-         depth = 6. Return
-	    f(20)
-        depth = 5. Return
-	    f(30)
-      depth = 3. key = 50
-       depth = 4. key = 40
-        depth = 5. Return
-	    f(40)
-        depth = 5. Return
-	    f(50)
-       depth = 4. key = 60
-        depth = 5. key = 55
-         depth = 6. key = 54
-          depth = 7. Return
-	    f(54)
-          depth = 7. Return
-	    f(55)
-         depth = 6. Return
-	    f(60)
-        depth = 5. key = 65
-         depth = 6. Return
-	    f(65)
-         depth = 6. Return
+    [-20, -10, 0, 1, 7, ]  -20  [-10, 0, 1, 7, ]  -10  [-5, -10, 0, 1, 7, ]  -5  [0, 1, 7, ]  0  [1, 7, ]  1  [2, 3, 1, 7, ]  2  [3, 1, 7, ]  3  [4, 5, 3, 1, 7, ]  4  [5, 3, 1, 7, ]  5  [6, 5, 3, 1, 7, ]  6  [7, ]
+    
+    7  [8, 30, 7, ]  8  [9, 20, 8, 30, 7, ]  9  [20, 8, 30, 7, ]  20  [30, 7, ]  30  [40, 50, 30, 7, ]  40  [50, 30, 7, ]  50  [54, 55, 60, 50, 30, 7, ]  54  [55, 60, 50, 30, 7, ]  55  [60, 50, 30, 7, ]  60
+
+   [65, 60, 50, 30, 7, ]  65  
    </pre>
 
 .. todo:: Add comments
@@ -113,7 +52,7 @@ We can convert the algorithm to an iterative version with an explicit stack. Lik
 
 .. code-block:: cpp
 
-    void in_order_iterative(Functor f, const std::unique_ptr<Node>& root_in) const noexcept
+    void bstree<Key, Value>::in_order_iterative(Functor f, const typename bstree<Key, Value>::vlaue_type& root_in) const noexcept
     {
        if (!root_in) return;
        

@@ -1,0 +1,43 @@
+push  7
+push  1
+push  0
+push  -10
+push  -20
+Return  output -20
+Return  output -10
+push  -5
+Return output -5
+Return output 0
+Return output 1
+push  3
+push  2
+Return output 2
+Return output 3
+push  5
+push  4
+Return output 4
+Return output 5
+push  6
+Return output 6
+Return output 7
+push  30
+push  8
+Return output 8
+push  20
+push  9
+Return output 9
+Return output 20
+Return output 30
+push  50
+push  40
+Return output 40
+Return output 50
+push  60
+push  55
+push  54
+Return output 54
+Return output 55
+Return output 60
+push  65
+Return output 65
+Return done

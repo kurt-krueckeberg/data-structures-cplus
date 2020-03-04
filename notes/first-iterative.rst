@@ -1,11 +1,5 @@
-Iterative Traversal Algorithms
-==============================
-
-Stack Based Traversal
----------------------
-
 In Order
-^^^^^^^^ 
+-------- 
 
 Recursive traversal algorithms can be converted to stack-based versions. The in-order recursive algorithm
 

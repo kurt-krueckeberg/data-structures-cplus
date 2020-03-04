@@ -86,18 +86,18 @@ We can simulate the built-in activation stack by adding an actual stack. We will
        std::cout << ']' << std::endl;
     }
 
-the results of tracing the in-order recursive algorithm are below. The stack of values is shown in brackets (the top element is on the left), followed by the value popped from the stack and visited. 
+the results of tracing the in-order recursive algorithm are below.
 
 .. raw:: html
 
    <pre>
-    [-10, 0, 1, 7, ]
-    [-5, -10, 0, 1, 7, ]
-    [0, 1, 7, ]
-    [1, 7, ]
-    [2, 3, 1, 7, ]
-    [3, 1, 7, ]
-    [4, 5, 3, 1, 7, ]
+    [-10, 0, 1, 7, ]           <--- root and left-most children pushed onto stack 
+    [-5, -10, 0, 1, 7, ]       <--- recursion ends, -10 popped and visited.  
+    [0, 1, 7, ]                <--- recursion ends, -5 popped and visited.
+    [1, 7, ]                   <--- recussion ends, 0 popped and visited 
+    [2, 3, 1, 7, ]             <--- recussion ends, 1 popped and visited, 3 and its left-most children pushed 
+    [3, 1, 7, ]                <--- recussion ends, 2 popped and visited 
+    [4, 5, 3, 1, 7, ]          <--- ditto
     [5, 3, 1, 7, ]
     [6, 5, 3, 1, 7, ]
     [7, ]
@@ -113,7 +113,8 @@ the results of tracing the in-order recursive algorithm are below. The stack of 
     [65, 60, 50, 30, 7, ]
    </pre>
 
-The algorithm shows how a node and its left-most children are pushed onto the stack, then when a leaf node's null left child is visited, the that is popped and the value visited. The entire process repeats again with the right child of the just-visited node.
+The output shows how a node and its left-most children are first pushed onto the stack, then when a leaf node's null left child is visited, the stack is popped (after the terminal condition is detected and the algorithm immediately
+returns) and the value visited. The entire process then repeats again with the right child of the just-visited node. 
 
 We can convert the recursive algorithm to an iterative version with an explicit stack. Like the recursive version, it first pushes the input node and all its left-most non-null children onto the stack. 
 

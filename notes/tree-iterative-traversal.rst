@@ -12,7 +12,15 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
 .. code-block:: cpp
 
     template<typename Functor>
-    void in_order(std::unique_ptr<Node>& current) const noexcept
+    template<Key, Value>
+    void bstree<Key, Value>::in_order() const noexcept
+    {
+        in_order(f, root); // Calls method below
+    }
+
+    template<typename Functor>
+    template<Key, Value>
+    void bstree<Key, Value>::in_order(Functor f, std::unique_ptr<Node>& current) const noexcept
     {
         if (!current) return;
    
@@ -22,6 +30,7 @@ Recursive traversal algorithms can be converted to stack-based versions. The in-
    
         in_order(current->right);
     }
+
 
 repeatedly invokes itself with current's left child until a null node is encountered, when it immediately returns. The recusion descends the left-most children because the smaller keys are in the left-most nodes. It then visits the prior node, the parent of the null node, the last
 non-null left-most child. After visiting the node, it takes current node's right child and it calls itself and repeats the recursion of the left-most children, pushing itself, the just-visited node's right child, and its left-most descendants onto the stack. The "pushing" is done
@@ -34,21 +43,79 @@ The recursive algorithm uses the built-in activation stack. If have this tree
    :align: center 
    :scale: 75 %
 
+We can simulate the built-in activation stack by adding an actual stack. We will use a ``std::list<int>``. To mimic LIFO stack behavior, we add elements at the end and remove elements from the end. We, however, ignore ``current`` if it is ``nullptr``.
+
+.. code-block:: cpp
+
+    template<typename Functor>
+    template<Key, Value>
+    void bstree<Key, Value>::in_order(std::unique_ptr<Node>& current) const noexcept
+    {  
+        std::list<Key> list;
+
+        in_order(f, current, list); 
+    }
+
+    template<typename Functor>
+    template<Key, Value>
+    void bstree<Key, Value>::in_order(Functor f, std::unique_ptr<Node>& current, std::list<int>& list) const noexcept
+    {
+        if (!current) return;  // Ignore nullptr
+   
+        list.push_back(current->key());   // push key onto end of list
+
+        in_order(current->left);
+
+        display_stack(list);
+            
+        f(current->__get_value());
+   
+        in_order(current->right);
+
+        list.pop_back();   // pop key from end of list.
+    }
+
+    template<typename Functor>
+    template<Key, Value>
+    void bstree<Key, Value>::display_stack(const std::list<int>& list) const noexcept
+    {
+       std::cout << '[';
+       for (auto riter = list.rbegin(); riter != list.rend(); ++riter) // Print out the simulated "stack". USe code above.
+          std::cout << *riter << ", ";
+
+       std::cout << ']' << std::endl;
+    }
+
 the results of tracing the in-order recursive algorithm are below. The stack of values is shown in brackets (the top element is on the left), followed by the value popped from the stack and visited. 
 
 .. raw:: html
 
    <pre>
-    [-20, -10, 0, 1, 7, ]  -20  [-10, 0, 1, 7, ]  -10  [-5, -10, 0, 1, 7, ]  -5  [0, 1, 7, ]  0  [1, 7, ]  1  [2, 3, 1, 7, ]  2  [3, 1, 7, ]  3  [4, 5, 3, 1, 7, ]  4  [5, 3, 1, 7, ]  5  [6, 5, 3, 1, 7, ]  6  [7, ]
-    
-    7  [8, 30, 7, ]  8  [9, 20, 8, 30, 7, ]  9  [20, 8, 30, 7, ]  20  [30, 7, ]  30  [40, 50, 30, 7, ]  40  [50, 30, 7, ]  50  [54, 55, 60, 50, 30, 7, ]  54  [55, 60, 50, 30, 7, ]  55  [60, 50, 30, 7, ]  60
-
-   [65, 60, 50, 30, 7, ]  65  
+    [-10, 0, 1, 7, ]
+    [-5, -10, 0, 1, 7, ]
+    [0, 1, 7, ]
+    [1, 7, ]
+    [2, 3, 1, 7, ]
+    [3, 1, 7, ]
+    [4, 5, 3, 1, 7, ]
+    [5, 3, 1, 7, ]
+    [6, 5, 3, 1, 7, ]
+    [7, ]
+    [8, 30, 7, ]
+    [9, 20, 8, 30, 7, ]
+    [20, 8, 30, 7, ]
+    [30, 7, ]
+    [40, 50, 30, 7, ]
+    [50, 30, 7, ]
+    [54, 55, 60, 50, 30, 7, ]
+    [55, 60, 50, 30, 7, ]
+    [60, 50, 30, 7, ]
+    [65, 60, 50, 30, 7, ]
    </pre>
 
-.. todo:: Add comments
+The algorithm shows how a node and its left-most children are pushed onto the stack, then when a leaf node's null left child is visited, the that is popped and the value visited. The entire process repeats again with the right child of the just-visited node.
 
-We can convert the algorithm to an iterative version with an explicit stack. Like the recursive version, it first pushes the input node and all its left-most non-null children onto the stack. 
+We can convert the recursive algorithm to an iterative version with an explicit stack. Like the recursive version, it first pushes the input node and all its left-most non-null children onto the stack. 
 
 .. code-block:: cpp
 

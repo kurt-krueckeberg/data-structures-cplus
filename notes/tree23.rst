@@ -13,8 +13,8 @@ Implementing a 2 3 Tree in C++17
 
 The complete source code is at https://github.com/kkruecke/23tree-in-cpp
 
-2 3 Tree Discussions
---------------------
+Discussion Links
+----------------
 
 The following sources discuss 2 3 Trees and their algorithms: 
 
@@ -27,13 +27,6 @@ The following sources discuss 2 3 Trees and their algorithms:
 
 Implementation Overview
 -----------------------
-
-Nested Union tree23<Key, Value>::KeyValue
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The key and value are stored in a KeyValue object that is a union of two ``std::pair``'s. KeyValue has a move assignement and move constructor to improve the efficiency of the tree insertion
-algorithm. Using a unions allows us to write to the ``std::pair<Key, Value>`` member without the need for constantly doing ``const_cast<Key&>(key) = k``, but also allow
-the  ``tree23<Key,Value>``'s iterators to return ``pair<const Key, Value>`` references, again without the need to use explicit ``const_cast<>`` throughout the code.
 
 Deletetion
 ^^^^^^^^^^

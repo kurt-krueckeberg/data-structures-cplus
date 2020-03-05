@@ -1,6 +1,8 @@
 Pre Order
 ---------
 
+The recursive pre-order algorithm below
+
 .. code-block:: cpp
 
     template<class Key, class Value>
@@ -16,13 +18,14 @@ Pre Order
        DoPreOrderTraverse(f, current->right);
     }
 
-todo....
+can be implemented as an iterative algorithm. The root is first placed on the stack, then a while-loop is entered and continues until the stack becomes empty. Inside the loop the top item from the stack is removed and visited.
+Then its right child, if it exists, is pushed onto the stack, then the left child, if it exists, is pushed onto the stack. The right child is pushed before the left, so the left will be popped and visited before the right.
 
 .. code-block:: cpp
 
     template<class Key, class Value>
     template<typename Functor>
-    void bstree<Key, Value>::DoPreOrderIterative(Functor f, const std::unique_ptr<Node>& lhs) const noexcept
+    void bstree<Key, Value>::preOrderIterative(Functor f, const std::unique_ptr<Node>& lhs) const noexcept
     {
        if (!lhs) return;
       
@@ -55,3 +58,6 @@ todo....
                 stack.push(node->left.get()); 
         } 
     }
+
+Examples
+^^^^^^^^

@@ -1,7 +1,7 @@
 In Order
 -------- 
 
-Recursive traversal algorithms can be converted to stack-based versions. The in-order recursive algorithm
+The in-order recursive algorithm
 
 .. code-block:: cpp
 

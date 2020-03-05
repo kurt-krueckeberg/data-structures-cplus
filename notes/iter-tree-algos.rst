@@ -4,5 +4,6 @@ Iterative Traversal Algorithms
 .. toctree::
    :maxdepth: 2
    
-   first-iterative.rst
-   second-iterative.rst
+   inorder-iter.rst
+   preorder-iter.rst
+   postorder-iter.rst

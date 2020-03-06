@@ -8,8 +8,8 @@ Given this tree
    :align: center 
    :scale: 75 %
 
-The recursive pre-order algorithm recursively visits the current node, initially the root, then its left child, and lastly its right child. The left child is always chosen before the right. This means left subtrees are always visited before the right subtrees, and, in turn, 
-each sub-subtree is traverse before the left sub-subtree. Applied to the tree above this means that a visit that print the key of the current node would, when passed to the pre-order recursive algorithm, print this  
+The recursive pre-order algorithm visits the input node, initially the root, then recurses with its left child, and lastly recurses with its right child. This means left subtree is visited before the right subtree, and likewise each sub-subtree is visited before the left sub-subtree.
+This ca been seen when the pre-order algorithm is called with the root of the above tree. 
 
 .. raw:: html
 
@@ -36,9 +36,14 @@ each sub-subtree is traverse before the left sub-subtree. Applied to the tree ab
      54
      65
     </pre>   
-    
-For an iterative pre-order algorithm to mimic this behavior the root is first placed on the stack, then a while-loop continues until the stack becomes empty. Inside the loop the top item from the stack is removed and visited.
-Then its right child, if it exists, is pushed onto the stack, followed by the left child, if it exists. The right child is pushed before the left to ensure that the left child will be popped and visited before the right child. One the left child is visited the
+
+The order in which nodes are visited is as just described, parent first, then left child, then right child.      
+
+To create an iterative pre-order algorithm that mimics this behavior the root is pushed onto a stack, next a while-loop runs until the stack becomes empty. Inside the while-loop the stack is popped and visited. Next its right child, if it exists, is pushed onto the stack, followed by the
+left child, if it exists. The right child is pushed onto the stack before the left child to ensure that the left child will be popped and visited before the right child. Once the left child is visited, first its left child, then its right child are placed on the stack. 
+
+.. todo:: Describe what happens next, after the parent/left-child push-pop-visit process ends. Show what the stack holds prior to this and then after this. Draw out the stack by hand.
+
 process repeats: its left child is pushed followed by its right child.
 
 .. code-block:: cpp

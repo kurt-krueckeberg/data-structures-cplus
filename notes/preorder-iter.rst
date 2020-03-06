@@ -1,33 +1,10 @@
 Pre Order
 ---------
 
-The recursive pre-order algorithm can be traced to view its stack. Running this stack tracing version
+The recursive pre-order algorithm 
 
-.. code-block:: cpp
 
-    template<class Key, class Value>
-    template<typename Functor>
-    void bstree<Key, Value>::preOrderTrace(Functor f, const std::unique_ptr<Node>& lhs, stack_tracer& tracer, int depth) const noexcept
-    {
-       if (!current) return;
-       
-       tracer.push(current->key());
-    
-       tracer.print();
-    
-       f(current->__get_value()); 
-    
-       preOrderTraverse(f, current->left, tracer, depth + 1);
-    
-       preOrderTraverse(f, current->right, depth + 1);
-    
-       tracer.pop();
-    }
-
-gives this output:
-
-.. todo:: fix this output
-
+.. todo:: Draw out by hand the stack of the preorder recursive algorithm, so it is clear what is going on. Then show hw the iterative version duplicates the same behavior using a stack.
 .. raw:: html
 
     <pre>   

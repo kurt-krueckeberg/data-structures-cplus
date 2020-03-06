@@ -1,24 +1,7 @@
 Pre Order
 ---------
 
-The recursive pre-order algorithm below
-
-.. code-block:: cpp
-
-    template<class Key, class Value>
-    template<typename Functor>
-    void bstree<Key, Value>::DoPreOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
-    {
-       if (!current) return;
-    
-       f(current->__get_value()); 
-    
-       DoPreOrderTraverse(f, current->left);
-    
-       DoPreOrderTraverse(f, current->right);
-    }
-
-can be traced to view its stack. The result of running this stack tracing method 
+The recursive pre-order algorithm can be traced to view its stack. Running this stack tracing version
 
 .. code-block:: cpp
 
@@ -41,11 +24,13 @@ can be traced to view its stack. The result of running this stack tracing method
        tracer.pop();
     }
 
-are blow:
+gives this output:
 
-.. todo:: complete this.
+.. todo:: output goes here
+
+...more text here
     
-...can be implemented as an iterative algorithm. The root is first placed on the stack, then a while-loop is entered and continues until the stack becomes empty. Inside the loop the top item from the stack is removed and visited.
+To mimic the iterative algorithm the root is first placed on the stack, then a while-loop is entered and continues until the stack becomes empty. Inside the loop the top item from the stack is removed and visited.
 Then its right child, if it exists, is pushed onto the stack, then the left child, if it exists, is pushed onto the stack. The right child is pushed before the left, so the left will be popped and visited before the right.
 
 .. code-block:: cpp

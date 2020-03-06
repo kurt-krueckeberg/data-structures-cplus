@@ -18,7 +18,34 @@ The recursive pre-order algorithm below
        DoPreOrderTraverse(f, current->right);
     }
 
-can be implemented as an iterative algorithm. The root is first placed on the stack, then a while-loop is entered and continues until the stack becomes empty. Inside the loop the top item from the stack is removed and visited.
+.. code-block:: cpp
+
+can be traced to view its stack. The result of running this stack tracing method 
+
+    template<class Key, class Value>
+    template<typename Functor>
+    void bstree<Key, Value>::preOrderTrace(Functor f, const std::unique_ptr<Node>& lhs, stack_tracer& tracer, int depth) const noexcept
+    {
+       if (!current) return;
+       
+       tracer.push(current->key());
+    
+       tracer.print();
+    
+       f(current->__get_value()); 
+    
+       preOrderTraverse(f, current->left, tracer, depth + 1);
+    
+       preOrderTraverse(f, current->right, depth + 1);
+    
+       tracer.pop();
+    }
+
+are blow:
+
+.. todo:: complete this.
+    
+...can be implemented as an iterative algorithm. The root is first placed on the stack, then a while-loop is entered and continues until the stack becomes empty. Inside the loop the top item from the stack is removed and visited.
 Then its right child, if it exists, is pushed onto the stack, then the left child, if it exists, is pushed onto the stack. The right child is pushed before the left, so the left will be popped and visited before the right.
 
 .. code-block:: cpp

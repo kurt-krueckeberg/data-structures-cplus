@@ -19,11 +19,6 @@ Discussion Links
 * `Introduction to Algorithms, 3rd Edition <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_  
 * `Radford.edu <https://www.radford.edu/~nokie/classes/360/trees.bst.html>`_  
 
-Implementation
---------------
-
-The implementation is on `gihub <https://github.com/kurt-krueckeberg/bst>`_.
-
 Nested Node class
 ~~~~~~~~~~~~~~~~~
 

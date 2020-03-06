@@ -1,40 +1,45 @@
 Pre Order
 ---------
 
-The recursive pre-order algorithm 
+Given this tree
 
+.. figure:: ../images/level-order-tree.jpg
+   :alt: binary search tree
+   :align: center 
+   :scale: 75 %
 
-.. todo:: Draw out by hand the stack of the preorder recursive algorithm, so it is clear what is going on. Then show hw the iterative version duplicates the same behavior using a stack.
+The recursive pre-order algorithm recursively visits the current node, initially the root, then its left child, and lastly its right child. The left child is always chosen before the right. This means left subtrees are always visited before the right subtrees, and, in turn, 
+each sub-subtree is traverse before the left sub-subtree. Applied to the tree above this means that a visit that print the key of the current node would, when passed to the pre-order recursive algorithm, print this  
+
 .. raw:: html
 
     <pre>   
-     [7, ]
-     7  [1, 7, ]
-     1  [0, 1, 7, ]
-     0  [-10, 0, 1, 7, ]
-     -10  [-20, -10, 0, 1, 7, ]
-     -20  [-5, -10, 0, 1, 7, ]
-     -5  [3, 1, 7, ]
-     3  [2, 3, 1, 7, ]
-     2  [5, 3, 1, 7, ]
-     5  [4, 5, 3, 1, 7, ]
-     4  [6, 5, 3, 1, 7, ]
-     6  [30, 7, ]
-     30  [8, 30, 7, ]
-     8  [20, 8, 30, 7, ]
-     20  [9, 20, 8, 30, 7, ]
-     9  [50, 30, 7, ]
-     50  [40, 50, 30, 7, ]
-     40  [60, 50, 30, 7, ]
-     60  [55, 60, 50, 30, 7, ]
-     55  [54, 55, 60, 50, 30, 7, ]
-     54  [65, 60, 50, 30, 7, ]
-     </pre>   
-
-...more text here
+      7
+      1
+      0
+    -10
+    -20
+     -5
+      3
+      2
+      5
+      4
+      6
+     30
+      8
+     20
+      9
+     50
+     40
+     60
+     55
+     54
+     65
+    </pre>   
     
-To mimic the iterative algorithm the root is first placed on the stack, then a while-loop is entered and continues until the stack becomes empty. Inside the loop the top item from the stack is removed and visited.
-Then its right child, if it exists, is pushed onto the stack, then the left child, if it exists, is pushed onto the stack. The right child is pushed before the left, so the left will be popped and visited before the right.
+For an iterative pre-order algorithm to mimic this behavior the root is first placed on the stack, then a while-loop continues until the stack becomes empty. Inside the loop the top item from the stack is removed and visited.
+Then its right child, if it exists, is pushed onto the stack, followed by the left child, if it exists. The right child is pushed before the left to ensure that the left child will be popped and visited before the right child. One the left child is visited the
+process repeats: its left child is pushed followed by its right child.
 
 .. code-block:: cpp
 
@@ -73,6 +78,8 @@ Then its right child, if it exists, is pushed onto the stack, then the left chil
                 stack.push(node->left.get()); 
         } 
     }
+
+Passing a key-printer visitor ot preOrderIterative() gives the same output as the recursive version. Why?
 
 Examples
 ^^^^^^^^

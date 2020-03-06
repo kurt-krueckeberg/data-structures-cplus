@@ -18,9 +18,9 @@ The recursive pre-order algorithm below
        DoPreOrderTraverse(f, current->right);
     }
 
-.. code-block:: cpp
-
 can be traced to view its stack. The result of running this stack tracing method 
+
+.. code-block:: cpp
 
     template<class Key, class Value>
     template<typename Functor>

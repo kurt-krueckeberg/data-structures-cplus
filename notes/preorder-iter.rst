@@ -104,9 +104,9 @@ is:
 
     <pre>   
     test_tree.preOrderIterative(key_printer) = 
-    7 is top of stack. Stack after pop() = []          <-- root was pushed before while-loop, and popped and visited inside it, then its...
-    Stack after pushing children of 7 = [1, 30, ]      <-- children are pushed onto the stack. The loop continues...   
-    1 is top of stack. Stack after pop() = [30, ]      <--- 1 is popped and visited, and the process repeats, with its children being pushed onto the stack 
+    7 is top of stack. Stack after pop() = []          <-- root 7 was pushed before while-loop, and popped and visited inside it, then its...
+    Stack after pushing children of 7 = [1, 30, ]      <-- children are pushed onto the stack. The loop begins agains and...   
+    1 is top of stack. Stack after pop() = [30, ]      <--- 1 is popped and visited, and the process repeats: its children are pushed onto the stack 
     Stack after pushing children of 1 = [0, 3, 30, ]
     0 is top of stack. Stack after pop() = [3, 30, ]
     Stack after pushing children of 0 = [-10, 3, 30, ]
@@ -116,7 +116,7 @@ is:
     Stack after pushing children of -20 = [-5, 3, 30, ]
     -5 is top of stack. Stack after pop() = [3, 30, ]
     Stack after pushing children of -5 = [3, 30, ]
-    3 is top of stack. Stack after pop() = [30, ]
+    3 is top of stack. Stack after pop() = [30, ]        
     Stack after pushing children of 3 = [2, 5, 30, ]
     2 is top of stack. Stack after pop() = [5, 30, ]
     Stack after pushing children of 2 = [5, 30, ]
@@ -125,9 +125,9 @@ is:
     4 is top of stack. Stack after pop() = [6, 30, ]
     Stack after pushing children of 4 = [6, 30, ]
     6 is top of stack. Stack after pop() = [30, ]
-    Stack after pushing children of 6 = [30, ]
-    30 is top of stack. Stack after pop() = []
-    Stack after pushing children of 30 = [8, 50, ]
+    Stack after pushing children of 6 = [30, ]         <-- All the root's left children and their left and right children have been placed on the stack, subsequently 
+    30 is top of stack. Stack after pop() = []                 popped and visited. 
+    Stack after pushing children of 30 = [8, 50, ]     <---   Finally the root's right child 30 is popped and visited, then its children pushed.
     8 is top of stack. Stack after pop() = [50, ]
     Stack after pushing children of 8 = [20, 50, ]
     20 is top of stack. Stack after pop() = [50, ]
@@ -148,7 +148,7 @@ is:
     Stack after pushing children of 65 = []
     </pre> 
 
-.. todo:: comment that this mimics exactly the recursive version
+The iterative algorithm thus mimics exactly the recursive version: 
 
 .. code-block:: cpp
 
@@ -187,8 +187,3 @@ is:
                 stack.push(node->left.get()); 
         } 
     }
-
-Passing a key-printer visitor ot preOrderIterative() gives the same output as the recursive version. Why?
-
-Examples
-^^^^^^^^

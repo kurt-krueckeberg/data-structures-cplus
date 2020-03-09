@@ -2,7 +2,7 @@ Iterative Traversal Algorithms
 ==============================
 
 Tree Iterator Implementation Discussions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------
 
 Non Stack-Based Tree Iterators Implementation Discussions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -248,18 +248,3 @@ Downside
 ^^^^^^^^
 
 The downside to ``shared_ptr`` is that tree copies share nodes, and if the tree interface allows the associated value of a key to altered, like ``T& operator[]( const Key& key )`` does, then a ``shared_ptr`` can't be used.
-
-Tree Iterator Implementation Discussions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Non Stack-Based Tree Iterators Implementation Discussions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-* `OLD Dominion Univ: Traversing Trees with Iterator, an STL-compatible iterator Q&A teaching discussion <https://secweb.cs.odu.edu/~zeil/cs361/web/website/Lectures/treetraversal/page/treetraversal.html>`__
-* `GeeksforGeeks: Inorder Tree Traversal without Recursion <http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/>`__
-
-Stack-Based Iterator Implementations Discussions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-*  http://courses.cs.vt.edu/~cs3114/Fall17/barnette/notes/Tree-Iterators.pdf
-* `Carneige Mellon: Non-Recursive Tree Traversals (discuss forward iteration using a stack, Java code <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/trees.html>`__

@@ -26,8 +26,8 @@ General References on BST Iteratros and Iteration
 
 General Reference on The Master Theorem
 
-* Theory of Recur:  `Time Complexity of Resursive Algorithms: The Master Theorem <https://yourbasic.org/algorithms/time-complexity-recursive-functions/>`_
-  and also https://adrianmejia.com/analysis-of-recursive-algorithms/.
+* `Time Complexity of Resursive Algorithms: The Master Theorem <https://yourbasic.org/algorithms/time-complexity-recursive-functions/>`_
+* Also: https://adrianmejia.com/analysis-of-recursive-algorithms/.
 
 Iterative Implementations
 -------------------------

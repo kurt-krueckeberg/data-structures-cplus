@@ -9,7 +9,8 @@ Non Stack-Based Tree Iterators Implementation Discussions
 
 .. note: One of these articles or those under the next heading menton that a parent pointer can help eliminate an explicit stack (in iterative implementations).
  
-* `OLD Dominion Univ: Traversing Trees with Iterator, an STL-compatible iterator Q&A teaching discussion <https://secweb.cs.odu.edu/~zeil/cs361/web/website/Lectures/treetraversal/page/treetraversal.html>`__
+* `OLD Dominion Univ: Traversing Trees with Iterator, an STL-compatible iterator Q&A teaching discussion <https://www.cs.odu.edu/~zeil/cs361/latest/Public/treetraversal/index.html>`_
+
 * `GeeksforGeeks: Inorder Tree Traversal without Recursion <http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/>`__
 
 Stack-Based Iterator Implementations Discussions

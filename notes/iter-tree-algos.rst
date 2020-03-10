@@ -20,7 +20,7 @@ Stack-Based Iterator Implementations Discussions
    
    1. **Note**: The post-order iterator uses a stack of pairs a ``Node *`` and a ``bool``, where the ``bool`` is an  flag indicating whether we have visited this node's right child already. 
    2. **Note**: It also discusses how *this flag can be eliminated*.
-   3. This same link also mentions that a parent point in the Node class eliminates the need for a stack entirely. See page 31.  
+   3. This same link also mentions that a parent point in the Node class **eliminates** the need for a **stack entirely**. See page 31.  
 
 * `Carneige Mellon: Java like pre-order iterator class using a stack <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/trees.html>`__. Source code `here <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/code/>`_.
 

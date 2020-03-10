@@ -9,15 +9,21 @@ Non Stack-Based Tree Iterators Implementation Discussions
 
 .. note: One of these articles or those under the next heading menton that a parent pointer can help eliminate an explicit stack (in iterative implementations).
  
-* `OLD Dominion Univ: Traversing Trees with Iterator, an STL-compatible iterator Q&A teaching discussion <https://www.cs.odu.edu/~zeil/cs361/latest/Public/treetraversal/index.html>`_
+* `OLD Dominion Univ: Traversing Trees with Iterator, a C++ STL-compatible iterator for BST. Q&A teaching discussion <https://www.cs.odu.edu/~zeil/cs361/latest/Public/treetraversal/index.html>`_
 
-* `GeeksforGeeks: Inorder Tree Traversal without Recursion <http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/>`__
+* `Morris In-Order Traversal: Inorder Tree Traversal without Recursion or Stack <http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/>`__
 
 Stack-Based Iterator Implementations Discussions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*  http://courses.cs.vt.edu/~cs3114/Fall17/barnette/notes/Tree-Iterators.pdf
-* `Carneige Mellon: Non-Recursive Tree Traversals (discuss forward iteration using a stack, Java code <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/trees.html>`__
+* `Java-style iterator for pre-order, in-order and post-order Iteration using a stack <http://courses.cs.vt.edu/~cs3114/Fall17/barnette/notes/Tree-Iterators.pdf>`_
+
+.. note::  **Note**: The post-order iterator uses a stack that holds a pair of values, a ``Node *`` and a ``bool``, where the ``bool`` is an  flag indicating whether we have visited this node's right child already, i.e. 
+           a went-right flag. It also discusses how this flag can be eliminated.
+
+.. note:: This same link also mentions that a parent point in the Node class eliminates the need for a stack entirely. See page 31.  
+
+* `Carneige Mellon: Java like pre-order iterator class using a stack <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/trees.html>`__. Source code `here <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/code/>`_.
 
 General References on BST Iteratros and Iteration
 -------------------------------------------------

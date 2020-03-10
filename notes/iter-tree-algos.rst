@@ -4,6 +4,7 @@ Iterative Traversal Algorithms
 Tree Iterator Implementation Discussions
 ----------------------------------------
 
+
 Non Stack-Based Tree Iterators Implementation Discussions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -16,6 +17,8 @@ Non Stack-Based Tree Iterators Implementation Discussions
 Stack-Based Iterator Implementations Discussions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+* `stack-based pre-, in- and post-order <https://prismoskills.appspot.com/lessons/Binary_Trees/Traversal_without_recursion.jsp>`_
+* `Both Iterative and Recursive traversal <https://cs.gmu.edu/~kauffman/teaching-samples/cs310/11-tree-recursion.pdf>`_
 * `Java-style iterator for pre-order, in-order and post-order Iteration using a stack <http://courses.cs.vt.edu/~cs3114/Fall17/barnette/notes/Tree-Iterators.pdf>`_
    
    1. **Note**: The post-order iterator uses a stack of pairs a ``Node *`` and a ``bool``, where the ``bool`` is an  flag indicating whether we have visited this node's right child already. 

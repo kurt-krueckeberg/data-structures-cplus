@@ -99,7 +99,7 @@ in-order iterator class without a stack
           auto __y = bstree.root.get();
     
           while(__y->left) 
-             __y->left.get();
+             __y = __y->left.get();
     
           min = current = __y;
        }

@@ -2,7 +2,7 @@ Notes on Data Structures and Algorithms in C++
 ==============================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    
    notes/merge-sort.rst
    notes/shell-sort.rst

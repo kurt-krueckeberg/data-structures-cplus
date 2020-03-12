@@ -3,6 +3,7 @@ Pre Order
 
 Stack-base Pre-order Iterative Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: cpp
 
     template<class Key, class Value>

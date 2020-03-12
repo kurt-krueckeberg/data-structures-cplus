@@ -1,6 +1,9 @@
 Pre Order
 ---------
 
+Stack-base Pre-order Iterative Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Given this tree
 
 .. figure:: ../images/level-order-tree.jpg
@@ -187,3 +190,8 @@ The iterative algorithm thus mimics exactly the recursive version:
                 stack.push(node->left.get()); 
         } 
     }
+
+Pre-order Iterator without a Stack
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. todo:: Show its increment() method

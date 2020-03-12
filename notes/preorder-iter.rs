@@ -1,6 +1,8 @@
 Pre Order
 ---------
 
+Stack-base Pre-order Iterative Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: cpp
 
     template<class Key, class Value>
@@ -16,8 +18,6 @@ Pre Order
        DoPreOrderTraverse(f, current->right);
     }
 
-Stack-base Pre-order Iterative Method
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. todo:: Add explanatory text
 

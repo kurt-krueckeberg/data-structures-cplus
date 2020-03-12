@@ -2,16 +2,15 @@ Post Order
 ----------
 
 Discussion of post-order iterative algorithm
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+````````````````````````````````````````````
 
 * `Traversl implement in multiple prog. languages <http://rosettacode.org/wiki/Tree_traversal>`_
 * `Tree traversal without recursion: the tree as a state machine <https://www.perlmonks.org/?node_id=600456>`_
-* 
 
-.. todo:: Include a stack-base and non-stack post-order iterative algorithm. The show a post-order iterator class.
+.. todo:: Include the stack-based and non-stack post-order iterative algorithms, as well as the post-order iterator class.
 
 Various Implementations
-^^^^^^^^^^^^^^^^^^^^^^^
+```````````````````````
 
 1. post-order iterative pseudocode and discussions: 
 

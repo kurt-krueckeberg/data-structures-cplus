@@ -8,6 +8,8 @@ Discussion of post-order iterative algorithm
 * `Tree traversal without recursion: the tree as a state machine <https://www.perlmonks.org/?node_id=600456>`_
 * 
 
+.. todo:: Include a stack-base and non-stack post-order iterative algorithm. The show a post-order iterator class.
+
 Various Implementations
 ^^^^^^^^^^^^^^^^^^^^^^^
 

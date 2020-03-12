@@ -16,7 +16,10 @@ Pre Order
        DoPreOrderTraverse(f, current->right);
     }
 
-todo....
+Stack-base Pre-order Iterative Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. todo:: Add explanatory text
 
 .. code-block:: cpp
 
@@ -55,3 +58,8 @@ todo....
                 stack.push(node->left.get()); 
         } 
     }
+
+Pre-order Iterator without a Stack
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. todo:: Show its increment() method

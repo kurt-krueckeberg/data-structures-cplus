@@ -164,6 +164,9 @@ In the main loop we need to check whether y is non-null and whether the stack is
 root) has only a right child (and no left child). In this case, the inner while loop will only push one node at a time, which will then be popped and visited.  The stack will become empty, but the next node to visit, y->right, will not be null. On the other hand, ``y->right.get()`` will
 be null whenever it is a leaf node. But in this case, the stack will not be null because y will always be in a subtree that contains a left child pointer, unless y is the last node in the tree. At that point, ``y->right`` will be null and the stack will be empty.
 
+In-Order Iterative Traversal Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Thus we have:
 
 .. code-block:: cpp
@@ -195,3 +198,8 @@ Thus we have:
           y = y->right.get(); // repeat the process with current's right child.
        }
     }
+
+In-order Bidirectional Iterator Class 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. todo:: Add later

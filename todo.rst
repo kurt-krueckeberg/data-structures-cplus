@@ -1,7 +1,7 @@
 TODO
 ----
 
-* Reorganize the all the Traversal Files into nested TOC's.
+* Decide on a reorganization of the tree and tree traversal files. Decide on what to talk about and the TOC-sort of hierarchy.
   
 Analyze the depth of recursion using a Node recursive copy ctor versus pre-order copy of nodes.
 

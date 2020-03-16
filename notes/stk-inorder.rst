@@ -1,5 +1,8 @@
 In-order Stack-based Iteration
-------------------------------
+==============================
+
+In-order
+--------
 
 The stack-base version of the in-order algorithm mimics the recursive algorithm. An explicit stack holds the nodes to be visited. ``__y`` is the next node to visit, which initially is the root. A while loop continues until the stack is empty or ``__y`` becomes ``nullptr``. 
 
@@ -15,16 +18,17 @@ visited. In this case, the stack will not be null, unless y's parent was the rig
 
     template<class Key, class Value>
     template<typename Functor>
-    void bstree<Key, Value>::inOrderStackIterative(Functor f, const std::unique_ptr<Node>& root_in) const noexcept
+    void bstree<Key, Value>::inOrderStackIterative(Functor f, const std::unique_ptr<Node>& root__) const noexcept
     {
-       if (!root_in) return;
+       if (!root__) return;
        
        std::stack<const node_type *> stack;
     
-       const Node *__y = root_in.get();
+       const Node *__y = root__.get();
 
        while (__y || !stack.empty()) { 
-          while (__y) { // put y and its left-most descendents onto the stack
+
+          while (__y) { // push y and all its left-most descendents onto the stack
           
              stack.push(__y);
              __y = __y->left.get();
@@ -36,6 +40,94 @@ visited. In this case, the stack will not be null, unless y's parent was the rig
     
           f(__y->__get_value());  
           
-          __y = __y->right.get(); // repeat the process with current's right child.
+          __y = __y->right.get(); // Turn to the right child of the node just visited. Push it onto stack
+                                  // and repeat the entire process. 
        }
+    }
+
+Pre-order
+---------
+
+.. code-block:: cpp
+
+    template<class Key, class Value>
+    template<typename Functor>
+    void bstree<Key, Value>::preOrderStackIterative(Functor f, const std::unique_ptr<Node>& lhs) const noexcept
+    {
+    
+       if (!lhs) return;
+      
+        std::stack<const node_type *> stack; 
+        stack.push(root.get()); 
+    
+        //
+        //  Pop all items one by one, and do the following for every popped item:
+        // 
+        //   a) invoke f 
+        //   b) push its right child 
+        //   c) push its left child 
+        //
+        // Note: the right child is pushed first so that left is processed first 
+         
+        while (!stack.empty()) { 
+    
+            // Pop the top item from stack and print it 
+            const node_type *node = stack.top(); 
+            stack.pop(); 
+    
+            f(node->__get_value()); // returns std::pair<const Key&, Value&>
+    
+            // Push right and left non-null children of the popped node to stack 
+            if (node->right) 
+                stack.push(node->right.get()); 
+    
+            if (node->left)
+                stack.push(node->left.get()); 
+            
+        } 
+    }
+    
+Post-order
+----------
+
+Show two stack version. Then one stack.
+
+.. code-block:: cpp
+
+    template<class Key, class Value>
+    template<typename Functor>
+    void bstree<Key, Value>::postOrderStackIterative(Functor f, const std::unique_ptr<Node>& root_in) const
+    {
+      const Node *pnode = root_in.get();
+    
+      std::stack<const Node *> stack; 
+    
+      const Node *prior_node{nullptr};
+    
+      while (!stack.empty() || pnode) {
+    
+        if (pnode) {
+    
+          stack.push(pnode);
+          pnode = pnode->left.get();
+    
+        } else {
+    
+          const Node *peek_node = stack.top();
+    
+          if (peek_node->right && prior_node != peek_node->right.get())
+    
+              pnode = peek_node->right.get();
+    
+          else {
+    
+            f(peek_node->__get_value());
+                
+            prior_node = stack.top();
+            stack.pop();
+     
+            pnode = nullptr;
+         }
+       } 
+     }
     }

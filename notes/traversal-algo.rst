@@ -36,3 +36,15 @@ General Reference on The Master Theorem
 
 * `Time Complexity of Resursive Algorithms: The Master Theorem <https://yourbasic.org/algorithms/time-complexity-recursive-functions/>`_
 * Also: https://adrianmejia.com/analysis-of-recursive-algorithms/.
+
+Iterative Implementations
+-------------------------
+
+Recursive traversal algorithms can be converted to stack-based versions. Below iterative versions of in-order, pre-order and post-order recursion algorithms are discussed.
+
+.. toctree::
+   :maxdepth: 2
+   
+   inorder-iter.rst
+   preorder-iter.rst
+   postorder-iter.rst

@@ -1,205 +1,267 @@
-In Order
--------- 
-
-In-Order Iterative Traversal Method
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The in-order recursive algorithm
-
 .. code-block:: cpp
 
-    template<typename Functor>
-    template<Key, Value>
-    void bstree<Key, Value>::in_order() const noexcept
-    {
-        in_order(f, root); // Calls method below
-    }
-
-    template<typename Functor>
-    template<Key, Value>
-    void bstree<Key, Value>::in_order(Functor f, std::unique_ptr<Node>& current) const noexcept
-    {
-        if (!current) return;
-   
-        in_order(current->left);
-   
-        f(current->__get_value());
-   
-        in_order(current->right);
-    }
-
-
-repeatedly invokes itself with current's left child until a null node is encountered, when it immediately returns. The recusion descends the left-most children because the smaller keys are in the left-most nodes. It then visits the prior node, the parent of the null node, the last
-non-null left-most child. After visiting the node, it takes current node's right child and it calls itself and repeats the recursion of the left-most children, pushing itself, the just-visited node's right child, and its left-most descendants onto the stack. The "pushing" is done
-implicitly onto the system-maintained stack. 
-
-The recursive algorithm uses the built-in activation stack. If have this tree
-
-.. figure:: ../images/level-order-tree.jpg
-   :alt: binary search tree
-   :align: center 
-   :scale: 75 %
-
-We can simulate the built-in activation stack by adding an actual stack. We will use a ``std::list<int>``. To mimic LIFO stack behavior, we add elements at the end and remove elements from the end. We, however, ignore ``current`` if it is ``nullptr``.
-
-.. code-block:: cpp
-
-    template<typename Functor>
-    template<Key, Value>
-    void bstree<Key, Value>::in_order(std::unique_ptr<Node>& current) const noexcept
-    {  
-        std::list<Key> list;
-
-        in_order(f, current, list); 
-    }
-
-    template<typename Functor>
-    template<Key, Value>
-    void bstree<Key, Value>::in_order(Functor f, std::unique_ptr<Node>& current, std::list<int>& list) const noexcept
-    {
-        if (!current) return;  // Ignore nullptr
-   
-        list.push_back(current->key());   // push key onto end of list
-
-        in_order(current->left);
-
-        display_stack(list);
-            
-        f(current->__get_value());
-   
-        in_order(current->right);
-
-        list.pop_back();   // pop key from end of list.
-    }
-
-    template<typename Functor>
-    template<Key, Value>
-    void bstree<Key, Value>::display_stack(const std::list<int>& list) const noexcept
-    {
-       std::cout << '[';
-       for (auto riter = list.rbegin(); riter != list.rend(); ++riter) // Print out the simulated "stack". USe code above.
-          std::cout << *riter << ", ";
-
-       std::cout << ']' << std::endl;
-    }
-
-the results of tracing the in-order recursive algorithm are below.
-
-.. raw:: html
-
-   <pre>
-    [-10, 0, 1, 7, ]           <--- root and left-most children pushed onto stack 
-    [-5, -10, 0, 1, 7, ]       <--- recursion ends, -10 popped and visited.  
-    [0, 1, 7, ]                <--- recursion ends, -5 popped and visited.
-    [1, 7, ]                   <--- recussion ends, 0 popped and visited 
-    [2, 3, 1, 7, ]             <--- recussion ends, 1 popped and visited, 3 and its left-most children pushed 
-    [3, 1, 7, ]                <--- recussion ends, 2 popped and visited 
-    [4, 5, 3, 1, 7, ]          <--- ditto
-    [5, 3, 1, 7, ]
-    [6, 5, 3, 1, 7, ]
-    [7, ]
-    [8, 30, 7, ]
-    [9, 20, 8, 30, 7, ]
-    [20, 8, 30, 7, ]
-    [30, 7, ]
-    [40, 50, 30, 7, ]
-    [50, 30, 7, ]
-    [54, 55, 60, 50, 30, 7, ]
-    [55, 60, 50, 30, 7, ]
-    [60, 50, 30, 7, ]
-    [65, 60, 50, 30, 7, ]
-   </pre>
-
-The output shows how a node and its left-most children are first pushed onto the stack, then when a leaf node's null left child is visited, the stack is popped (after the terminal condition is detected and the algorithm immediately
-returns) and the value visited. The entire process then repeats again with the right child of the just-visited node: it and its left-most children are pushed onto the stack. The net results is in-order traversal of the tree. 
-
-We can convert the recursive algorithm to an iterative version with an explicit stack. Like the recursive version, it pushes the input node and all its left-most non-null children onto the stack. 
-
-.. code-block:: cpp
-
-    void bstree<Key, Value>::in_order_iterative(Functor f, const typename bstree<Key, Value>::vlaue_type& root_in) const noexcept
-    {
-       if (!root_in) return;
-       
-       std::stack<const node_type *> stack;
+    class iterator_inorder {  
+           
+       bstree<Key, Value> *ptree;
+       using node_type = bstree<Key, Value>::node_type;
+       node_type *current;
     
-       const Node *y = root_in.get();
-    
-       while (y) { // put y and its left-most descendents onto the stack
-          
-          stack.push(y);
-          y = y->left.get();
-       } 
-
-Then the top item is popped from the stack and the node visited. The push-loop then again repeats the process with the right child (of the just-visited node). It and its non-null left-most children are pushed onto the stack.
-
-Pushing nodes in the order just described--first the root and its left-most children, then after popping and visiting a node, pushing its right child followed by its left-most children--exactly mimics the recursive algorithm. We now add the outer while loop condition.
-The entire algorithm is below. We just need to determine the condition of the outer while-loop. 
-
-.. code-block:: cpp
-
-    void in_order_iterative(Functor f, const std::unique_ptr<Node>& root_in) const noexcept
-    {
-       if (!root_in) return;
-       
-       std::stack<const node_type *> stack;
+       enum class position {at_beg, between, at_end};
+       position pos;
       
-       const Node *y = root_in.get();
-
-       while (conditions-are-met)  { // See discussion below
-     
-           while (y) { // put y and its left-most descendents onto the stack
-              
-              stack.push(y);
-              y = y->left.get();
-           } 
-        
-           y = stack.top();
-
-           stack.pop();
-        
-           f(y->__get_value());  
-           y = y->right.get(); // repeat the process with current's right child.
-       } 
-   }
+       Node *increment()
+       {
+           if (current == nullptr || pos == position::at_end) return current;
+           
+           Node *__y = current;
     
-In the main loop we need to check whether y is non-null and whether the stack is empty. We loop as long one of these conditions is met. In certain conditions the stack will become empty before all nodes have been visited. To see this, consider a tree in which each node (including the
-root) has only a right child (and no left child). In this case, the inner while loop will only push one node at a time, which will then be popped and visited.  The stack will become empty, but the next node to visit, y->right, will not be null. On the other hand, ``y->right.get()`` will
-be null whenever it is a leaf node. But in this case, the stack will not be null because y will always be in a subtree that contains a left child pointer, unless y is the last node in the tree. At that point, ``y->right`` will be null and the stack will be empty.
-
-Thus we have:
-
-.. code-block:: cpp
-
-    template<class Key, class Value>
-    template<typename Functor>
-    void bstree<Key, Value>::InOrderIterative(Functor f, const std::unique_ptr<Node>& root_in) const noexcept
-    {
-       if (!root_in) return;
+           if (__y->right) { // current has a right child, a greater value to the right
+         
+               __y = __y->right.get();
+         
+               while (__y->left) // Get the smallest value in its right subptree, the smallest value in the r. subptree.
+                  __y = __y->left.get();
+         
+           } else {
+         
+               auto parent = __y->parent;
        
-       std::stack<const node_type *> stack;
+               // Ascend to the first parent ancestor that is not a right child, 
+               // and thus is greater than __y 
+               while (__y == parent->right.get()) {
+       
+                   if (parent == ptree->root.get())  // We reached the root -> there is no successor
+                       return current;
+                          
+                   __y = parent;
+       
+                   parent = parent->parent;
+               }
+               __y = parent; // First parent ancestor that is not a right child. 
+           }
     
-       const Node *y = root_in.get();
-    
-       while (y || !stack.empty()) { 
-
-          while (y) { // put y and its left-most descendents onto the stack
-          
-             stack.push(y);
-             y = y->left.get();
-          } 
-    
-          y = stack.top();
-    
-          stack.pop();
-    
-          f(y->__get_value());  
-          
-          y = y->right.get(); // repeat the process with current's right child.
+           return __y;
        }
-    }
-
-In-order Bidirectional Iterator Class 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. todo:: Add later
+       
+       Node *decrement()
+       {
+          if (current == nullptr || pos == position::at_beg) return current;
+    
+          Node *__x = current; 
+        
+          if (__x->left) { // Unlike increment() we check left child before right child. 
+         
+               auto __y = __x->left.get();
+         
+               while (__y->right) // Get its largest value. This is the predecessor to current.
+                 __y = __y->right.get();
+         
+               __x = __y;
+         
+           } else { // When we ascend, we look for a parent ancestor that is not a left child, unlike increment that looks for 'not a right child'.
+         
+               auto parent = __x->parent;
+       
+               // Ascend to first parent ancestor that is not a left child
+               // and thus is less than __x.
+               while (__x == parent->left.get()) {
+       
+                  if (parent == ptree->root.get()) // The parent is the root -> there is no predecessor.
+                      return current;             
+                  
+                   __x = parent;
+                   parent = parent->parent;
+               }
+         
+               __x = parent; // Set __x to first parent less than __x.
+           }
+           return __x;
+       }
+    
+       Node *min(Node *__y)  
+       {
+          while(__y->left) 
+             __y = __y->left.get();
+    
+          return __y;
+       } 
+     
+       Node *max(Node *__y)  
+       {
+          while(__y->right) 
+             __y = __y->right.get();
+    
+          return __y;
+       }     
+    
+    
+      public:
+       
+        using difference_type  = std::ptrdiff_t; 
+        using value_type       = bstree<Key, Value>::value_type; 
+        using reference        = value_type&; 
+        using pointer          = value_type*;
+            
+        using iterator_category = std::bidirectional_iterator_tag; 
+       
+        iterator_inorder() : current{nullptr}, ptree{nullptr}, pos{position::at_end} { }
+    
+        explicit iterator_inorder(bstree<Key, Value>& tree) : ptree{&tree}
+        { 
+           if (!ptree->root) {
+    
+               pos = position::at_end; 
+               current = nullptr;
+           } else { 
+    
+             pos = position::at_beg;
+             // Set current to node with smallest key.
+             current = min(ptree->root.get());
+           }
+        } 
+        
+        // Ctor for return the iterator_inorder returned by end();  
+        iterator_inorder(bstree<Key, Value>& tree, int dummy) : ptree{&tree}
+        {
+           pos = position::at_end; 
+            
+           current = (!ptree->root) ?  nullptr : max(ptree->root.get());
+        }
+    
+        iterator_inorder(const iterator_inorder& lhs) : current{lhs.current}, ptree{lhs.ptree}, pos{lhs.pos}
+        {
+        }
+          
+        iterator_inorder& operator=(const iterator_inorder& lhs)
+        {
+            if (this == &lhs) return *this;
+    
+            current = lhs.current;
+            ptree = lhs.ptree;
+            pos = lhs.pos; 
+    
+            return *this;
+        }
+     
+        iterator_inorder& operator++() noexcept 
+        {
+          switch (pos) {
+        
+             case position::at_end:
+                 break;
+              
+             case position::at_beg:
+             case position::between:
+             {
+                 auto next = increment();
+    
+                 if (current == next) pos = position::at_end;
+                 else
+                   current = next; 
+             }
+             break;
+             default:
+             break;
+        
+           } 
+           return *this;
+        }
+        
+        iterator_inorder operator++(int) noexcept
+        {
+           iterator_inorder tmp(*this);
+       
+           operator++();
+       
+           return tmp;
+        } 
+         
+        iterator_inorder& operator--() noexcept 
+        {
+           switch(pos) {
+       
+               case position::at_beg:
+                  break; 
+              
+               case position::at_end:
+                   pos = position::between;
+                   break;
+       
+               case position::between: 
+               {     
+                 auto prev = decrement();
+              
+                if (prev == current) pos = position::at_beg;
+                else
+                    current = prev;
+               } 
+               break;
+               default:
+                   break;
+           } 
+           return *this;
+        } 
+        
+        iterator_inorder operator--(int) noexcept
+        {
+           iterator_inorder tmp(*this);
+           operator--();
+           return tmp;
+        } 
+           
+        reference operator*() const noexcept 
+        { 
+            return current->__get_value();
+        } 
+        
+        pointer operator->() const noexcept
+        { 
+           return &(operator*()); 
+        } 
+       
+        friend bool
+        operator==(const iterator_inorder& __x, const iterator_inorder& __y) noexcept
+        {
+          if (__x.ptree == __y.ptree) {
+          
+             // If we are not in_between...check whether both iterators are at the end...
+             if (__x.pos == position::at_end && __y.pos == position::at_end) return true;
+          
+             else if (__x.pos == position::at_beg && __y.pos == position::at_beg) return true; // ...or at beginning.
+          
+             else if (__x.pos == __y.pos && __x.current == __y.current) return true;// else check whether pos and current are all equal.
+          }
+          return false;
+        }
+    
+        friend bool
+        operator!=(const iterator_inorder& __x, const iterator_inorder& __y) noexcept 
+        {
+           return !operator==(__x, __y); 
+        }
+       };
+       
+       iterator_inorder begin() noexcept
+       {
+           iterator_inorder iter{*this}; 
+           return iter; 
+       }
+        
+       iterator_inorder end() noexcept 
+       {
+           iterator_inorder iter{*this, 1};
+           return iter;  
+       }
+       
+       using reverse_iterator = std::reverse_iterator<iterator_inorder>;
+       
+       reverse_iterator rbegin() noexcept  
+       {
+          return std::make_reverse_iterator(this->end());
+       }    
+    
+       reverse_iterator rend() noexcept
+       {
+          return std::make_reverse_iterator(this->begin());
+       }    
+    };

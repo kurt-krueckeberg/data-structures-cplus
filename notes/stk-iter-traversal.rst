@@ -1,8 +1,13 @@
-In-order Stack-based Iteration
-==============================
+Iterative Traversal Algorithms Part I
+=====================================
+
+Stack-Based Iterative Algorithmns and Iterators
+-----------------------------------------------
+
+Recursive traversal algorithms can be converted to stack-based versions. Below iterative versions of in-order, pre-order and post-order recursion algorithms are discussed.
 
 In-order
---------
+~~~~~~~~
 
 The stack-base version of the in-order algorithm mimics the in-order recursive algorithm. An explicit stack holds the nodes to be visited. ``__y`` is the next node to visit, which initially is the root. A while loop continues until the stack is empty or ``__y`` becomes ``nullptr``. 
 
@@ -47,12 +52,14 @@ visited. In this case, the stack will not be null, unless y's parent was the rig
     }
 
 Pre-order
----------
+~~~~~~~~~
 
-The pre-order stack-base iterative algorithm traverse the root, then the left subtree, followed by the right subtree. It initially places the root onto the stack. Then a while loop continues until the stack is empty. Inside the loop the top element is
-popped from the stack, visited, and then its right child, if it exists, is pushed onto the stack followed by its left child, if it exists. The right child is pushed before the left child, so that the left child will be popped before it.
-Once the left child of the root is popped, its right child and then its left child are pushed onto the stack. In this manner the left branch of the tree will be entirely visited before the right branch. And with each left branch (or right branch),
-the left branch of the substree will be processed before the right branch. This exactly mimics the pre-order recursive algorithm. The loop terminates when the last node, the largest node in the tree, has been popped and visited. 
+The pre-order stack-based iterative algorithm visits the root, then the left subtree, followed by the right subtree. It initially places the root onto the stack. Then a while loop begins and continues until the stack is empty. In the loop the top element is
+popped from the stack, visited, and then its right child, if it exists, is pushed onto the stack followed by its left child, if it exists. The right child is pushed before the left child, so that the left child will be popped before first (and its left and right 
+children subsequenntly pushed onto the stack). Once the left child of the root is popped, its right child followed by its left child are pushed onto the stack. In this manner all the nodes of the left branch of the tree are entirely visited before the right branch.
+And with each smaller subtree of the left branch (and after it, the right branch), the left branch will be processed first. 
+
+This behavoir exactly mimics the pre-order recursive algorithm. The while loop terminates when the last node, the right most, largest node in the tree, has been popped and visited. 
 
 .. code-block:: cpp
 
@@ -69,11 +76,11 @@ the left branch of the substree will be processed before the right branch. This 
         //
         //  Pop all items one by one, and do the following for every popped item:
         // 
-        //   a) invoke f 
-        //   b) push its right child 
-        //   c) push its left child 
+        //   a) invoke functor f 
+        //   b) push just-visted node's right child 
+        //   c) push just-visited node's left child 
         //
-        // Note: the right child is pushed first so that left is processed first 
+        // Note: the right child is pushed first, so that the left can be popped first. 
          
         while (!stack.empty()) { 
     
@@ -83,7 +90,7 @@ the left branch of the substree will be processed before the right branch. This 
     
             f(node->__get_value()); // returns std::pair<const Key&, Value&>
     
-            // Push right and left non-null children of the popped node to stack 
+            // Push right then left non-null children 
             if (node->right) 
                 stack.push(node->right.get()); 
     
@@ -94,7 +101,7 @@ the left branch of the substree will be processed before the right branch. This 
     }
     
 Post-order
-----------
+~~~~~~~~~~
 
 Show two stack version. Then one stack.
 

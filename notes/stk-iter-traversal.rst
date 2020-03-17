@@ -1,6 +1,3 @@
-Iterative Traversal Algorithms Part I
-=====================================
-
 Stack-Based Iterative Algorithmns and Iterators
 -----------------------------------------------
 

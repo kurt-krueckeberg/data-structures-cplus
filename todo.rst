@@ -1,7 +1,7 @@
 TODO
 ----
 
-* Decide on a reorganization of the tree and tree traversal files. Decide on what to talk about and the TOC-sort of hierarchy.
+* I don't seem to be doing nest '.. toc:: max 2' correctly.
   
 Analyze the depth of recursion using a Node recursive copy ctor versus pre-order copy of nodes.
 

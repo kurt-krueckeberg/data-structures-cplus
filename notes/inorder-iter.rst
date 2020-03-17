@@ -1,4 +1,4 @@
-In-order bedirectional iterator class
+In-order bidirectional iterator class
 -------------------------------------
 
 .. code-block:: cpp

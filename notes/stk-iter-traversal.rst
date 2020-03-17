@@ -49,6 +49,11 @@ visited. In this case, the stack will not be null, unless y's parent was the rig
 Pre-order
 ---------
 
+The pre-order stack-base iterative algorithm traverse the root, then the left subtree, followed by the right subtree. It initially places the root onto the stack. Then a while loop continues until the stack is empty. Inside the loop the top element is
+popped from the stack, visited, and then its right child, if it exists, is pushed onto the stack followed by its left child, if it exists. The right child is pushed before the left child, so that the left child will be popped before it.
+Once the left child of the root is popped, its right child and then its left child are pushed onto the stack. In this manner the left branch of the tree will be entirely visited before the right branch. And with each left branch (or right branch),
+the left branch of the substree will be processed before the right branch. This exactly mimics the pre-order recursive algorithm. The loop terminates when the last node, the largest node in the tree, has been popped and visited. 
+
 .. code-block:: cpp
 
     template<class Key, class Value>

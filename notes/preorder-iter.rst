@@ -1,5 +1,5 @@
-Pre-order bidirectional iterator class
-++++++++++++++++++++++++++++++++++++++
+Pre-order forward iterator class
+++++++++++++++++++++++++++++++++
 
 .. code-block:: cpp
 
@@ -83,7 +83,7 @@ If not, we continue up the parent chain. If we encounter the root, then there is
           __y = __y->left.get();
       else if (__y->right)   // otherwise, the right 
           __y = __y->right.get();
-    
+      else if (__y->parent == nullptr) // root is a leaf node, do nothing. Loop will exit.     
       else  { // If current is a leaf node...
     
          // ...and it's parent has a right child, make it current

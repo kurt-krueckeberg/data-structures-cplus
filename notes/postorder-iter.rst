@@ -1,5 +1,5 @@
-Post-order bidirectional iterator class
-+++++++++++++++++++++++++++++++++++++++
+Post-order forward iterator class
++++++++++++++++++++++++++++++++++
 
 .. todo:: Add comments
 

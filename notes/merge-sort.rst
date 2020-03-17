@@ -6,7 +6,7 @@ Sorting
 =======
 
 Merge Sort
-^^^^^^^^^^
+-----------
 
 Merge sort recursively divides an array into smaller subarrays until subarrays of size one are reached, which terminated the recursion. The merge of the subarrays (into sorted order) then
 occurs.  The number of levels in the recursion is:
@@ -16,7 +16,7 @@ occurs.  The number of levels in the recursion is:
 where N is the array size.  
 
 Merge Sort Pseudocode
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
 Input sequence S with n elements, comparator C. S is sorted in ascending sequence:
 
@@ -37,7 +37,7 @@ Input sequence S with n elements, comparator C. S is sorted in ascending sequenc
 
 
 First implementation
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 This implementation assumes the input is an array. A temporary working buffer the same size as the input array is first allocated, which is used in the merge (the conquer) step. After the buffer
 is allocated the recursive subdivision of the array begins. When an array of size one is encountered, the recursion stops, and the merge step occurs.
@@ -123,7 +123,7 @@ is allocated the recursive subdivision of the array begins. When an array of siz
    #endif
 
 A more Generic Implementaion
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This implementation does not require the data structure being sorted to be an array. It only requires an generic random access iterator type with pointer-like semantics such as
 addition and substraction with an integer, subtraction of two iterators, deferencing and comparison. 

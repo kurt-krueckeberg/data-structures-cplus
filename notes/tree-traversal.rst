@@ -24,8 +24,11 @@ Stack-Based Iterators Implementations Discussions
 
 * `Carneige Mellon: Java like pre-order iterator class using a stack <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/trees.html>`__. Source code `here <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/code/>`_.
 
+Iterative Traversals
+--------------------
+
 Stack-based Iterative Traversal Algorithms
-------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
    :maxdepth: 2
@@ -33,7 +36,7 @@ Stack-based Iterative Traversal Algorithms
    stk-iter-traversal.rst 
 
 Non-Stack-based Iterators and Iterative Algorithms
---------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If the node class has a parent pointer, tree traversal can be done iteratively without recourse to stack. Below non-stack-based iterators classes for in-order, pre-order and post-order recursion algorithms are discussed.
 

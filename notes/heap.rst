@@ -80,7 +80,7 @@ Code of Array Implementation of Max Heap
 ----------------------------------------
 
 **add(int priority, const T& t)** Code 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Pseudocode for Adding an Element to Max Heap:
 
@@ -123,7 +123,7 @@ The C++ implementation uses a functor to do the comparison operation. This allow
      };
 
 add(int priority, const T& data)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Add places the new item at the end of the heap, and then swaps it with its parent until the heap property is re-established, i.e., the parent is not less than either of its children (in the case of a max heap).
 
@@ -163,7 +163,7 @@ Add places the new item at the end of the heap, and then swaps it with its paren
   }
   
 **remove()** Code 
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
 
 Removes the root. Places the last item in the heap as the root, and the repair the heap property by invoking `sink(int index)`, which recursively swaps the new root with its largest child, as long 
 as the largest child is larger than the root or until the root has become a leaf.
@@ -215,7 +215,7 @@ as the largest child is larger than the root or until the root has become a leaf
   }
 
 C++ Implementation
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 

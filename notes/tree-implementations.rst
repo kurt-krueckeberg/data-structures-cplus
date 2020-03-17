@@ -2,7 +2,7 @@ Tree Design Discussion Links
 ============================
 
 Using ``std::shared_ptr`` Discussion
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 `Implementation of Binary Search Trees Via Smart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses the advantage of using
 ``std::shared_ptr`` to more easily implement recursive algorithms.

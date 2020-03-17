@@ -6,7 +6,7 @@ Sorting continued
 =================
 
 Shell Sort
-^^^^^^^^^^
+----------
 
 Shell sort is a version of insertion sort that is faster. Instead of starting at the beginning of the array starts, say, at the 13th position and performs insertion sort on
 every 13th following index. It then sorts using a smaller gap, say every 7th element, then every third. Finally, we start at 0 and do a final insertion sort. 

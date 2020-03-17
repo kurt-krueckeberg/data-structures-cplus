@@ -19,8 +19,11 @@ Discussion Links
 * `Introduction to Algorithms, 3rd Edition <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_  
 * `Radford.edu <https://www.radford.edu/~nokie/classes/360/trees.bst.html>`_  
 
+Class Overview
+--------------
+
 Nested Node class
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
 
 The tree nodes are of nested tree type ``unique_ptr<Node>``: 
 
@@ -55,13 +58,13 @@ The tree nodes are of nested tree type ``unique_ptr<Node>``:
 Each node contains a ``__value_type`` member __vt, ``struct __value_type`` is take from the **libc++** source code for ``std::map``. It is a convenience wrapper for convenient access its private pair<const Key, Value>. See the ``value-type.h`` header file in the include directory on `github <https://github.com/kurt-krueckeberg/bst>`_.
 
 Destructor
-~~~~~~~~~~
+^^^^^^^^^^
 
 While the default ``~bstree`` destructor will successfully frees all tree nodes. This results in one huge recursive call that invokes every Node's destructor. To avoid stack overflow therefore, `destroy_tree()` is used instead to do a post-order
 tree traversal invoking ``unique_ptr<Node>::reset()`` for each node.
 
 Recursive methods
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
 
 Methods like ``find(Key key)`` can take advantage of the trees recursive structure to implement a recursive algorithm. The same is true for sveral other methods, like the Node copy constructor, which replicates the entire subtree of its input.
 
@@ -111,7 +114,7 @@ Methods like ``find(Key key)`` can take advantage of the trees recursive structu
     }
 
 Delete
-------
+^^^^^^
 
 The overall strategy for deleting a node z from a binary search tree T has three basic cases, but,
 as we shall see, one of the cases is a bit tricky (a sub case of the third case).

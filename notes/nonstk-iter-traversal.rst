@@ -9,6 +9,4 @@ If the node class has a parent pointer, tree traversal can be done iteratively w
 .. toctree::
    :maxdepth: 2
   
-    inorder-iter.rst   
-    preorder-iter.rst   
-    postorder-iter.rst   
+   inorder-iter.rst   

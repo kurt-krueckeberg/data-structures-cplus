@@ -1,20 +1,18 @@
 Traversal Algorithms
 ====================
 
-General References on Tree Traversal
-------------------------------------
+General References on BST Traversal
+-----------------------------------
 
-Non Stack-Based Tree Iterators Implementation Discussions
+Non Stack-Based BST Iterators Implementation Discussions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. note: One of these articles or those under the next heading menton that a parent pointer can help eliminate an explicit stack (in iterative implementations).
- 
 * `OLD Dominion Univ: Traversing Trees with Iterator, a C++ STL-compatible iterator for BST. Q&A teaching discussion <https://www.cs.odu.edu/~zeil/cs361/latest/Public/treetraversal/index.html>`_
 
 * `Morris In-Order Traversal: Inorder Tree Traversal without Recursion or Stack <http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/>`__
 
-Stack-Based Iterator Implementations Discussions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stack-Based Iterators Implementations Discussions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * `stack-based pre-, in- and post-order <https://prismoskills.appspot.com/lessons/Binary_Trees/Traversal_without_recursion.jsp>`_
 * `Both Iterative and Recursive traversal <https://cs.gmu.edu/~kauffman/teaching-samples/cs310/11-tree-recursion.pdf>`_
@@ -26,13 +24,18 @@ Stack-Based Iterator Implementations Discussions
 
 * `Carneige Mellon: Java like pre-order iterator class using a stack <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/trees.html>`__. Source code `here <https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/code/>`_.
 
-General References on BST Iterators and Iteration
--------------------------------------------------
+Stack-based Iterative Traversal Algorithms
+------------------------------------------
 
-* C code that implements both `recursive and iterative versions of traversal algorithms <https://code.google.com/archive/p/treetraversal/downloads>`_.
-* Article using Perl code: `Tree traversal without recursion: the tree as a state machine <https://www.perlmonks.org/?node_id=600456>`_ explains and shows how iterative tree traversal can be done withan explicit stack. 
+.. toctree::
+   :maxdepth: 2
+  
+   stk-iter-traversal.rst 
 
-General Reference on The Master Theorem
+Non-Stack-based Iterators and Iterative Algorithms
+--------------------------------------------------
 
-* `Time Complexity of Resursive Algorithms: The Master Theorem <https://yourbasic.org/algorithms/time-complexity-recursive-functions/>`_
-* Also: https://adrianmejia.com/analysis-of-recursive-algorithms/.
+.. toctree::
+   :maxdepth: 2
+  
+   inorder-iter.rst         

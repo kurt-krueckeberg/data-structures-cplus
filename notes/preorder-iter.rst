@@ -4,68 +4,65 @@ Pre-order bidirectional iterator class
 .. code-block:: cpp
 
 
-   class iterator_preorder {  // This not efficient to copy due to the stack container inside it.
-   
-      using node_type = bstree<Key, Value>::node_type;
-   
-      node_type *current;
-      bool at_end = false;
-   
-      bstree<Key, Value>& tree;
-   
-      Node *successor(); 
-     public:
-   
-      using difference_type  = std::ptrdiff_t; 
-      using value_type       = bstree<Key, Value>::value_type; 
-      using reference        = value_type&; 
-      using pointer          = value_type*;
-          
-      using iterator_category = std::bidirectional_iterator_tag; 
-   
-      explicit iterator_preorder(bstree<Key, Value>& bstree) : tree{bstree}
-      {
-         current = bstree.root.get();
-      }
-      
-      iterator_preorder(const iterator_preorder& lhs) : current{lhs.current}, tree{lhs.tree} {}
-      
-      iterator_preorder& operator++() noexcept 
-      {
-         current = successor();
-         return *this;
-      } 
-      
-      iterator_preorder operator++(int) noexcept
-      {
-         iterator_preorder tmp(*this);
-         current = successor();
-         return tmp;
-      } 
-         
-      reference operator*() const noexcept 
-      { 
-          return current->__get_value(); // or simply current, if 'Node *' wanted
-      } 
-      
-      pointer operator->() const noexcept
-      { 
-         return &(operator*()); 
-      } 
-      
-      struct sentinel {}; // Use for determining "at the end" in 'bool operator==(const iterator_preorder&) const' below
-   
-      bool operator==(const iterator_preorder::sentinel& sent) noexcept
-      {
-          return at_end; 
-      }
-      
-      bool operator!=(const iterator_preorder::sentinel& lhs) noexcept
-      {
-        return !operator==(lhs);    
-      }
-   };
+    class iterator_preorder {  // This not efficient to copy due to the stack container inside it.
+    
+       using node_type = bstree<Key, Value>::node_type;
+       node_type *current;
+       bool at_end = false;
+       bstree<Key, Value>& tree;
+       Node *successor(); 
+      public:
+    
+       using difference_type  = std::ptrdiff_t; 
+       using value_type       = bstree<Key, Value>::value_type; 
+       using reference        = value_type&; 
+       using pointer          = value_type*;
+           
+       using iterator_category = std::bidirectional_iterator_tag; 
+    
+       explicit iterator_preorder(bstree<Key, Value>& bstree) : tree{bstree}
+       {
+          current = bstree.root.get();
+       }
+       
+       iterator_preorder& operator++() noexcept 
+       {
+          current = successor();
+          return *this;
+       } 
+       iterator_preorder operator++(int) noexcept
+       {
+          iterator_preorder tmp(*this);
+          current = successor();
+          return tmp;
+       } 
+       reference operator*() const noexcept 
+       { 
+           return current->__get_value(); // or simply current, if 'Node *' wanted
+       } 
+       pointer operator->() const noexcept
+       { 
+          return &(operator*()); 
+       } 
+       struct sentinel {}; // Use for determining "at the end" in 'bool operator==(const iterator_preorder&) const' below
+    
+       bool operator==(const iterator_preorder::sentinel& sent) noexcept
+       {
+           return at_end; 
+       }
+       bool operator!=(const iterator_preorder::sentinel& lhs) noexcept
+       {
+         return !operator==(lhs);    
+       }
+    };
 
+.. todo:: Comment on ctor.
+   
+    explicit iterator_preorder(bstree<Key, Value>& bstree) : tree{bstree}
+    {
+         current = bstree.root.get();
+    }
+ 
 .. code-block:: cpp
 
 We choose the left child, if exists, before using the right child, if it exists. If neither exist, ``__y`` is a leaf node, and we first checkand if its parent has a right child, and ir so, we make it the pre-order successor.

@@ -1,7 +1,7 @@
 Post-order forward iterator class
 +++++++++++++++++++++++++++++++++
 
-.. todo:: Add comments
+Class ``iterator_postorder``...
 
 .. code-block:: cpp
 
@@ -15,8 +15,8 @@ Post-order forward iterator class
       position pos;
   
       bstree<Key, Value> *ptree;
-    
       Node *successor(); 
+
       public:
    
       using difference_type  = std::ptrdiff_t; 
@@ -43,7 +43,7 @@ Post-order forward iterator class
          }
       }
 
-      // Ctor for return the iterator_inorder returned by end();  
+      // This constructor is call by bstree::end();  
       iterator_postorder(bstree<Key, Value>& tree, int dummy) : ptree{&tree}
       {
           pos = position::at_end; 
@@ -51,8 +51,7 @@ Post-order forward iterator class
          if (ptree->root == nullptr) 
              current = nullptr;
          else 
-            // Set current to root 
-            current = ptree->root.get();
+            current = ptree->root.get();// Set current to root 
       }
      
       iterator_postorder(const iterator_postorder& lhs) : current{lhs.current}, ptree{lhs.ptree}, pos{lhs.pos}
@@ -62,7 +61,6 @@ Post-order forward iterator class
       iterator_postorder& operator++() noexcept 
       {
         switch (pos) {
-      
            case position::at_end:
                break;
            case position::at_beg:
@@ -109,9 +107,11 @@ Post-order forward iterator class
       }
    };
 
-.. code-block:: cpp
+Node *successor(); 
+~~~~~~~~~~~~~~~~~~
 
-.. todo:: Add comments
+The ``successor()`` method first checks if the given s the right child of its parent of the parent's right child is empty. If either is true, the post-order successor is the parent; otherwise, we
+find the left-most child in the right substree of the parent.    
 
 .. code-block:: cpp
 

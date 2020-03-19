@@ -84,6 +84,8 @@ Pre-order forward iterator class
    };
 
 .. todo:: Comment on ctor.
+
+.. code-block:: cpp
    
     explicit iterator_preorder(bstree<Key, Value>& bstree) : tree{bstree}
     {

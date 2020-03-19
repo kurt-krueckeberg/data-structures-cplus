@@ -110,8 +110,8 @@ Class ``iterator_postorder``...
 ``Node *successor();`` 
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The ``successor()`` method first checks if the given s the right child of its parent of the parent's right child is empty. If either is true, the post-order successor is the parent; otherwise, we
-find the left-most child in the right substree of the parent.    
+The ``successor()`` method first checks if the given node is the right child of its parent or if the parent's right child is empty. If either is true, the post-order successor is the parent; otherwise, we search for the left-most
+child in the parent's right substree.    
 
 .. code-block:: cpp
 

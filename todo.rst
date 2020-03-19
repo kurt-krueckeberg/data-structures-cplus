@@ -1,8 +1,6 @@
 TODO
 ----
 
-* incorporate the latest version of the iterator_xxx classes (with correct operator== and operator!=)
-  
 Analyze the depth of recursion using a Node recursive copy ctor versus pre-order copy of nodes.
 
 See also this key Theorem: `Time Complexity of Resursive Algorithms: The Master Theorem <https://yourbasic.org/algorithms/time-complexity-recursive-functions/>`_

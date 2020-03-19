@@ -15,8 +15,10 @@ Post-order forward iterator class
       position pos;
   
       bstree<Key, Value> *ptree;
+    
       Node *successor(); 
-     public:
+      public:
+   
       using difference_type  = std::ptrdiff_t; 
       using value_type       = bstree<Key, Value>::value_type; 
       using reference        = value_type&; 
@@ -33,8 +35,10 @@ Post-order forward iterator class
          if (ptree->root == nullptr) {
              pos = position::at_end; 
              current = nullptr;
+
          } else { 
            pos = position::at_beg;
+           // Set current to node with smallest key.
            current = min(ptree->root.get());
          }
       }
@@ -43,6 +47,7 @@ Post-order forward iterator class
       iterator_postorder(bstree<Key, Value>& tree, int dummy) : ptree{&tree}
       {
           pos = position::at_end; 
+          
          if (ptree->root == nullptr) 
              current = nullptr;
          else 
@@ -77,28 +82,32 @@ Post-order forward iterator class
          return *this;
       }
         
-      reference operator*() const noexcept 
-      { 
-          return current->__get_value(); // May want 'Node *' itself
-      } 
+      reference operator*() const noexcept { return current->__get_value(); } 
       
-      pointer operator->() const noexcept
-      { 
-         return &(operator*()); 
-      } 
+      pointer operator->() const noexcept { return &(operator*()); } 
       
-      struct sentinel {}; // Use for determining "at the end" in 'bool operator==(const iterator_postorder&) const' below
+      struct sentinel {}; 
    
-      bool operator==(const iterator_postorder::sentinel& sent) noexcept
+      bool operator==(const iterator_postorder::sentinel& sent) const noexcept
       {
           return (pos == position::at_end) ? true : false; 
       }
       
-      bool operator!=(const iterator_postorder::sentinel& lhs) noexcept
+      bool operator!=(const iterator_postorder::sentinel& lhs) const noexcept
       {
         return !operator==(lhs);    
       }
-    };
+ 
+      friend bool operator==(const iterator_postorder::sentinel& sent, const iterator_postorder& iter) noexcept
+      {
+          return iter.operator==(sent); 
+      }
+      
+      friend bool operator!=(const iterator_postorder::sentinel& sent, const iterator_postorder& iter) noexcept
+      {
+        return iter.operator!=(sent); 
+      }
+   };
 
 .. code-block:: cpp
 
@@ -130,4 +139,3 @@ Post-order forward iterator class
         }          
         return __y;
     }     
- 

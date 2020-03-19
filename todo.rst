@@ -1,7 +1,7 @@
 TODO
 ----
 
-* I don't seem to be doing nest '.. toc:: max 2' correctly.
+* incorporate the latest version of the iterator_xxx classes (with correct operator== and operator!=)
   
 Analyze the depth of recursion using a Node recursive copy ctor versus pre-order copy of nodes.
 

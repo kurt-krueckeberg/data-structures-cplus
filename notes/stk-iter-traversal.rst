@@ -1,17 +1,21 @@
 Stack-Based Iterative Algorithmns and Iterators
 +++++++++++++++++++++++++++++++++++++++++++++++
 
-Recursive traversal algorithms can be converted to stack-based versions. Below iterative versions of in-order, pre-order and post-order recursion algorithms are discussed.
+Recursive tree traversal algorithms can be converted to iterative stack-based versions. If the node class provides a parent pointer, even a stack is not necessary to implement iterative tree traversals. Below iterative versions of in-order, pre-order and post-order recursion algorithms
+are given that use a stack to maintain the iteration state.
 
 In-order
 ~~~~~~~~
 
-The stack-base version of the in-order algorithm mimics the in-order recursive algorithm. An explicit stack holds the nodes to be visited. ``__y`` is the next node to visit, which initially is the root. A while loop continues until the stack is empty or ``__y`` becomes ``nullptr``. 
+The stack-based version of the in-order algorithm mimics exactyly the in-order recursive algorithm. An explicit stack holds the nodes to be visited. ``__y``,  which initially is the root pointer, is the pointer to the next node to visit. A while loop continues until the stack is empty
+or ``__y`` becomes ``nullptr``. 
 
-If the tree is empty, we are done (since the stack will be empty and ``__Y`` nullptr); otherwise, ``__y``, followed by all its left children, are pushed onto the stack, mimicing exactly the beginning steps of the recursive algorithm. Inside the while loop, we pop the top item from the stack
-into ``__y``, visit it, and then set ``__y`` to ``__y``\ 's right child, when the process begins all over (pushing ``__y``, if it is null, and ``__y``\ 's left children onto the stack, popping the top of the stack into ``__y``, visiting ``__y``, and setting ``__y`` to its right child.
+If the tree is empty, we are done since ``__y`` will be nullptr). Inside the while-loop ``__y`` (initially the root) is pushed onto the stack, followed by all its left children. This mimics exactly the first step of the recursive algorithm. Next we pop the top item from the stack, which will
+be the root's left-most grandchild, into ``__y``, visit it, and then set ``__y`` to ``__y``\ 's right child. We then start the loop all over, pushing ``__y``, if it is null, and ``__y``\ 's left children onto the stack, popping the top of the stack into ``__y``, visiting ``__y``, and
+setting ``__y`` to its right child.
 
-Placing the right child of ``__y`` onto the stack (along with its left children) mimics exactly the remainder of the behavior of the recursive algorithm, which, after pushing a node and all its left children, recurses with the right child of the node just visisted.
+Carefully thought shows this process mimics entirely the recursive algorithm. Placing the right child of ``__y`` onto the stack (along with its left children) mimics exactly the remainder of the behavior of the recursive algorithm, which, after recursing down its left children and then
+visiting the left-most node, recurses with the right child of the node just visisted.
 
 Why do we need to check that both ``__y`` is not null and the stack is empty?  Consider a tree in which each node (including the root) has one right child and no left child. Then the inner while loop (which pushed all the left children onto the stack) will only push one node (at a time), which will
 then be popped and visited, and then ``__y`` will be set to ``__y->right``.  The stack will be empty, but the next node to visit will not be null. On the other hand, after the line ``__y = __y->right.get()``, ``__y`` will become null whenever its parent is a leaf node that has just been

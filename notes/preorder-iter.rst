@@ -85,15 +85,6 @@ The iterator_preorder class constructor sets ``current`` to the root. It uses an
       }
    };
 
-.. todo:: Comment on ctor.
-
-.. code-block:: cpp
-   
-    explicit iterator_preorder(bstree<Key, Value>& bstree) : tree{bstree}
-    {
-         current = bstree.root.get();
-    }
- 
 .. code-block:: cpp
 
 We choose the left child, if exists, before using the right child, if it exists. If neither exist, ``__y`` is a leaf node, and we first checkand if its parent has a right child, and ir so, we make it the pre-order successor.

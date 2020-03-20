@@ -1,6 +1,8 @@
 Pre-order forward iterator class
 ++++++++++++++++++++++++++++++++
 
+The iterator_preorder class constructor sets ``current`` to the root. It uses an the ``bool at_end`` to signal completion. The  ``Node *successor()`` method is explained below.
+
 .. code-block:: cpp
 
     class iterator_preorder {  // This not efficient to copy due to the stack container inside it.
@@ -112,7 +114,7 @@ If not, we continue up the parent chain. If we encounter the root, then there is
           __y = __y->left.get();
       else if (__y->right)   // otherwise, the right 
           __y = __y->right.get();
-      else if (__y->parent == nullptr) // root is a leaf node, do nothing. Loop will exit.     
+      else if (__y->parent == nullptr) {} // root is a leaf node, do nothing. Loop will exit.     
       else  { // If current is a leaf node...
     
          // ...and it's parent has a right child, make it current

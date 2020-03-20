@@ -1,6 +1,9 @@
 In-order bidirectional iterator class
 +++++++++++++++++++++++++++++++++++++
 
+If the tree is not empty, the constructor set ``current`` to the minimun node, the left-most node with the smallest key. The ``Node *successor()`` method call by ``iterator_inorder& operator++()`` is described below. An enum class implements a finite state machine of possible 
+iterator positions, with ``at_beg`` and ``at_end`` denoting one-before the first tree value and one-after the last tree key, repectively, and ``between`` modeling the state between these two settings. 
+
 .. code-block:: cpp
 
     class iterator_inorder {  
@@ -9,6 +12,7 @@ In-order bidirectional iterator class
        using node_type = bstree<Key, Value>::node_type;
        node_type *current;
     
+       Node *successor();
        enum class position {at_beg, between, at_end};
        position pos;
        // snip...private methods are show later on.      

@@ -10,7 +10,7 @@ Red Black Trees (under develpment)
 
 **Contents Under Development...**
 
-.. todo:: Read these sources to discover the clearest and look for those that mention how 2-3 and 2-3-4 tree relate to red-balck trees.
+.. todo:: Read these sources to discover the clearest and look for those that mention how 2-3 and 2-3-4 tree relate to red-balck trees. Perhaps update existing tree related .rst files with something particularly relevant.
 
 The insert and delete algorithms for  a `2-3-4-trees` ensure a balanced tree, but a 2-3-4 tree wastes storage. A red black tree represents a 2 3 4 tree as a \ |apos|\ balanced binary search tree.  
 Helpful links to Red Black Trees are:

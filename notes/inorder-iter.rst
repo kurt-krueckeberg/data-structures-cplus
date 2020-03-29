@@ -147,9 +147,9 @@ iterator positions, with ``at_beg`` and ``at_end`` denoting one-before the first
         }
        };
 
-.. code-block:: cpp
-
 These bstree uses these methods to return ``iterator_inorder`` objects:
+
+.. code-block:: cpp
        
        iterator_inorder begin() noexcept
        {

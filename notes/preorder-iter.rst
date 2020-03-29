@@ -1,7 +1,10 @@
 Pre-order forward iterator class
 ++++++++++++++++++++++++++++++++
 
-The iterator_preorder class constructor sets ``current`` to the root. It uses an the ``bool at_end`` to signal completion. The  ``Node *successor()`` method is explained below.
+class iterator_preorder
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The constructor for class **iterator_preorder** sets ``current`` to the root. The iterator uses ``bool at_end`` to track completion. The  ``Node *successor()`` method, called by ``iterator_preorder& operator++()`` to advance to the next node, is explained below.
 
 .. code-block:: cpp
 
@@ -85,10 +88,13 @@ The iterator_preorder class constructor sets ``current`` to the root. It uses an
       }
    };
 
-.. code-block:: cpp
+Node *iterator_preorder::successor() 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We choose the left child, if exists, before using the right child, if it exists. If neither exist, ``__y`` is a leaf node, and we first checkand if its parent has a right child, and ir so, we make it the pre-order successor.
-Else the leaf is a right child or a left child whose parent does not have a right child. In this case, we ascend the parent chain until we find a parent whose right child's key > current->key().
+.. todo:: what exactly is current inside the last else below.
+
+It chooses the left child, if exists, before choosing the right child, if it exists. If neither exist, then ``__y`` is a leaf node, and so we check if its parent has a right child, and if it does, we make it the pre-order successor; otherwise,
+if the leaf is a right child or a left child whose parent does not have a right child, we ascend the parent chain until we find a parent whose right child's is greater than ``__y``'s key: ``parent->right->key > __y->key()``.
 
 When parent's key is > current->key(), then we are high enough in the parent chain to determine if the parent's right child's key > current->key(). If it is, this is the preorder successor for the leaf node current. 
 If not, we continue up the parent chain. If we encounter the root, then there is no pre-order successor. We are done iterating.
@@ -115,7 +121,7 @@ If not, we continue up the parent chain. If we encounter the root, then there is
            
          else {
            // else the leaf is a right child or a left child whose parent does not have a right child,
-           // and we ascend the parent chain until we find a parent whose right child's key > current->key()
+           // and we ascend the parent chain until we find a parent whose right child's key > __y->key(), where __y is initially current and then...
            // When parent's key is > current->key(), then we are high enough in the parent chain to determine if the
            // parent's right child's key > current->key(). If it is, this is the preorder successor for the leaf node current. 
            // If not, continue up the parent chain....

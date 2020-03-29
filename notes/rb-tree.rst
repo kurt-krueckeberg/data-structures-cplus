@@ -10,6 +10,8 @@ Red Black Trees (under develpment)
 
 **Contents Under Development...**
 
+.. todo:: Read these sources to discover the clearest and look for those that mention how 2-3 and 2-3-4 tree relate to red-balck trees.
+
 The insert and delete algorithms for  a `2-3-4-trees` ensure a balanced tree, but a 2-3-4 tree wastes storage. A red black tree represents a 2 3 4 tree as a \ |apos|\ balanced binary search tree.  
 Helpful links to Red Black Trees are:
 
@@ -22,7 +24,7 @@ Helpful links to Red Black Trees are:
 
 * `Illustration of Relationship of 2 3 4 to Red Black Trees <https://stackoverflow.com/questions/35955246/converting-a-2-3-4-tree-into-a-red-black-tree>`_.
 
-* `Introduction to Algorithms 3rd Edition <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_ **B-Trees** chapter 12, **Red-Black Trees** chapter 13. Instructor's Solution Manual:
+* `CLRS: Introduction to Algorithms 3rd Edition <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_ **B-Trees** chapter 12, **Red-Black Trees** chapter 13. Instructor's Solution Manual:
 
    * `Instructor's Manual <https://cdn.manesht.ir/19908/Introduction%20to%20Algorithms.pdf>`_
    * `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_ 

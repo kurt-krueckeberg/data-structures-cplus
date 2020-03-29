@@ -149,7 +149,7 @@ iterator positions, with ``at_beg`` and ``at_end`` denoting one-before the first
 
 .. code-block:: cpp
 
-bstree uses these methods to return ``iterator_inorder`` objects:
+These bstree uses these methods to return ``iterator_inorder`` objects:
        
        iterator_inorder begin() noexcept
        {
@@ -157,6 +157,7 @@ bstree uses these methods to return ``iterator_inorder`` objects:
            return iter; 
        }
         
+       // Retruns an iterator representing one-past the one.
        iterator_inorder end() noexcept 
        {
            iterator_inorder iter{*this, 1};

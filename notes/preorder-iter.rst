@@ -88,8 +88,8 @@ The constructor for class **iterator_preorder** sets ``current`` to the root. Th
       }
    };
 
-Node *iterator_preorder::successor() 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Node ``*iterator_preorder::successor()`` 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. todo:: what exactly is current inside the last else below.
 

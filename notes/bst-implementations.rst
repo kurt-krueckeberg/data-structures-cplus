@@ -1,5 +1,5 @@
-Tree Design Discussion Links
-============================
+Binary Search Tree Design Discussion Links
+==========================================
 
 Using ``std::shared_ptr`` Discussion
 ------------------------------------

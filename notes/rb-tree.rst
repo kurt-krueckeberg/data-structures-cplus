@@ -20,7 +20,11 @@ Helpful links to Red Black Trees are:
    * `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_: **B-Trees** (slides 1-51), **Red Black trees** (slides 52-77), **Multi-way trees** (slides 78-271).
    * `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ Red Black tree performance (slides 1-86).
 
-.. note:: This is an excellent source. BST tree are discussed, then illustrations of red black trees are illustrated, then multiway trees are shown. Finally, the isometry between 2-3-4 trees and red-black trees is explained! 
+The slides above links are excellent. Starting at slide 196, they explain:
+
+    "Red-black trees are an isometry of 2-3-4 trees; they represent the structure of 2-3-4 trees in a different way. Many data structures can be designed and analyzed in the same way. 
+     Huge advantage: Rather than memorizing a complex list of red/black tree rules, just think about what the equivalent operation on the corresponding 2-3-4 tree would be and simulate
+     it with BST operations."
 
 * `Transforming a 2 3 4 tree into a Red Black Tree <http://smile.ee.ncku.edu.tw/old/Links/MTable/Course/DataStructure/2-3,2-3-4&red-blackTree_952.pdf>`_ National Chung University, slide 67 onward.
 

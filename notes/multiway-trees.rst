@@ -17,7 +17,7 @@ Souce
 .. figure:: ../images/multiway-tree.gif
    :alt: 4 Node to be Split
    :align: center 
-   :scale: 100 %
+   :scale: 135 %
 
    **Figure: 2 3 4 tree, a type of multiway tree**
 

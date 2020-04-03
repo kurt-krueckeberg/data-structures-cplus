@@ -31,17 +31,16 @@ The Standford CS166 Tree slides below are excellent. They explain:
    * `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_: **B-Trees** (slides 1-51), **Red Black trees** (slides 52-77), **Multi-way trees** (slides 78-271).
    * `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ Red Black tree performance (slides 1-86).
 
-The National Chengheng University slides introduce 2 3 trees, 2 3 4 trees, and the show how 2 3 4 trees algorithms are equivalent to red black insert algorithms:
-`Transforming a 2 3 4 tree into a Red Black Tree <http://smile.ee.ncku.edu.tw/old/Links/MTable/Course/DataStructure/2-3,2-3-4&red-blackTree_952.pdf>`_ 
+The National Chengheng University `Transforming a 2 3 4 tree into a Red Black Tree <http://smile.ee.ncku.edu.tw/old/Links/MTable/Course/DataStructure/2-3,2-3-4&red-blackTree_952.pdf>`_ slides introduce 2 3 trees, 2 3 4 trees, and the show how 2 3 4 trees algorithms are equivalent to red black insert algorithms.
 
-This link shows how nodes of a 2 3 4 tree map to red black tree nodes: `Illustration of Relationship of 2 3 4 to Red Black Trees <https://stackoverflow.com/questions/35955246/converting-a-2-3-4-tree-into-a-red-black-tree>`_.
+Stackoverflow `Illustration of Relationship of 2 3 4 to Red Black Trees <https://stackoverflow.com/questions/35955246/converting-a-2-3-4-tree-into-a-red-black-tree>`_.
 
 .. todo:: Resume analyzing these links:
 
-`Digipen.edu <https://www.digipen.edu/academics/computer-science-degrees>`_: 
+Digipen.edu
 
-   * `Overiew of all types of trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_: BST, 2-3 tree, and red black trees. Concept of rotations.
-   * `Mapping 2-3-4 Trees into Red-Black Trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html>`_ .
+   * Digipen's `Overiew of all types of trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_ shows BST, 2-3 tree, and red black trees. Concept of rotations.
+   * Digipen's `Mapping 2-3-4 Trees into Red-Black Trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html>`_ .
 
 * `Insertion relationship between 2-, 3- and 4-trees and Red and Black trees <http://faculty.cs.niu.edu/~freedman/340/340notes/340redblk.htm>`_ from Northern Illinois University. 
 

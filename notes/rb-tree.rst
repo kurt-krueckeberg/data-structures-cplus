@@ -31,22 +31,23 @@ The Standford CS166 Tree slides below are excellent. They explain:
    * `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_: **B-Trees** (slides 1-51), **Red Black trees** (slides 52-77), **Multi-way trees** (slides 78-271).
    * `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ Red Black tree performance (slides 1-86).
 
+USC `2-3-4 tree and red black tree correspondence <https://ee.usc.edu/~redekopp/cs104/slides/L19b_BalancedBST_BTreeRB.pdf>`_  shows on slides 32-75 relationship of 2-3-4 trees to Red-Black trees.
+It contains extensive illustrations how the tree changes, how rotations occur.
+
 The National Chengheng University `Transforming a 2 3 4 tree into a Red Black Tree <http://smile.ee.ncku.edu.tw/old/Links/MTable/Course/DataStructure/2-3,2-3-4&red-blackTree_952.pdf>`_ slides introduce 2 3 trees, 2 3 4 trees, and the show how 2 3 4 trees algorithms are equivalent to red black insert algorithms.
+
+`Open Data structures article <http://opendatastructures.org/ods-java/9_2_RedBlackTree_Simulated_.html>`_ on how 2-3-4 algorithms map to red black trees.
 
 Stackoverflow `Illustration of Relationship of 2 3 4 to Red Black Trees <https://stackoverflow.com/questions/35955246/converting-a-2-3-4-tree-into-a-red-black-tree>`_.
 
-.. todo:: Resume analyzing these links:
+.. todo:: Rank these also most helpful for, say, illustration of xyz, pseudo code, etc.
 
 Digipen.edu's:
 
-   * `Overiew of all types of trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_ shows BST, 2-3 tree, and red black trees. Concept of rotations.
-   * `Mapping 2-3-4 Trees into Red-Black Trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html>`_ .
+* `Overiew of all types of trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html>`_ shows BST, 2-3 tree, and red black trees. Concept of rotations.
+* `Mapping 2-3-4 Trees into Red-Black Trees <https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html>`_ .
 
-* `Insertion relationship between 2-, 3- and 4-trees and Red and Black trees <http://faculty.cs.niu.edu/~freedman/340/340notes/340redblk.htm>`_ from Northern Illinois University. 
-
-* `Open Data structures article <http://opendatastructures.org/ods-java/9_2_RedBlackTree_Simulated_.html>`_ how 2-3-4 algorithms map to red black trees.
-
-* `USC B-Trees (2-3, 2-3-4) and Red/Black Trees <https://ee.usc.edu/~redekopp/cs104/slides/L19b_BalancedBST_BTreeRB.pdf>`_ (slides 32-75) relationship of 2-3-4 trees to Red-Black trees.
+North Illinois University `Insertion relationship between 2-, 3- and 4-trees and Red and Black trees <http://faculty.cs.niu.edu/~freedman/340/340notes/340redblk.htm>`_.
 
 In the CLRS book there is no discussion of the relationship of 2-3-4 trees to red-black trees. After introducing the structure of and rules for red-black trees, a lemma is immediately proved about the maximum possible height
 of rb trees. After this, the rotation, insertion and deletion algorthims are discussed in detail. The rb-tree introduced uses a common sentinel node as the left and right child of all leaf nodes.
@@ -57,12 +58,10 @@ of rb trees. After this, the rotation, insertion and deletion algorthims are dis
    * `Instructor's Manual <https://cdn.manesht.ir/19908/Introduction%20to%20Algorithms.pdf>`_
    * `Solutions to "Introduction to Algorithms" by Cormen, Leiserson, Rivest, and Stein CLRS Solutions <https://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html>`_ 
 
-Red Black Tree Insertion:
+Red Black Tree Lecture Notes:
 
-* `Red black lecture notes <https://www.usna.edu/Users/cs/crabbe/SI321/2003-08/red-black/red-black.html>`_ discusses insertion and deletion. 
-* http://www.cs.tulane.edu/~carola/teaching/cmps2200/fall17/slides/RB-trees.pdf
-* https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic23RedBlackTrees.pdf
-* https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic23RedBlackTrees.pdf
+* Illustration and synoptic discussion of `red black tree insertion and deletion <https://www.usna.edu/Users/cs/crabbe/SI321/2003-08/red-black/red-black.html>`_ discusses insertion and deletion. 
+* Tulane `red black trees <ttp://www.cs.tulane.edu/~carola/teaching/cmps2200/fall17/slides/RB-trees.pdf>`_ contains detailed pseudo code of all **insertion** cases 
 
 Actual Implementations
 ~~~~~~~~~~~~~~~~~~~~~~

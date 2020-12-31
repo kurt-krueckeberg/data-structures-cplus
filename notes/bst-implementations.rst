@@ -1,5 +1,5 @@
-Binary Search Tree Design Discussion Links
-==========================================
+Binary Search Tree Implementation
+=================================
 
 Using ``std::shared_ptr`` Discussion
 ------------------------------------
@@ -76,9 +76,9 @@ The ``root`` meber of sbtree class is of type ``std::shared_ptr<Node>``, as are 
         const Node* find(const T&);
     };
 
-``remove(const T& x, std::shared_ptr<Node>& p)`` uses recursion occurs, first, when searching for the key x, and, secondly, when the key is found in an internal node, that is, a node with two non-nullptr
-children. In this case the key is "removed" by copying its in-order successor into the node. Then in order to remove the duplicate in-order successor key (in the node that contained the in-order successor),
-we again call ``remove(successor_key, p->right)``, where ``p`` is the root of the subtree that contained the in-order successor. 
+``remove(const T& x, std::shared_ptr<Node>& p)`` uses recursion, first when searching for key x, and secondly, when the key is found in an internal node (a node with two non-nullptr
+children),n which case the key is 'removed' by copying its in-order successor into the node. Then in order to remove the duplicate successor key in the node that contained the in-order successor,
+we call ``remove(successor_key, rightSubtree)``, where ``rightSubtree`` is the root of the subtree containing the in-order successor. 
 
 .. code-block:: cpp
 
@@ -123,36 +123,37 @@ we again call ``remove(successor_key, p->right)``, where ``p`` is the root of th
             while (q->left != nullptr) // locate in-order successor in leaf node, with min value of p's
                    q = q->left;        // right subtree.
    
-             p->key = q->key; // Set in-order q's key in p's node effectively removing the key.
+             // We can't call std::swap because the call to remove immediately below depends on q->key not changing
+             //std::swap(p->key, q->key); // swap key with p's key and...
+
+             p->key = q->key; // Copy in-order successor's to "remove" p->key.
    
-             remove(q->key, p->right); // ...now delete q->key (which is also the value of p->key) from p's right subtree, recalling
-                                       // q was initially set to p->right, which is the root node of subtree that had the in-order
-                                       // successor key.  
-          }
+             remove(q->key, p->right); // ... and now delete q->key (which is now a duplicate of p->key) from p's right subtree. Recall
+                                       // q was initially set to p->right, the root of p's right subtree.          }
           return true;
       }
       // Could not find x in p or any of its children
       return false;
    }
 
-**remove** could not be implemented like it is if we had used ``unique_ptr<Node>`` instead of ``shared_ptr<Node>``. This section of code, for example,
+We could not have implemented **remove** like this if `sbstree<T>`` used ``unique_ptr<Node>`` instead of ``shared_ptr<Node>``. This section of the remove code, for example, would not work (as indicated by the comments). 
 
 .. code-block:: cpp
 
-      std::shared_ptr<Node> q = p->left; // <-- Error if unique_ptr used instead
+      std::unique_ptr<Node> q = p->left; // <-- Error if unique_ptr used instead
 
       while (q->right != nullptr) 
            q = q->right;          // <--- Error if unique_ptr used instead
 
       p->key = q->key; 
 
-      remove(q->key, p->left);  // Error: p->left would have already been moved from, if it was a unique_ptr.
+      remove(q->key, p->left);  // Error: p->left would have already been moved-from, if it was a unique_ptr.
     }
 
     return true;
 
-would not work (as indicated by the comments). But with ``shared_ptr<Node>`` a straight forward recursive removal algorithm can easily be implemented. Converting convert the code to use ``unique_ptr<Node>`` would look
-like this
+But with ``shared_ptr<Node>`` a straight forward recursive removal algorithm can easily be implemented. Converting convert the code to use ``unique_ptr<Node>`` would result in more
+complex implementation:
 
 .. code-block:: cpp
 

@@ -26,7 +26,7 @@ Some recursive binary search tree algorithms cannot be as easily implemented whe
             //..snip
         };
         
-The ``root`` meber of sbtree class is of type ``std::shared_ptr<Node>``, as are the ``left`` and ``right`` members of ``Node<T>``. The use of ``shared_ptr<Node>`` simplifies the implementation of ``remove(const T& key, std::shared_ptr<Node>& p)``, as explained in its code comments. 
+The ``root`` meber of sbtree class is of type ``std::shared_ptr<Node>``, as are the ``left`` and ``right`` members of ``Node<T>``. The use of ``shared_ptr<Node>`` simplifies the implementation of ``remove(const T& key, std::shared_ptr<Node>& p)``. See the remove() method below. 
 
 .. code-block:: cpp
 
@@ -76,9 +76,9 @@ The ``root`` meber of sbtree class is of type ``std::shared_ptr<Node>``, as are 
         const Node* find(const T&);
     };
 
-``remove(const T& x, std::shared_ptr<Node>& p)`` uses recursion, first when searching for key x, and secondly, when the key is found in an internal node (a node with two non-nullptr
-children),n which case the key is 'removed' by copying its in-order successor into the node. Then in order to remove the duplicate successor key in the node that contained the in-order successor,
-we call ``remove(successor_key, rightSubtree)``, where ``rightSubtree`` is the root of the subtree containing the in-order successor. 
+``remove(const T& x, std::shared_ptr<Node>& p)`` uses recursion, first when searching for key x, and secondly, when the key is found in an internal node (that has two non-nullptr
+children), when the key is 'removed' by copying its in-order successor. And then, in order to remove the duplicate successor key/node from the in-order successor, we call
+``remove(successor_key, rightSubtree)``, passing the root of the right subtree that contains the in-order successor. 
 
 .. code-block:: cpp
 
@@ -136,7 +136,7 @@ we call ``remove(successor_key, rightSubtree)``, where ``rightSubtree`` is the r
       return false;
    }
 
-We could not have implemented **remove** like this if `sbstree<T>`` used ``unique_ptr<Node>`` instead of ``shared_ptr<Node>``. This section of the remove code, for example, would not work (as indicated by the comments). 
+We could not have implemented **remove** as above if ``sbstree<T>`` used ``unique_ptr<Node>`` instead of ``shared_ptr<Node>``. This section of the remove code, for example, would not work (as indicated by the comments). 
 
 .. code-block:: cpp
 
@@ -152,8 +152,7 @@ We could not have implemented **remove** like this if `sbstree<T>`` used ``uniqu
 
     return true;
 
-But with ``shared_ptr<Node>`` a straight forward recursive removal algorithm can easily be implemented. Converting convert the code to use ``unique_ptr<Node>`` would result in more
-complex implementation:
+Converting ``remove()`` to use ``unique_ptr<Node>`` would result in a more complex implementation:
 
 .. code-block:: cpp
 

@@ -7,7 +7,7 @@ Description
 Use of Multiway Trees
 ---------------------
 
-See starting at slide slide #174 from the Standford `B-tree and Multiway-Tree Lecture Slides <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_.
+Standford Slides on Balanced Search Trees and `B-tree and Multiway-Tree Lecture Slides <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_.
 
 Souce
 -----

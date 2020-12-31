@@ -80,54 +80,62 @@ and the **remove** method is implemented below
 
 .. code-block:: cpp
 
-    template<typename T> bool sbtree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
-    {
-       // If p is not nullptr and... 
-       // ...if its key is less than current node and we still have nodes to search 
-       if (!p && x < p->key) 
-          return remove(x, p->left);
-    
-       // ...else if its key is greater than current node and we still have nodes to search  
-       else if (!p && x > p->key)
-          return remove(x, p->right);
-    
-       // ...else we found the key
-       else if (!p && p->key == x) { 
-    
-           // 1. If p has only one child (that is not nullptr), then we can remove node p immediately by...
-    
-           if (p->left == nullptr) 
-    
-               // ...remove p by replacing it with right child
-               p = p->right; 
-    
-           // ...else if p doesn't have a right child, then...
-           else if (p->right == nullptr) 
-    
-                // ...remove p by replacing it with left child
-                p = p->left; 
-           
-           // 2. Else if p has two non-nullptr children, swap x with its in-order predecessor
-    
-           else { 
-    
-             std::shared_ptr<Node> q = p->left; // Note: This line not possible with unique_ptr
-    
-             while (q->right != nullptr) // locate in-order predecessor leaf node.
-                    q = q->right;
-    
-             p->key = q->key; // Swap leaf node key with p's key and...
+/*
+ Recursive removal. The recursion occurs in first searching for the key x. Recursion can also occur after
+ a key in an internal node, i.e., a node that has two non-nullptr children, is removed by replacing it with its in-order.
+ In order to remove the duplicate in-order successor key, we invoke remove(successor_key, p->right). That is, we 
+ remove the in-order successor key from p's right subtree.
+ successor
+ Input Parameters:
+ x - key/node to remove
+ p - current node, initially the root of the tree.
+*/
+template<typename T> bool sbstree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
+{
+   // If we are not done--that is, p is not the child of a leaf node (and so equals nullptr)--and p's key is
+   // less than current key, recurse the left child.
+   if (p && x < p->key) 
+      return remove(x, p->left);
 
-             // ...now delete the swapped key, x. Start searching for x at p->left,
-             // the root node of the in-order predessor.  
-             remove(q->key, p->left);            
-           }
+   // ...else if we are not done--p is not the child of a leaf node (and so equals nullptr)--and p's key is
+   // greater than current key, recurse the right child.
+   else if (p && x > p->key)
+      return remove(x, p->right);
 
-           return true;
+   // ...else we found the key to remove.
+   else if (p && p->key == x) { 
+
+       // 1. If p has no left child, we replace it with its right child.
+       if (!p->left) // ...if there is no left child...
+
+           // ...remove node p by replacing it with its right child
+           p = p->right; 
+
+       // ...else if p has no right child, but it does have a left child, then...
+       else if (!p->right) 
+
+            // ...remove node p by replacing it with its left child 
+            p = p->left; 
+       
+       // 2. Else if p has two non-nullptr children, swap p with its in-order predecessor
+       else { 
+
+         std::shared_ptr<Node> q = p->right; // <--- This line not possible with unique_ptr
+
+         while (q->left != nullptr) // locate in-order successor in leaf node, with min value of p's
+                q = q->left;        // right subtree.
+
+          p->key = q->key; // Set in-order q's key in p's node effectively removing the key.
+
+          remove(q->key, p->right); // ...now delete q->key (which is also the value of p->key) from p's right subtree, recalling
+                                    // q was initially set to p->right, which is the root node of subtree that had the in-order
+                                    // successor key.  
        }
-       // Could not find x in p or any of its children
-       return false;
-    }
+       return true;
+   }
+   // Could not find x in p or any of its children
+   return false;
+}
 
 **remove** could not be implemented like this if we had used ``unique_ptr`` instead. This section of its code, for example,
 

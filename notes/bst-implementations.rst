@@ -16,19 +16,22 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
 
 .. code-block:: cpp
 
-    #ifndef sbstree_h
-    #define sbstree_h
+
+    #ifndef bstree_h
+    #define bstree_h
     #include <memory>
     #include <utility>
     #include <iostream>
     #include <algorithm>
+    #include <memory>
     #include <queue>
     #include <initializer_list>
     
     /* 
      * See discussion at https://opendatastructures.org/ods-cpp/6_2_Unbalanced_Binary_Searc.html on unbalanced search trees
+     * See https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf 
      */
-    template<typename T> class sbstree {
+    template<typename T> class bstree {
     
         struct Node{
             T key;
@@ -43,23 +46,14 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
             {
             } 
     
-            Node(const Node& lhs) noexcept;
+            Node(const Node& lhs) noexcept = delete;
     
-            Node& operator=(const Node& lhs) noexcept;
+            Node& operator=(const Node& lhs) noexcept = delete;
              
-            Node(Node&& lhs) noexcept : key{lhs.key}, left{std::move(lhs.left)}, right{lhs.right}, parent{lhs.parent} 
-            { 
-            }
+             
+            Node(Node&& lhs) noexcept = delete;
     
-            Node& operator=(Node&& lhs) noexcept
-            { 
-               key = lhs.key;
-    
-               left = std::move(lhs.left);
-               right = lhs.right;
-    
-               parent = lhs.parent; 
-            } 
+            Node& operator=(Node&& lhs) noexcept = delete;
             
             friend std::ostream& operator<<(std::ostream& ostr, const Node& node) 
             {
@@ -77,13 +71,16 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
             }
     
             std::ostream& debug_print(std::ostream& ostr) const noexcept;
-        };
+       };
+     
+       std::shared_ptr<Node> root; 
+       std::size_t size;
     
        bool remove(const T& x, std::shared_ptr<Node>& p); 
     
        bool insert(const T& x, std::shared_ptr<Node>& p) noexcept;
     
-       void move(sbstree&& lhs) noexcept
+       void move(bstree&& lhs) noexcept
        {
            root = std::move(lhs.root);
            size = lhs.size;
@@ -93,9 +90,6 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
        template<typename Functor> void in_order(Functor f, const std::shared_ptr<Node>& current) const noexcept; 
        template<typename Functor> void post_order(Functor f, const std::shared_ptr<Node>& current) const noexcept; 
        template<typename Functor> void pre_order(Functor f, const std::shared_ptr<Node>& current) const noexcept; 
-     
-       std::shared_ptr<Node> root; 
-       std::size_t size;
     
        class NodeLevelOrderPrinter {
        
@@ -121,7 +115,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
           
           public: 
           
-          NodeLevelOrderPrinter (const sbstree<T>& tree, std::ostream& (Node::*pmf_)(std::ostream&) const noexcept, std::ostream& ostr_in):  ostr{ostr_in}, current_level{0}, pmf{pmf_}
+          NodeLevelOrderPrinter (const bstree<T>& tree, std::ostream& (Node::*pmf_)(std::ostream&) const noexcept, std::ostream& ostr_in):  ostr{ostr_in}, current_level{0}, pmf{pmf_}
           { 
               height_ = tree.height(); 
           }
@@ -145,31 +139,57 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
        };
      
        std::size_t height(const std::shared_ptr<Node>& node) const noexcept;
+    
+       void pre_order_copy(const std::shared_ptr<Node>& src, std::shared_ptr<Node>& dest) noexcept
+       {
+          if (!src) return;
+       
+          dest = src;
+       
+          pre_order_copy(src->left, dest->left);
+          pre_order_copy(src->right, dest->right);
+       }
+       
      
       public:
     
-        sbstree() : root{nullptr}, size{0}
+        bstree() : root{nullptr}, size{0}
         {
         } 
     
-       ~sbstree() = default;
+       ~bstree() = default;
     
-        sbstree(const sbstree& lhs);
+        bstree(const bstree& lhs) : size(lhs.size)
+        {
+           pre_order_copy(lhs.root, root);
+        }
     
-        sbstree(const std::initializer_list<T>& list) noexcept : size{0}
+        bstree(const std::initializer_list<T>& list) noexcept : size{0}
         {
             for (const auto& x : list)
                 insert(x);
         }
     
-        sbstree(sbstree&& lhs)
+        bstree(bstree&& lhs)
         {
            move(std::move(lhs));
         }
     
-        sbstree& operator=(const sbstree& lhs);
+        //bstree& operator=(const bstree& lhs) = default; This may be correct, but for now...
     
-        sbstree& operator=(sbstree&& lhs);
+        bstree& operator=(const bstree& lhs)
+        { 
+           if (this != &lhs)  {
+              size = lhs.size;
+              pre_order_copy(lhs.root, root);
+           } 
+           return *this;
+        }
+    
+        bstree& operator=(bstree&& lhs)
+        {
+            move(std::move(lhs));
+        }
     
         void printlevelOrder(std::ostream& ostr) const noexcept;
     
@@ -230,13 +250,13 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
             return ostr;
         }
         
-        friend std::ostream& operator<<(std::ostream& ostr, const sbstree& tree)
+        friend std::ostream& operator<<(std::ostream& ostr, const bstree& tree)
         {
             return tree.print(ostr);
         }
     };
     
-    template<class T> std::ostream& sbstree<T>::Node::debug_print(std::ostream& ostr) const noexcept
+    template<class T> std::ostream& bstree<T>::Node::debug_print(std::ostream& ostr) const noexcept
     {
        ostr << " {["; 
      
@@ -263,59 +283,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
        return ostr;
     }
     
-    
-    template<typename T> sbstree<T>::Node::Node(const typename sbstree<T>::Node& lhs) noexcept : key{lhs.key}, left{nullptr}, right{nullptr}
-    {
-       if (lhs.parent == nullptr) // If we are copying a root pointer, then set parent.
-           parent = nullptr;
-    
-       // The make_shared<Node> calls below results in the entire tree rooted at lhs being copied.
-       if (lhs.left  != nullptr) { 
-    
-           left = std::make_shared<Node>(*lhs.left);    
-           left->parent = this;
-       }
-       
-       if (lhs.right != nullptr) {
-    
-           right = std::make_shared<Node>(*lhs.right); 
-           right->parent = this;
-       }
-    }
-    
-    template<typename T> typename sbstree<T>::Node& sbstree<T>::Node::operator=(const typename sbstree<T>::Node& lhs) noexcept
-    {
-       if (&lhs == this) return *this;
-    
-       key = lhs.key;
-    
-       if (lhs.parent == nullptr) // If we are copying the root node, then set parent.
-           parent = nullptr;
-    
-       // The make_shared<Node> calls below creates a copy of the entire tree at lhs.root
-       if (lhs.left  != nullptr) { 
-    
-           left = std::make_shared<Node>(*lhs.left);    
-           left->parent = this;
-       }
-       
-       if (lhs.right != nullptr) {
-    
-           right = std::make_shared<Node>(*lhs.right); 
-           right->parent = this;
-       }
-      
-       return *this;
-    }
-    
-    template<typename T> sbstree<T>::sbstree(const sbstree& lhs)
-    {
-       // This will invoke Node(const Node&), passing *lhs.root, which will duplicate the entire tree rooted at lhs.root.
-       root = std::make_unique<Node>(*lhs.root); 
-       size = lhs.size;
-    }
-    
-    template<typename T> bool sbstree<T>::insert(const T& x) noexcept
+    template<typename T> bool bstree<T>::insert(const T& x) noexcept
     {
       if (!root) {
          root = std::make_shared<Node>(x);     
@@ -330,11 +298,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
       }
     };
     
-    /*
-    TODO: Add comments for this method
-    */
-    
-    template<typename T> bool sbstree<T>::insert(const T& x, std::shared_ptr<Node>& current) noexcept
+    template<typename T> bool bstree<T>::insert(const T& x, std::shared_ptr<Node>& current) noexcept
     {
       if (x < current->key) {
     
@@ -345,9 +309,9 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
        
       } else if (x > current->key) {
     
-            if (!current->right) { 
+            if (!current->right)  
                 current->right = std::make_shared<Node>(x, current.get());
-            }
+            
             else
                 insert(x, current->right);
     
@@ -358,6 +322,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
     }
     
     /*
+     remove
     
      Recursion is used to descend the tree searching for the key x to remove. Recursion is used again when an internal node holds the key.
      An internal node is a node that has two non-nullptr children. It is "removed" by replacing its keys with that of its in-order
@@ -370,7 +335,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
      x - key/node to remove
      p - current node, initially the root of the tree.
     */
-    template<typename T> bool sbstree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
+    template<typename T> bool bstree<T>::remove(const T& x, std::shared_ptr<Node>& p) 
     {
        // If we are not done, if p is not nullptr (which would mean the child of a leaf node), and p's key is
        // less than current key, recurse the left subtree looking for it.
@@ -420,7 +385,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
     }
     
     template<typename T>
-    template<typename Functor> void sbstree<T>::in_order(Functor f, const std::shared_ptr<Node>& current) const noexcept 
+    template<typename Functor> void bstree<T>::in_order(Functor f, const std::shared_ptr<Node>& current) const noexcept 
     {
        if (current == nullptr) {
     
@@ -435,7 +400,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
     }
     
     template<typename T>
-    template<typename Functor> void sbstree<T>::pre_order(Functor f, const std::shared_ptr<Node>& current) const noexcept 
+    template<typename Functor> void bstree<T>::pre_order(Functor f, const std::shared_ptr<Node>& current) const noexcept 
     {
        if (current == nullptr) {
     
@@ -448,7 +413,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
     }
     
     template<typename T>
-    template<typename Functor> void sbstree<T>::post_order(Functor f, const std::shared_ptr<Node>& current) const noexcept 
+    template<typename Functor> void bstree<T>::post_order(Functor f, const std::shared_ptr<Node>& current) const noexcept 
     {
        if (current == nullptr) {
     
@@ -461,7 +426,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
        f(current->key); 
     }
     
-    template<typename T> inline void  sbstree<T>::printlevelOrder(std::ostream& ostr) const noexcept
+    template<typename T> inline void  bstree<T>::printlevelOrder(std::ostream& ostr) const noexcept
     {
       NodeLevelOrderPrinter tree_printer(*this, &Node::print, ostr);  
       
@@ -470,7 +435,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
       std::cout << std::endl;
     }
     
-    template<typename T> void sbstree<T>::debug_printlevelOrder(std::ostream& ostr) const noexcept
+    template<typename T> void bstree<T>::debug_printlevelOrder(std::ostream& ostr) const noexcept
     {
       NodeLevelOrderPrinter tree_printer(*this, &Node::debug_print, ostr);  
       
@@ -479,7 +444,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
       ostr << std::flush;
     }
     
-    template<typename T> std::size_t sbstree<T>::height(const std::shared_ptr<Node>& current) const noexcept
+    template<typename T> std::size_t bstree<T>::height(const std::shared_ptr<Node>& current) const noexcept
     {
       // From: algorithmsandme.com/level-order-traversal-of-binary-tree
       if (!current) return 0;
@@ -490,7 +455,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
       return 1 + std::max(lh, rh);
     }
     
-    template<typename T> template<typename Functor> void sbstree<T>::levelOrderTravers(Functor f) const noexcept
+    template<typename T> template<typename Functor> void bstree<T>::levelOrderTravers(Functor f) const noexcept
     {
        std::queue< std::pair<const Node*, int> > queue; 
     
@@ -531,108 +496,11 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
        }
     
     }
-    
     #endif
-
-Converting ``remove()`` to use ``unique_ptr<Node>`` would result in a more complex implementation:
-
-.. code-block:: cpp
-
-    template<typename T> 
-    bool bstree<T>::remove(const T& x, typename bstree<T>::Node *p) noexcept
-    {
-       // If p is not nullptr and... 
-       // ...if its key is less than current node and we still have nodes to search 
-       if (p && x < p->key) 
-          return remove(x, p->left.get());
-    
-       // ...else if its key is greater than current node and we still have nodes to search  
-       else if (p && x > p->key)
-          return remove(x, p->right.get());
-    
-       // ...else we found the key
-       else if (p && p->key == x) { 
-    
-           // 1. If p has only one child (that is not nullptr), then we can remove node p immediately by...
-           Node *parent = p->parent;
-    
-           // ...If p doesn't have a left child, then...
-           if (!p->left) { // TOD: Can we test !p->right first, too? 
-    
-               // ...remove p by replacing it with right child
-               if (root.get() == p) //....If p is root, we can't use parent pointer.
-                   reset(p->right, root);
-    
-                else { 
-                  // We need the actual unique_ptr. Use the parent to get it.
-                  std::unique_ptr<Node>& punique = (parent->left.get() == p) ? parent->left : parent->right;
-                  
-                  reset(p->right, punique);  // TODO: What if p->right is nullptr, too? Then punique 
-               }
-    
-            // ...else If p doesn't have a right child, then...
-            } else if (!p->right) {
-    
-                // ...remove p by replacing it with left child
-       
-                if (root.get() == p) //....If p is root, the we can't use parent pointer.
-                    reset(p->left, root); 
-    
-                else { 
-       
-                   // We need the actual unique_ptr. Use the parent to get it.
-                   std::unique_ptr<Node>& punique = (parent->left.get() == p) ? parent->left : parent->right;
-    
-                   reset(p->left, punique); 
-                }
-       
-             // 2. Else if p has two children (ttat aren't nullptr). Swap the found key with its in-order predecessor
-    
-             } else { // p is an internal node with two children. 
-       
-                Node *q = p->right.get(); 
-       
-                while (q->left != nullptr) // locate in-order successor
-                       q = q->left.get();
-       
-                 // Can't call std::swap here instead because the remove immediately following depends on q->key not changing
-                 //std::swap(p->key, q->key); // swap key with p's key and...
-                 p->key = q->key;
-       
-                 remove(q->key, p->right.get()); // delete the swapped key, which is x. Start searching for x at p->left,
-                                          // the root of the in-order predessor.  
-             }
-             return true;
-       }
-       return false;
-    }
-
-    /*
-     * reset deletes the Node managed by dest by move-assigning src to dest, which transfers ownership of the raw pointer managed by src to dest.
-     * It also reassigns the parent pointer after the move so the tree it is valid.
-     */
-     template<typename T>
-     void sbtree<T>::reset(std::unique_ptr<Node>& src, std::unique_ptr<Node>& dest) noexcept
-     {
-         if (!src)
-             
-             dest.reset();
-             
-         else {
-             
-            Node *parent = dest->parent; 
-    
-            // This deletes the Node managed by dest, and transfers ownership of the pointer managed by src to dest.
-           
-            dest = std::move(src); 
      
-            dest->parent = parent; // Set the parent pointer to be the Node that had been the parent of dest (before it was delete immediately above).
-        }
-    }
- 
 The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
-
+    
 Downside
 ^^^^^^^^
-
+    
 The downside to ``shared_ptr`` is that tree copies--from copy assignment or copy construction--share nodes, and if the tree interface allows the associated value of a key to altered, using ``T& operator[]( const Key& key )``, then its value is altered in its tree copies, too. 

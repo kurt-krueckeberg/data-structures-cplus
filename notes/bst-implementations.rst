@@ -16,7 +16,6 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
 
 .. code-block:: cpp
 
-
     #ifndef bstree_h
     #define bstree_h
     #include <memory>
@@ -28,14 +27,16 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
     #include <initializer_list>
     
     /* 
-     * See discussion at https://opendatastructures.org/ods-cpp/6_2_Unbalanced_Binary_Searc.html on unbalanced search trees
-     * See https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf 
+     * See Unbalanced search trees at https://opendatastructures.org/ods-cpp/6_2_Unbalanced_Binary_Searc.html  
+     * 
+     * See implmented with shared_ptr<Node>  https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf 
      */
     template<typename T> class bstree {
     
-        struct Node{
+        struct Node {
+    
             T key;
-            Node *parent;
+            Node *parent; // For tree traversal only
     
             std::shared_ptr<Node> left; 
             std::shared_ptr<Node> right;
@@ -49,7 +50,6 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
             Node(const Node& lhs) noexcept = delete;
     
             Node& operator=(const Node& lhs) noexcept = delete;
-             
              
             Node(Node&& lhs) noexcept = delete;
     
@@ -80,7 +80,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
     
        bool insert(const T& x, std::shared_ptr<Node>& p) noexcept;
     
-       void move(bstree&& lhs) noexcept
+       void move_tree(bstree&& lhs) noexcept
        {
            root = std::move(lhs.root);
            size = lhs.size;
@@ -172,7 +172,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
     
         bstree(bstree&& lhs)
         {
-           move(std::move(lhs));
+           move_tree(std::forward<bstree>(lhs));
         }
     
         //bstree& operator=(const bstree& lhs) = default; This may be correct, but for now...
@@ -188,7 +188,7 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
     
         bstree& operator=(bstree&& lhs)
         {
-            move(std::move(lhs));
+            move_tree(std::forward<bstree>(lhs));
         }
     
         void printlevelOrder(std::ostream& ostr) const noexcept;
@@ -497,10 +497,10 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
     
     }
     #endif
-     
+                     
 The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
-    
+        
 Downside
 ^^^^^^^^
-    
+        
 The downside to ``shared_ptr`` is that tree copies--from copy assignment or copy construction--share nodes, and if the tree interface allows the associated value of a key to altered, using ``T& operator[]( const Key& key )``, then its value is altered in its tree copies, too. 

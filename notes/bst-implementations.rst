@@ -31,8 +31,8 @@ There are three cases to consider when removing a key and its node:
 
 We will combine case #1 with case #2, but first we consider case #2, which has two subcases:
 
-* pnode only has a left child
-* pnode only has a right child
+* The node only has a left child
+* the node only has a right child
 
 Both can be handled by splicing in the sole child node in place of pnode. We must also preserve the parent relationships by making pnode->parent the parent of the sole child.
 

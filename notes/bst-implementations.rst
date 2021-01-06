@@ -1,19 +1,92 @@
-Binary Search Tree Implementation
-=================================
+Binary Search Tree Implementation Using ``std::shared_ptr``
+===========================================================
 
-Using ``std::shared_ptr`` Discussion
-------------------------------------
+A binary search tree can be more easily implemented when ``shared_ptr<Node>`` is used:
 
-`Implementation of Binary Search Trees Via Smart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses the advantage of using
-``std::shared_ptr`` to more easily implement recursive algorithms.
+* `Implementation of Binary Search Trees Via Smart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses the advantage of using
+  ``std::shared_ptr`` to more easily implement recursive algorithms.
+* `Bartosz Milewski's Functional Data Structures in C++: Trees <https://.com/2013/11/25/functional-data-structures-in-c-trees/>`_ also uses ``std::shared_ptr`` (implementation is at `github <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_).
 
-`Bartosz Milewski's Functional Data Structures in C++: Trees <https://.com/2013/11/25/functional-data-structures-in-c-trees/>`_ also uses ``std::shared_ptr`` (implementation is at `github <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_).
+insertion
+---------
 
-shared_ptr Implementation of Binary Search Tree
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. todo: add comments.
 
-A binary search tree can be more easily implemented when ``shared_ptr`` is used, for example:
+copy construction and copy assignment
+-------------------------------------
 
+.. todo: add comments. Note the deleted methods of Node
+
+move construction and assigment
+-------------------------------
+
+remove
+------
+
+There are three cases to consider when removing a key and its node:
+
+1. The node is a leaf
+2. The has has only one child
+3. The node has two children
+
+We will combine case #1 with case #2, but first we case #2, which has two subcases:
+
+* pnode only has a left child
+* pnode only has a right child
+
+Both can be handled by splicing in the sole child node in place of pnode. We must also preserve the parent relationships by making pnode->parent the parent of the sole child.
+
+.. code-block:: cpp
+
+    auto new_parent = pnode->parent;
+    
+    // 1. If p has no left child, we replace it with its right child.
+    if (!p->left) {
+    
+        // ...remove node p by replacing it with its right child (which may be nullptr), effectively splicing
+        // in the right subtree.
+        p = p->right; 
+        p->parent = new_parent;
+    
+    // ...else if p has no right child and it does have a left child (since the first if-test failed)...
+    } 
+
+Note: If p is a leaf node, it, too, is handled by the code above (and in that case ``p->right`` mananges ``nullptr``). If p has a left child but no right child, we handle that next
+
+.. code-block:: cpp
+
+    else if (!p->right) { 
+    
+         // ...remove node p by replacing it with its left child (which may be nullptr), effectively splicing in the 
+         // left subtree.
+         p = p->left; 
+        p->parent = new_parent;
+    
+    // 2. Else if p is an internal node and has two non-nullptr children, so we swap p with its in-order predecessor
+    }
+    
+Lastly, we handle case #3, and we replace the key in p with its in-order successor. After which we recusively call remove to remove the duplicate key: 
+
+.. code-block:: cpp
+
+    else { 
+    
+         std::shared_ptr<Node> q = p->right; // <--- This line not possible with unique_ptr
+        
+         while (q->left != nullptr) // locate in-order successor in leaf node. It is the min value of p's
+                q = q->left;        // right subtree.
+        
+         p->key = q->key; // Set in-order q's key in p's node effectively removing the key.
+            
+         // ...now delete q->key (which is also the value of p->key) from p's right subtree, recalling
+         // q was initially set to p->right, which is the root node of subtree that had the in-order
+         // successor key.  
+         remove(q->key, p->right); 
+    }
+
+The complete code
+-----------------
+    
 .. code-block:: cpp
 
     #ifndef bstree_h
@@ -350,22 +423,26 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
        // ...else if p is not null, we compare it to the key.
        else if (p && p->key == x) { 
     
+           auto new_parent = pnode->parent;
+ 
            // 1. If p has no left child, we replace it with its right child.
-           if (!p->left) 
+           if (!p->left) {
     
                // ...remove node p by replacing it with its right child (which may be nullptr), effectively splicing
                // in the right subtree.
                p = p->right; 
+               p->parent = new_parent;
     
            // ...else if p has no right child and it does have a left child (since the first if-test failed)...
-           else if (!p->right) 
+           } else if (!p->right) { 
     
                 // ...remove node p by replacing it with its left child (which may be nullptr), effectively splicing in the 
                 // left subtree.
                 p = p->left; 
+               p->parent = new_parent;
            
            // 2. Else if p is an internal node and has two non-nullptr children, so we swap p with its in-order predecessor
-           else { 
+           } else { 
     
              std::shared_ptr<Node> q = p->right; // <--- This line not possible with unique_ptr
     
@@ -373,11 +450,14 @@ A binary search tree can be more easily implemented when ``shared_ptr`` is used,
                     q = q->left;        // right subtree.
     
               p->key = q->key; // Set in-order q's key in p's node effectively removing the key.
-    
+              
+                
+              // TODO: Double check.
               remove(q->key, p->right); // ...now delete q->key (which is also the value of p->key) from p's right subtree, recalling
                                         // q was initially set to p->right, which is the root node of subtree that had the in-order
                                         // successor key.  
            }
+           
            return true;
        }
        // Could not find x in p or any of its children

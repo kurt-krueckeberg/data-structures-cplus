@@ -34,7 +34,7 @@ We will combine case #1 with case #2, but first we consider case #2, which has t
 * The node only has a left child
 * the node only has a right child
 
-Both can be handled by splicing in the sole child node in place of pnode. We must also preserve the parent relationships by making pnode->parent the parent of the sole child.
+Both can be handled by splicing in the sole child node in place of the node to be removed. We must also preserve the parent relationships, so we must alter parent of the spliced-in node:
 
 .. code-block:: cpp
 
@@ -51,7 +51,7 @@ Both can be handled by splicing in the sole child node in place of pnode. We mus
     // ...else if p has no right child and it does have a left child (since the first if-test failed)...
     } 
 
-Note: If p is a leaf node, it, too, is handled by the code above (and in that case ``p->right`` mananges ``nullptr``). If p has a left child but no right child, we handle that next
+Note: If p is a leaf node, it, too, is handled by the code above (and in that case ``p->right`` points to ``nullptr``). If p has a left child but no right child, we handle that next
 
 .. code-block:: cpp
 
@@ -60,16 +60,13 @@ Note: If p is a leaf node, it, too, is handled by the code above (and in that ca
          // ...remove node p by replacing it with its left child (which may be nullptr), effectively splicing in the 
          // left subtree.
          p = p->left; 
-        p->parent = new_parent;
+         p->parent = new_parent;
     
-    // 2. Else if p is an internal node and has two non-nullptr children, so we swap p with its in-order predecessor
-    }
-    
-Lastly, we handle case #3, and we replace the key in p with its in-order successor. After which we recusively call remove to remove the duplicate key: 
+Lastly, we handle case #3, and we replace the key in p with its in-order successor. After which we recusively call ``remove`` to remove the duplicate key: 
 
 .. code-block:: cpp
 
-    else { 
+    else { // Else if p is an internal node and has two non-nullptr children, so we swap p with its in-order predecessor
     
          std::shared_ptr<Node> q = p->right; // <--- This line not possible with unique_ptr
         
@@ -439,7 +436,7 @@ The complete code
                 // ...remove node p by replacing it with its left child (which may be nullptr), effectively splicing in the 
                 // left subtree.
                 p = p->left; 
-               p->parent = y;
+                p->parent = y;
            
            // 2. Else if p is an internal node and has two non-nullptr children, so we swap p with its in-order predecessor
            } else { 

@@ -66,7 +66,7 @@ tree traversal invoking ``unique_ptr<Node>::reset()`` for each node.
 Recursive methods
 ^^^^^^^^^^^^^^^^^
 
-Methods like ``find(Key key)`` can take advantage of the trees recursive structure to implement a recursive algorithm. The same is true for sveral other methods, like the Node copy constructor, which replicates the entire subtree of its input.
+``find(Key key)`` uses recursion, as do several other tree methods.
 
 .. code-block:: cpp
 
@@ -119,7 +119,7 @@ Delete
 The overall strategy for deleting a node z from a binary search tree T has three basic cases, but,
 as we shall see, one of the cases is a bit tricky (a sub case of the third case).
 
-1. If z has no children, then we simply remove it by modifying its parent to replace z with NIL as its child.
+1. If z has no children, then we simply remove it by modifying its parent to replace z with nullptr as its child.
 2. If z has just one child, then we elevate that child to take z’s position in the tree
    by modifying z’s parent to replace z by z’s child.
 3. If z has two children, then we find z’s successor y—which must be in z’s right subtree—and have y
@@ -132,8 +132,8 @@ It organizes its cases a bit differently from the three cases outlined previousl
 cases:
 
 1. If z has no left child (part (a) of the figure), then we replace z by its right child, which may or may not
-   be NIL . When z’s right child is NIL , this case deals with the situation in which z has no children. When z’s
-   right child is non- NIL , this case handles the situation in which z has just one child, which is its right
+   be nullptr . When z’s right child is nullptr , this case deals with the situation in which z has no children. When z’s
+   right child is non- nullptr , this case handles the situation in which z has just one child, which is its right
    child.
 
 2. If z has just one child, which is its left child (part (b) of the figure), then we replace z by its left
@@ -158,28 +158,23 @@ cases:
     
       // There are three cases to consider:
      
-      // Case 1: If both children are NIL, we can simply delete the node (which sets it to NIL). 
+      // Case 1: If both children are nullptr, we reset the unique_ptr<Node>. 
       if (!pnode->left && !pnode->right) 
           pnode.reset();    
-    
-      // Case 2: pnode has just one child, thus we elevate that child to take pnode's position in the tree
-      // by modifying pnode's parent to replace pnode by it's child.
-    
+
       /*
-       Case 2: Both children are non-NIL. We find pnode's successor y, which we know lies in pnode's right subtree and has no left child.
+       Case 2: The node is an internal node (and both its children are non-nullptr). We find pnode's successor y, which we know lies in pnode's right subtree and has no left child.
        We want to splice y out of its current location and have it replace pnode in the tree. There are two cases to consider:
       
-       1. The easier case is, if y is pnode's right child, then we replace pnode by y, leaving y’s right child alone. Easy case.
+       1. The easier case is, if y is pnode's right child, then we replace pnode by y, leaving y’s right child alone. 
       
-       2. Otherwise, y lies within pnode's right subtree but is not pnode's right child (part (d)). In this case, we first
-          replace y by its own right child, and then we replace pnode by y.
+       2. Otherwise, y lies within pnode's right subtree but is not pnode's right child. In this case, we first replace y by its own right child, and then we replace pnode by y.
       */
-      else if (pnode->left && pnode->right) {  // (pnode->left && p->right) == true
+      else if (pnode->left && pnode->right) {  //  If pnode is an internal node,
     
-          if (!pnode->right->left) { // sub-case 1: Since pnode->right->left is NIL, we know the successor must be pnode->right.
+          if (!pnode->right->left) { // subcase 1: if  pnode->right->left is nullptr, the successor is pnode->right.
     
-              pnode->right->parent = pnode->parent; // Before the move-assignment of pnode with pnode->right, adjust pnode->right->parent
-                                                    // to be pnode's parent  
+              pnode->right->parent = pnode->parent; // Before the move assignment below, we set pnode->right->parent to pnode's parent  
      
               pnode = std::move(pnode->right); // move-assign pdnoe with its right child, thus, deleting pnode.
     
@@ -188,7 +183,7 @@ cases:
               // Because pnode has two children, we know its successor y lies within pnode's right subtree.
     
               Node *suc = min(pnode->right); // In this case, we swap pnode's underlying pointer with y's underlying pointer, and then we replace pnode by it's right child, which before the 
-                                                            // swap was y's right child.
+                                             // swap was y's right child.
     
               std::unique_ptr<Node>& y = suc->parent->left.get() == suc ? suc->parent->left : suc->parent->right;
     
@@ -201,14 +196,13 @@ cases:
               y = std::move(y->right);          // Replace successor with its right child.
           }
           
-      } else { // Case 3: pnode has only one child. 
+      } else { // Case 3: If the node has just one non-nullptr child, we splice it into pnode's position. We use pnode's parent to do this.   
     
           std::unique_ptr<Node>& onlyChild = pnode->left ? pnode->left : pnode->right;
     
-          onlyChild->parent = pnode->parent; // Before the move-assignment, we set onlyChild->parent to 
-                                             // pnode's parent.
-    
-          pnode = std::move(onlyChild);      // Replace pnode by move-assignmetn with its only non-NIL child, thus, deleting pnode.
+          onlyChild->parent = pnode->parent; // Before the move assignment below we must correct set onlyChild its parent     
+
+          pnode = std::move(onlyChild);      // Replace pnode by move-assignmetn with its only non-nullptr child, thus, deleting pnode.
       }  
     
       --size; 

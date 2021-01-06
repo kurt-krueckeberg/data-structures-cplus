@@ -38,7 +38,7 @@ Both can be handled by splicing in the sole child node in place of pnode. We mus
 
 .. code-block:: cpp
 
-    auto new_parent = pnode->parent;
+    auto new_parent = p->parent;
     
     // 1. If p has no left child, we replace it with its right child.
     if (!p->left) {
@@ -423,7 +423,7 @@ The complete code
        // ...else if p is not null, we compare it to the key.
        else if (p && p->key == x) { 
     
-           auto new_parent = pnode->parent;
+           auto y = p->parent;
  
            // 1. If p has no left child, we replace it with its right child.
            if (!p->left) {
@@ -431,7 +431,7 @@ The complete code
                // ...remove node p by replacing it with its right child (which may be nullptr), effectively splicing
                // in the right subtree.
                p = p->right; 
-               p->parent = new_parent;
+               p->parent = y;
     
            // ...else if p has no right child and it does have a left child (since the first if-test failed)...
            } else if (!p->right) { 
@@ -439,7 +439,7 @@ The complete code
                 // ...remove node p by replacing it with its left child (which may be nullptr), effectively splicing in the 
                 // left subtree.
                 p = p->left; 
-               p->parent = new_parent;
+               p->parent = y;
            
            // 2. Else if p is an internal node and has two non-nullptr children, so we swap p with its in-order predecessor
            } else { 
@@ -451,7 +451,6 @@ The complete code
     
               p->key = q->key; // Set in-order q's key in p's node effectively removing the key.
               
-                
               // TODO: Double check.
               remove(q->key, p->right); // ...now delete q->key (which is also the value of p->key) from p's right subtree, recalling
                                         // q was initially set to p->right, which is the root node of subtree that had the in-order

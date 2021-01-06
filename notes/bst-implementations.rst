@@ -29,7 +29,7 @@ There are three cases to consider when removing a key and its node:
 2. The has has only one child
 3. The node has two children
 
-We will combine case #1 with case #2, but first we case #2, which has two subcases:
+We will combine case #1 with case #2, but first we consider case #2, which has two subcases:
 
 * pnode only has a left child
 * pnode only has a right child

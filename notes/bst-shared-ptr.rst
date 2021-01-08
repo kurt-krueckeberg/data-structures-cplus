@@ -486,7 +486,6 @@ The complete code
     
               p->key = q->key; // Set in-order q's key in p's node effectively removing the key.
               
-              // TODO: Double check.
               remove(q->key, p->right); // ...now delete q->key (which is also the value of p->key) from p's right subtree, recalling
                                         // q was initially set to p->right, which is the root node of subtree that had the in-order
                                         // successor key.  

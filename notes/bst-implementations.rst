@@ -10,15 +10,51 @@ A binary search tree can be more easily implemented when ``shared_ptr<Node>`` is
 insertion
 ---------
 
-.. todo: add comments.
+``insert(x)`` creates a root node, if root equals ``nullptr``; otherwise, it calls the recursive methhod ``insert(x, root)``, which recurses until the next child node to be visited is ``nullptr``, where it, then, inserts the new child.
 
-copy construction and copy assignment
--------------------------------------
+.. code-block:: cpp
 
-.. todo: add comments. Note the deleted methods of Node
+    template<typename T> bool bstree<T>::insert(const T& x) noexcept
+    {
+      if (!root) {
+         root = std::make_shared<Node>(x);     
+         ++size;
+         return true;
+      } 
+      else {
+    
+         auto rc = insert(x, root);
+         if (rc) ++size;
+         return rc;
+      }
+    };
 
-move construction and assigment
--------------------------------
+    template<typename T> bool bstree<T>::insert(const T& x, std::shared_ptr<Node>& current) noexcept
+    {
+      if (x < current->key) {
+    
+           if (!current->left) 
+                current->left =  std::make_shared<Node>(x, current.get());
+           else 
+               insert(x, current->left);
+       
+      } else if (x > current->key) {
+    
+            if (!current->right)  
+                 current->right = std::make_shared<Node>(x, current.get());
+            
+            else
+                insert(x, current->right);
+    
+      } else return false; // already in tree 
+      
+      return true;
+    }
+
+copy construction and copy assignment and move construction and assigment
+-------------------------------------------------------------------------
+
+These methods are handled by ``bstree<T>`` only. Node's copy constructor, copy assignment operator, move constructor and move assignment operator are all deleted.
 
 remove
 ------
@@ -34,11 +70,11 @@ We will combine case #1 with case #2, but first we consider case #2, which has t
 * The node only has a left child
 * the node only has a right child
 
-Both can be handled by splicing in the sole child node in place of the node to be removed. We must also preserve the parent relationships, so we must alter parent of the spliced-in node:
+Both can be handled by splicing in the sole child node into the position of the node being removed. Since we must also preserve the parent relationships, we must, then, set the new parent of the spliced-in node:
 
 .. code-block:: cpp
 
-    auto new_parent = p->parent;
+    auto y = p->parent; // y will become the new parent of the spliced-in node.
     
     // 1. If p has no left child, we replace it with its right child.
     if (!p->left) {
@@ -46,7 +82,7 @@ Both can be handled by splicing in the sole child node in place of the node to b
         // ...remove node p by replacing it with its right child (which may be nullptr), effectively splicing
         // in the right subtree.
         p = p->right; 
-        p->parent = new_parent;
+        p->parent = y;
     
     // ...else if p has no right child and it does have a left child (since the first if-test failed)...
     } 

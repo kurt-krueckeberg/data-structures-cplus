@@ -459,18 +459,20 @@ The complete code
            auto y = p->parent;
  
            // 1. If p has no left child, we replace it with its right child.
+           // Note: p->right be nullptr, too, if it is a leaf. 
            if (!p->left) {
     
-               // ...remove node p by replacing it with its right child (which may be nullptr), effectively splicing
-               // in the right subtree.
+               // ...remove node p by replacing it with its right child, effectively splicing
+               // in the right subtree. 
                p = p->right; 
                p->parent = y;
     
            // ...else if p has no right child and it does have a left child (since the first if-test failed)...
+           // Note: p->left be nullptr, too, if it is a leaf, and we handle that here, too.
            } else if (!p->right) { 
     
                 // ...remove node p by replacing it with its left child (which may be nullptr), effectively splicing in the 
-                // left subtree.
+                // left subtree. 
                 p = p->left; 
                 p->parent = y;
            

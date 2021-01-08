@@ -611,8 +611,3 @@ The complete code
     #endif
                      
 The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
-        
-Downside
-^^^^^^^^
-        
-The downside to ``shared_ptr`` is that tree copies--from copy assignment or copy construction--share nodes, and if the tree interface allows the associated value of a key to altered, using ``T& operator[]( const Key& key )``, then its value is altered in its tree copies, too. 

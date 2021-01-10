@@ -30,12 +30,26 @@ How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
 Insertion
 ^^^^^^^^^
 
-Insertions occur at leaf nodes. If the leaf node is a 4-node, it must first be split. The first such case to consider is when the root is a leaf node and a 4-node. 
+The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  Insertions occur at leaf nodes. If the leaf node is a 4-node, it is first split into two 2-nodes, one consisting of the left key, the other the
+right key, with the middle key pushed up into the parent. Consider, for example, a tree holding integers. When its root is 4-node and also a leaf node as below
 
-.. todo:: Include an illustration. 
+.. figure:: ../images/4-node-split-1.jpg
+   :alt: 4 Node to be Split
+   :align: center 
+   :scale: 100 %
 
+   **Figure: 4-node [59, 70, 75] needs to be split**
 
-Should I keep the next sentence? The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  New keys are inserted at leaf nodes. If the leaf node is a 4-node, we make room it splitting the leaf node and pushing its middle
+and we attempt to insert a key of 27 into it, the result is ....The original root node has been split into two 2-nodes, the left leaf node holds ?? and the right holds ??. The middle key has become the new root. The new key of 27 is added to the left node.
+
+.. figure:: ../images/4-node-split-2.jpg
+   :alt: 4 Node after Split
+   :align: center 
+   :scale: 100 %
+
+   **Figure: 4-node split into two 2-nodes**
+
+New keys are inserted at leaf nodes. If the leaf node is a 4-node, we make room it splitting the leaf node and pushing its middle
 key into its parent. If the parent, too, is a 4-node, we repeat the process: we push its middle key up to its parent. We repeat this process until we reach the root. If it, too, is a 4-node, it is split and new root node, consisting of the middle key, is insert above the current root. 
 
 .. todo:: Provide an illustration of the process. Also note that splitting 4-nodes as we descend still keeps the tree balanced.

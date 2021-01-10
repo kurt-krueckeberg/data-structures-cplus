@@ -1,9 +1,4 @@
-
 .. include:: <isonum.txt>
-
-A red-black tree is a binary tree representation of a 2-3-4 tree. 
-
-A 2-, 3- and 4-nodes is transformed into its red-black representation as follows:
 
 Red Black Trees (under develpment)
 ==================================
@@ -11,6 +6,10 @@ Red Black Trees (under develpment)
 **Contents Under Development...**
 
 .. todo:: Read these sources to discover the clearest and look for those that mention how 2-3 and 2-3-4 tree relate to red-balck trees. Perhaps update existing tree related .rst files with something particularly relevant.
+
+A red-black tree is a binary tree representation of a 2-3-4 tree. 
+
+A 2-, 3- and 4-nodes is transformed into its red-black representation as follows:
 
 Visualization link:
 
@@ -63,10 +62,10 @@ Red Black Tree Lecture Notes:
 * Illustration and synoptic discussion of `red black tree insertion and deletion <https://www.usna.edu/Users/cs/crabbe/SI321/2003-08/red-black/red-black.html>`_ discusses insertion and deletion. 
 * Tulane `red black trees <ttp://www.cs.tulane.edu/~carola/teaching/cmps2200/fall17/slides/RB-trees.pdf>`_ contains detailed pseudo code of all **insertion** cases 
 
-Actual Implementations
-~~~~~~~~~~~~~~~~~~~~~~
+Red Black Tree Implementations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `Bartosz Milewski’s red-black tree article in C++ using shared_ptr <http://bartoszmilewski.com/2013/11/25/functional-data-structures-in-c-trees/>`__
+* `Bartosz Milewski’s red-black tree article in C++ using std::shared_ptr <http://bartoszmilewski.com/2013/11/25/functional-data-structures-in-c-trees/>`__
 * `Bartosz Milewski’s red-black tree source code <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_
 * `C# Implementation <http://www.jot.fm/issues/issue_2005_03/column6/>`__ from Journal of Object Technology 
 * `C++ Implementation <http://samplecodebank.blogspot.com/2011/05/red-black-tree-example-c.html>`__ from a blog on sample source code.

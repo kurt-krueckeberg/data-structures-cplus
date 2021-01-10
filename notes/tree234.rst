@@ -30,10 +30,12 @@ How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
 Insertion
 ^^^^^^^^^
 
+.. todo:: Show the root case first. Then show the other case of insertion into a leaf node, using the same root node example, which will serve as the running example.
+
 (Should I keep this sentence? The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_).  New keys are inserted at leaf nodes. If the leaf node is a 4-node, we must make room for the new key, which is done by pushing its middle
 key into its parent. If the parent in turn is a 4-node, we repeat the process and first push its middle key up to its parent. We repeat this process until we reach the root(--right?). Alternately, to always ensure a parent can always accomodate a new key, we can split all 4-nodes as we descend the tree. 
 
-.. todo:: Provide an illustration of the process and note that splitting 4-nodes as we descend still keeps the tree balanced.
+.. todo:: Provide an illustration of the process. Also note that splitting 4-nodes as we descend still keeps the tree balanced.
 
 If the root must be split because it is the parent of a 4-node leaf or is itself a 4-node leaf, the tree grows upward when a new root node is created and added above the old. 
 
@@ -74,8 +76,6 @@ And after the split, the search for the proper leaf node resumes with the middle
 
 In summary, we note that after the split a new node has been added to the tree on the same level of the tree as the former 4-node. The parent has a new key added and one additional child, but **the tree itself remains balanced**. It has only grown "wider" by one 
 node on the level of the former 4-node.
-
-.. todo:: Should the root case be mentioned first?
 
 The root is a special case. If the root is a 4-node, its parent is nullptr. In this case a new root node is allocated to hold the middle key of the former root. Here is a tree with 4-node root into which 25 will be inserted: 
 

@@ -21,16 +21,26 @@ This link has an code and illustration of insertion.
 
 * `2 3 4 Tree Part1 slides <http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt>`_
 
+General Description of a 2-3-4 Tree
+-----------------------------------
+
 How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
 -------------------------------------------------------------------
 
 Insertion
 ^^^^^^^^^
 
-The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  New keys are inserted at leaf nodes. If the leaf node is a 4-node, we must first split it by pushing its middle key up a level
-to make room for the new key. If the parent is a 2-node, we must first split the parent, so it can accept a new key. To ensure a parent can always accomodate a new key, we split all 4-nodes as we descend the tree. 
+(Should I keep this sentence? The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_).  New keys are inserted at leaf nodes. If the leaf node is a 4-node, we must make room for the new key, which is done by pushing its middle
+key into its parent. If the parent in turn is a 4-node, we repeat the process and first push its middle key up to its parent. We repeat this process until we reach the root(--right?). Alternately, to always ensure a parent can always accomodate a new key, we can split all 4-nodes as we descend the tree. 
 
-If the root must be split (because it is the parent of a 4-node leaf or it is itself a 4-node leaf), the tree will grow upward when a new root node is added above the old.
+.. todo:: Provide an illustration of the process and note that splitting 4-nodes as we descend still keeps the tree balanced.
+
+If the root must be split because it is the parent of a 4-node leaf or is itself a 4-node leaf, the tree grows upward when a new root node is created and added above the old. 
+
+.. todo:: Illustrate the sentences above
+
+The split algorithm
+~~~~~~~~~~~~~~~~~~~
 
 The split algorithm works by converting the 4-node into a 2-node containing only its left key and two left-most children. The middle key is pushed up into the parent, and the right key becomes a brand new 2-node. The new 2-node then takes ownership of the two right-most children of the
 former 4-node, and the newly created 2-node is made a child of the parent. The child indecies in the parent are adjusted as needed to properly reflect these new relationships between nodes.
@@ -64,6 +74,8 @@ And after the split, the search for the proper leaf node resumes with the middle
 
 In summary, we note that after the split a new node has been added to the tree on the same level of the tree as the former 4-node. The parent has a new key added and one additional child, but **the tree itself remains balanced**. It has only grown "wider" by one 
 node on the level of the former 4-node.
+
+.. todo:: Should the root case be mentioned first?
 
 The root is a special case. If the root is a 4-node, its parent is nullptr. In this case a new root node is allocated to hold the middle key of the former root. Here is a tree with 4-node root into which 25 will be inserted: 
 

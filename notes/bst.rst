@@ -1,8 +1,8 @@
 .. include:: <isopub.txt>
 .. include:: <mmlalias.txt>
 
-Binary Search Trees
-===================
+Binary Search Trees Implemented using std::unique_ptr
+=====================================================
 
 Discussion Links
 ----------------

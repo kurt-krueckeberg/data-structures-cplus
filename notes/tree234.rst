@@ -1786,12 +1786,15 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       if (rightSubtree->isTwoNode()) { 
     
           child_index = convert2Node(rightSubtree, child_index);  
+
         /*
-          Check if, when we converted the rightSubtree, delete_key moved.  
+          Check if, when we converted the rightSubtree, delete_key moved...
+
           Comments: If the root of the right subtree had to be converted, either a rotation occurred, or a fusion (with the parent, rightSubtree and a
-          sibling occurred). If a left rotation occurred (that "stold" a key from the left sibling and brought down the delete_key), then delete_key
-          becomes the first key rightSubtree. If a right rotation occurred, delete_key is unaffected. This applies regardless whether pdelete is a 3-node
+          sibling occurred). If a left rotation occurred (that "stole" a key from the left sibling and brought down the delete_key), then delete_key
+          becomes the first key of rightSubtree. If a right rotation occurred, delete_key is unaffected. This applies regardless whether pdelete is a 3-node
           or a 4-node.
+
           If a fusion of the rightSubtree with a parent key and a sibling key occurred, delete_key becomes the 2nd key in rightSubtree. 
           Therefore we check if delete_key is now the first or second key of rightSubtree, and...
          */

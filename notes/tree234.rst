@@ -176,7 +176,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     #include <iosfwd>
     #include <string>
     #include <iostream>
-    #include "value-type.h"
+    #include "value-type.h" // This header was taken from clang's STL implementation. It works like a union for the two
+                            // types std::pair<Key, Value> and std::pair<const Key, Value>.  
     
     template<typename Key, typename Value> class tree234;  // Forward declaration
     
@@ -184,12 +185,11 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
        public:
       
-          // Basic STL-required types:
           // Container typedef's used by STL.
           using key_type   = Key;
           using mapped_type = Value;
       
-          using value_type = __value_type<Key, Value>::value_type;// = std::pair<const Key, Value>;  
+          using value_type = __value_type<Key, Value>::value_type; // = std::pair<const Key, Value> within value_type.h  
           using difference_type = long int;
           using pointer         = value_type*; 
           using reference       = value_type&; 
@@ -199,38 +199,36 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        class Node { 
           /*
-          Note: Node depends on both of tree234's template parameters, Key and Value, so we can 
-          make it a nested class.
+             Node depends on both of tree234's template parameters, Key and Value, so we make it a nested class.
           */
           private:  
           friend class tree234<Key, Value>;             
-          static const int MAX_KEYS;   
+          inline static const int MAX_KEYS;   
           
           enum class NodeType : int { two_node=1, three_node=2, four_node=3 };
           
           int totalItems; /* If 1, two node; if 2, three node; if 3, four node. */
           
-          Node *parent; /* parent is only used for navigation of the tree. It never owns the memory
-           		          it points to. */
+          Node *parent; /* parent never owns the memory it points to. It is used to ease tree navigation. */
     
-          std::array<__value_type<Key, Value>, 3> keys_values;
+          std::array<__value_type<Key, Value>, 3> keys_values; // Fix size of 3 __value_type<Key, Value>'s.
           
           /*
-          * For 2-nodes, children[0] is left pointer, children[1] is right pointer.
+          * For 2-nodes, children[0] is left pointer  and children[1] is right pointer.
           * For 3-nodes, children[0] is left pointer, children[1] the middle pointer, and children[2] the right pointer.
           * For 4-nodes, children[0] is left pointer, children[1] the left middle pointer, and children[2] is the right middle pointer,
-          * and children[3] is the right pointer.
+          *     and children[3] is the right pointer.
           */
-          std::array<std::unique_ptr<Node>, 4> children;
+          std::array<std::unique_ptr<Node>, 4> children; // Node owns the memory of the children it points to.
           
           constexpr Node *getParent() noexcept { return parent; }
           
-          int getChildIndex() const noexcept;
+          int getChildIndex() const noexcept;  // Returns int value i such that parent->children[i] == this.
           
           /* 
-          * Returns {true, Node * pnode, int index} if key is found and pnode->keys_values[index] == found_key
-          * Returns {false, Node * pnode, int index} if key is not found, and sets pnode and index so is the next prospective node and key
-          * one level lower in the tree.
+          * Returns either:
+            1. {true, Node * pnode, int index}  -- if key is found. pnode->keys_values[index] == found_key
+            2. {false, Node * pnode, int index} -- if key is not found. pnode and index set to the next to key in next prospective node to search one level down in the tree.
           */
           std::tuple<bool, typename tree234<Key, Value>::Node *, int>  find(Key key) const noexcept;
           
@@ -238,10 +236,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           
           void insert(__value_type<Key, Value>&& key_value, std::unique_ptr<Node>& newChild) noexcept;
           
-          // Wrapper for std::pair<con Key, Value>. Allows easy updating.
           __value_type<Key, Value> removeKeyValue(int index) noexcept; 
     
-          value_type& get_value(int i) noexcept
+          value_type& get_value(int i) noexcept  // simply helpers
           {
              return keys_values[i].__get_value();            
           } 
@@ -251,17 +248,17 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
              return keys_values[i].__get_value();            
           } 
     
-          // Take ownership of child, inserting it a childNum. 
+          // Takes ownership of unique_ptr<Node>, making it child number childNum. 
           void insertChild(int childNum, std::unique_ptr<Node>& pChild) noexcept;
     
           void connectChild(int childNum, std::unique_ptr<Node>& child) noexcept;
      
           /*
-          * Removes child node (implictly using move ctor) and shifts its children to fill the gap. Returns child pointer.
+          * Removes unique_ptr<Node> at child_index and shifts children to fill the gap. Returns unique_ptr<Node>.
           */  
           std::unique_ptr<Node> disconnectChild(int child_index) noexcept; 
     
-          Node *makeRoot4Node() noexcept;
+          Node *make4Node() noexcept; // Called during a special case of remove() algorithm.
           
           std::pair<bool, int> chooseSibling(int child_index) const noexcept;
                 
@@ -293,6 +290,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
              constexpr const Node *getParent() const noexcept;
           
              constexpr int getTotalItems() const noexcept;
+             constexpr int get_lastkey_index() const noexcept { return getTotalItems() - 1; }
              constexpr int getChildCount() const noexcept;
           
              constexpr const Node *getRightMostChild() const noexcept { return children[getTotalItems()].get(); }
@@ -334,10 +332,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
           void display_level(std::ostream& ostr, int level) const noexcept
           {
-            ostr << "\n\n" << "current_level = " <<  current_level << ' '; 
+            ostr << "\n\n" << "current level = " <<  level << ' '; 
              
             // Provide some basic spacing to tree appearance.
-            std::size_t num = height - current_level + 1;
+            std::size_t num = height - level + 1;
           
             std::string str( num, ' ');
           
@@ -417,6 +415,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
        std::tuple<Node *, int, Node *> get_delete_successor(Node *pdelete, Key delete_key, int delete_key_index) noexcept;
     
+      void destroy_subtree(std::unique_ptr<Node>& current) noexcept;
+    
      public:
        
        using node_type = Node; 
@@ -435,8 +435,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        
        constexpr int size() const;
     
-       ~tree234() = default; 
-       
+       ~tree234() //--= default; 
+       {
+           destroy_subtree(root); // The default dtor is recursive
+       }
        // Breadth-first traversal
        template<typename Functor> void levelOrderTraverse(Functor f) const noexcept;
        
@@ -702,15 +704,13 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        return !root ? true : false;
     }
     
-    template<typename Key, typename Value> const int  tree234<Key, Value>::Node::MAX_KEYS = 3; 
-    
     /*
     * Node constructors. Note: While all children are initialized to nullptr, this is not really necessary. 
-    * Instead your can simply set children[0] = nullptr, since a Node is a leaf if and only if children[0] == 0'
+    * Instead you can simply set children[0] = nullptr, since a Node is a leaf if and only if children[0] == nullptr.
     */
     template<typename Key, typename Value> inline  tree234<Key, Value>::Node::Node()  noexcept : parent{nullptr}, totalItems{0}
     {
-     // Note: Uses default member construction for keys_values and children 
+     // Note: Default member construction used for keys_values and children 
     }
     
     template<typename Key, typename Value> inline  tree234<Key, Value>::Node::Node(__value_type<Key, Value>&& key_value) noexcept : totalItems{1},  parent{nullptr}
@@ -786,14 +786,14 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<typename Key, typename Value> inline tree234<Key, Value>::tree234(const tree234<Key, Value>& lhs) noexcept
     {
-       // The Node(const Node&) will copy the entire tree rooted at lhs.get(). 
+       // Node(const Node&) will copy the entire tree rooted at lhs.get(). 
     
        root = std::make_unique<Node>(*lhs.root); 
        tree_size = lhs.tree_size;
     }
     
     
-    // The Node(Node&&) will copy the entire tree rooted at lhs.get(). 
+    // Node(Node&&) will copy the entire tree rooted at lhs.get(). 
     template<typename Key, typename Value> inline tree234<Key, Value>::tree234(tree234&& lhs) noexcept : root{std::move(lhs.root)}, tree_size{lhs.tree_size}  
     {
         root->parent = nullptr;
@@ -809,17 +809,22 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     }
     
     /*
+    *
+    * Pseudo code for getting the successor is from: http://ee.usc.edu/~redekopp/cs104/slides/L19_BalancedBST_23.pdf:
+    *
     Finding the successor of a given node 
     -------------------------------------
     Requires:
-        1. If position is beg, Node *current and key_index MUST point to first key in tree. 
-        2. If position is end, Node *current and key_index MUST point to last key in tree.
-          
-        3. If position is in_between, current and key_index do not point to either the first key in the tree or last key. If the tree has only one node,
-           the state can only be in_between if the first node is a 3-node.
-        Returns:
-        pair<const Node *, int>, where pnode->key(key_index) is next in-order key. Note, if the last key has already been visited, the pointer returned will be nullptr.
-        The pseudo code for getting the successor is from: http://ee.usc.edu/~redekopp/cs104/slides/L19_BalancedBST_23.pdf:
+    *    1. If position is beg, Node *current and key_index MUST point to first key in tree. 
+    *    2. If position is end, Node *current and key_index MUST point to last key in tree.
+    *      
+    *    3. If position is in_between, current and key_index does not point to either the first key in the tree or last key. If the tree has only one node,
+    *          the state can only be in_between if the first node is a 3-node.
+    *
+    *    Returns:
+    *     pair<const Node *, int>, where pnode->key(key_index) is next in-order key. 
+    *     If the last key has already been visited, the pointer returned will be nullptr.
+    *
     */
     template<class Key, class Value> std::pair<const typename tree234<Key, Value>::Node *, int> tree234<Key, Value>::iterator::getSuccessor(const Node *current, int key_index) noexcept
     {
@@ -827,21 +832,21 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
          const auto& root = tree.root; 
     
-         if (current == root.get()) { // special case: current is root, which is a leaf      
+         if (current == root.get()) { // special case: current is root and root is a leaf      
     
              // If root has more than one value--it is not a 2-node--and key_index is not the right-most key/value pair in the node,
-             // return the key--the index of the key--immediately to the right. 
-             if (!root->isTwoNode() && key_index != (root->getTotalItems() - 1)) { 
+             // return the index of the key immediately to the right. 
+             if (!root->isTwoNode() && key_index != root->get_lastkey_index()) { 
     
                  return {current, key_index + 1};
              } 
                       
              return {nullptr, 0}; // There is no successor because key_index is the right-most index.
      
-         } else {
+         } else 
     
             return getLeafNodeSuccessor(current, key_index);
-         }
+         
     
       } else { // else internal node successor
     
@@ -878,7 +883,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      const auto& root = tree.root;
     
       // Handle the easy case: a 3- or 4-node in which key_index is not the right most value in the node.
-      if (!pnode->isTwoNode() && (pnode->getTotalItems() - 1) != key_index) { 
+      if (!pnode->isTwoNode() && (pnode->get_lastkey_index()) != key_index) { 
     
           return {pnode, key_index + 1};  
       }
@@ -948,7 +953,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
                [2,   4,   6]  
               /  \  / \  / \
             [1]  [3]   [5]  [7] 
-            If the leaft node is a 3- or 4-node, we already know (from the first if-test) that the current key is the last, current_key == pnode->getTotalItems() - 1. So the we simply go up on level to find the in order successor.    
+            If the leaft node is a 3- or 4-node, we already know (from the first if-test) that the current key is the last, current_key == pnode->get_lastkey_index(). So the we simply go up on level to find the in order successor.    
             We know pnode == parent->children[child_index]. child_index also is index of the successor key in the parent: successor-key == parent->key(child_index).
           */
     
@@ -1103,7 +1108,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
           return *this;
       }
       
-      destroy_tree(root); // free all the nodes of the current tree 
+      destroy_subtree(root); // free all the nodes of the current tree 
     
       tree_size = lhs.tree_size;
     
@@ -1121,7 +1126,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
           ostr << keys_values[i].__get_value().first;
     
-          if (i < getTotalItems() - 1)       {
+          if (i < get_lastkey_index()) { //getTotalItems() - 1)       {
     
              ostr << ", ";
           } 
@@ -1243,10 +1248,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      */
     template<typename Key, typename Value> inline const typename tree234<Key, Value>::Node *tree234<Key, Value>::min(const Node *current) const noexcept
     {
-       while (current->children[0]) {
+       while (current->children[0]) 
     
             current = current->children[0].get();
-       }
+    
        return current;
     }
     /*
@@ -1254,10 +1259,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      */
     template<typename Key, typename Value> inline const typename tree234<Key, Value>::Node *tree234<Key, Value>::max(const Node *current) const noexcept
     {
-       while (current->getRightMostChild()) {
+       while (current->getRightMostChild()) 
     
-            current = current->getRightMostChild();
-       }
+              current = current->getRightMostChild();
+       
        return current;
     }
     
@@ -1268,7 +1273,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<typename Key, typename Value> template<typename Functor> inline void tree234<Key, Value>::postOrderTraverse(Functor f) const noexcept
     {
-       DoPostOrderTraverse(f, root.get());
+       DoPostOrderTraverse(f, root);
     }
     
     template<typename Key, typename Value> template<typename Functor> inline void tree234<Key, Value>::preOrderTraverse(Functor f) const noexcept
@@ -1283,6 +1288,47 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     /*
      * Calls functor on each node in post order. Uses recursion.
      */
+    template<typename Key, typename Value> void tree234<Key, Value>::destroy_subtree(std::unique_ptr<Node>& current) noexcept
+    {  
+       if (!current) return;
+    
+       switch (current->getTotalItems()) {
+    
+          case 1: // two node
+                destroy_subtree(current->children[0]);
+    
+                destroy_subtree(current->children[1]);
+    
+                current.reset();
+                break;
+    
+          case 2: // three node
+                destroy_subtree(current->children[0]);
+    
+                destroy_subtree(current->children[1]);
+    
+                destroy_subtree(current->children[2]);
+    
+                current.reset();
+                break;
+    
+          case 3: // four node
+                destroy_subtree(current->children[0]);
+    
+                destroy_subtree(current->children[1]);
+    
+                destroy_subtree(current->children[2]);
+    
+                destroy_subtree(current->children[3]);
+    
+                current.reset();
+                break;
+       }
+    }
+    /*
+     * Calls functor on each node in post order. Uses recursion.
+     */
+    
     template<typename Key, typename Value> template<typename Functor> void tree234<Key, Value>::DoPostOrderTraverse(Functor f, const Node *current) const noexcept
     {  
        if (!current) return;
@@ -1464,7 +1510,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       return node; 
     }
     
-    
     /*
      * Returns tuple of three values: <bool, Node *, int>. 
      * If key found n this Node, we return this tuple: {true, pointer to node containing key, the index into Node::key_values of the key}.
@@ -1519,7 +1564,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
         return find(root.get(), key); 
     } 
     /*
-     * find helper method.
+     * Recursive main find method. Return true if found, false otherwise.
      */
     template<typename Key, typename Value> bool tree234<Key, Value>::find(const Node *pnode, Key key) const noexcept
     {
@@ -1539,7 +1584,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        return find(pnode->children[i].get(), key);
     }
     
-    
     /*
      * Preconditions: node is not a four node, and key is not present in node.
      * Purpose: Shifts keys_values needed so key can be inserted in sorted position. Returns index of inserted key.
@@ -1547,7 +1591,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<typename Key, typename Value> int  tree234<Key, Value>::Node::insert(const Key& lhs_key, const Value& lhs_value)  noexcept // ok. Maybe add a move version, too: insertKey(Key, Value&&)
     { 
        // start on right, examine items
-       for(auto i = getTotalItems() - 1; i >= 0 ; --i) {
+       for(auto i = get_lastkey_index(); i >= 0 ; --i) {
      
            if (lhs_key < key(i)) { // if key[i] is bigger
                
@@ -1562,7 +1606,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
            } 
        } 
      
-         // key is smaller than all keys_values, so insert it at position 0
+       // key is smaller than all keys_values, so insert it at position 0
        keys_values[0].__ref() = std::make_pair<const key_type&, const mapped_type&>(lhs_key, lhs_value);  
      
        ++totalItems; // increase the total item count
@@ -1575,7 +1619,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     template<typename Key, typename Value> void tree234<Key, Value>::Node::insert(__value_type<Key, Value>&& vt_in, std::unique_ptr<Node>& largerNode) noexcept 
     { 
       // start on right, examine items
-      for(auto i = getTotalItems() - 1; i >= 0 ; --i) {
+      for(auto i = get_lastkey_index(); i >= 0 ; --i) {
     
           if (vt_in.__ref().first < key(i)) { // if key[i] is bigger
     
@@ -1606,10 +1650,10 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      */
     template<typename Key, typename Value> void tree234<Key, Value>::Node::insertChild(int insert_index, std::unique_ptr<Node>& newChild) noexcept
     {
-       int last_index = getTotalItems() - 1;  // While totalItems reflects the correct number of keys, the number of children currently is also equal to the number of keys.
+       // While Node::totalItems reflects the correct number of keys, the number of children currently is also equal to the number of keys.
     
        // ...move its children right, starting from its last child index and stopping just before insert_index.
-       for(auto i = last_index; i >= insert_index; i--)  {
+       for(auto i = get_lastkey_index(); i >= insert_index; i--)  {
     
            connectChild(i + 1, children[i]);       
        }
@@ -1619,7 +1663,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     }
     
     /*
-     * Insert and Delete based on
+     * Insert and Delete algorithms are based on these link
      * 
      * https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf
      * https://www.cs.purdue.edu/homes/ayg/CS251/slides/chap13a.pdf
@@ -1628,7 +1672,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      *
      * We reduce deletion of an internal node's key to deletion of a leaf node's key by swapping the key to be deleted
      * with its in-order successor and then deleting the key from the leaf. To prevent deletion from a 2-node leaf, which
-     * would leave an empty node (underflow), we convert all 2-nodes as we descend the tree to 3 or 4-nodes using the stratagies below.
+     * would leave an empty node (underflow), we convert all 2-nodes as we descend the tree to 3- or 4-nodes using the stratagies below.
      *  
      * If the key is an internal node, then its successor will be the minimum key of its first right subtree. To ensure that the successor of the
      * internal node is not a 2-node, we again convert all 2-nodes to 3- or 4-nodes as we descend. If the right subtree root is itself a 2-node, when it
@@ -1684,7 +1728,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       __value_type<Key, Value> key_value = std::move(keys_values[index]);  // What is this all about
     
       // shift to the left all keys_values to the right of index to the left
-      for(auto i = index; i < getTotalItems() - 1; ++i) {
+      for(auto i = index; i < get_lastkey_index(); ++i) {
     
           keys_values[i] = std::move(keys_values[i + 1]); 
       } 
@@ -1696,7 +1740,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     /*
      * Input: right subtree from which to remove key. 
-     * Return: true if key remove. false if key not found.
+     * Return: true if key removed. false if key not found.
      */
     template<class Key, class Value> bool tree234<Key, Value>::remove(Node *psubtree, Key key)
     {
@@ -1735,13 +1779,13 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       if (pcurrent->isTwoNode()) {
     
            // Special case: root is a 2-node with two 2-node children.
-           if (pcurrent == root.get() && root->children[0]->isTwoNode() && root->children[1]->isTwoNode()) {
+           if (pcurrent == root.get() && root->children[0]->isTwoNode() && root->children[1]->isTwoNode()) 
     
-                pcurrent->makeRoot4Node();
+                pcurrent->make4Node();
     
-           } else if (pcurrent != root.get()) {
+           else if (pcurrent != root.get()) 
+    
                 convert2Node(pcurrent, child_index);
-           }
       }
     
       // Search for it, and if found, return it.
@@ -1766,7 +1810,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     /*
      * Input: 
-     * pdelete points to the Node that has the key to be deleted and pdelete->key(delete_key_index) == delete_key == key to be deleted.
+     * pdelete is such that:  
+     * pdelete->key(delete_key_index) == delete_key == 'key to be deleted.'
      *
      *  Returns tuple consisting of:
      *  0 - Node* of key to be deleted, which may have changed from its input value.
@@ -1784,35 +1829,38 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       if (rightSubtree->isTwoNode()) { 
     
           child_index = convert2Node(rightSubtree, child_index);  
-
+    
         /*
           Check if, when we converted the rightSubtree, delete_key moved...
-
-          Comments: If the root of the right subtree had to be converted, either a rotation occurred, or a fusion (with the parent, rightSubtree and a
-          sibling occurred). If a left rotation occurred (that "stole" a key from the left sibling and brought down the delete_key), then delete_key
-          becomes the first key of rightSubtree. If a right rotation occurred, delete_key is unaffected. This applies regardless whether pdelete is a 3-node
-          or a 4-node.
-
-          If a fusion of the rightSubtree with a parent key and a sibling key occurred, delete_key becomes the 2nd key in rightSubtree. 
-          Therefore we check if delete_key is now the first or second key of rightSubtree, and...
+    
+           Comments: If the root of the right subtree had to be converted, then either a rotation occurred, or a fusion (with the parent, rightSubtree and a
+           sibling occurred). If a fusion of the rightSubtree with a parent key and a sibling key occurred, delete_key becomes the 2nd key in rightSubtree.
+          
+           If a left rotation occurred (that "stole" a key from the left sibling and brought down the delete_key), then delete_key
+           becomes the first key of rightSubtree. If a right rotation occurred, delete_key is unaffected. This applies regardless whether pdelete is a 3-node
+           or a 4-node.
+    
+           Thus: If a fusion of the rightSubtree with a parent key and a sibling key occurred, delete_key becomes the 2nd key in rightSubtree. If a left rotation occurred, 
+           delete_key becomes the first key of rightSubtree.
          */
+    
          if (delete_key == rightSubtree->key(0) || delete_key == rightSubtree->key(1)) {              
     
-             // ...if it is, we reset delete_key_index, and...
+             // ...reset delete_key_index, and...
              delete_key_index = (delete_key == rightSubtree->key(0)) ? 0 : 1;
              
-             if (rightSubtree->isLeaf()) { // ...if rightSubtree is a leaf, we're done; otherwise, ...
+             if (rightSubtree->isLeaf()) { // ...if rightSubtree is a leaf, we're done; otherwise, we...  
     
                   return {rightSubtree, delete_key_index, rightSubtree};
              }  
-             // ...we start all over, passing the converted prightSubtree and the new delete_key_index value.
+             // ... recurse, passing the just-converted rightSubtree and the new delete_key_index value.
              return get_delete_successor(rightSubtree, delete_key, delete_key_index); 
          } 
       }
      
       // We get here if rightSubtree was not a leaf.
      
-      // Finds the left-most node (of right subtree) and convert 2-nodes encountered.
+      // Finds the left-most node of the right subtree and converts 2-nodes encountered.
       Node *psuccessor = get_successor_node(rightSubtree, child_index);
     
       return {pdelete, delete_key_index, psuccessor};
@@ -1897,7 +1945,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      * 1. Absorbs its children's keys_values as its own. 
      * 2. Makes its grandchildren its children.
      */
-    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::Node::makeRoot4Node() noexcept
+    template<typename Key, typename Value> typename tree234<Key, Value>::Node *tree234<Key, Value>::Node::make4Node() noexcept
     {
        // move key of 2-node 
        keys_values[1] = std::move(keys_values[0]);
@@ -2214,7 +2262,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        largestNode->connectChild(0, pnode->children[2]); 
        largestNode->connectChild(1, pnode->children[3]);
        
-       // 2. Make pnode a 2-node. Note: It still retains its two left-most children, 
+       // 2. Make pnode a 2-node by setting totalItmes. Note: It still retains its two left-most children, 
        pnode->totalItems = 1;
        
        Node *pLargest = largestNode.get();
@@ -2237,8 +2285,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
          pnode->parent->insert(std::move(pnode->keys_values[1]), largestNode); 
        }
     
-      // Since we already did 'if (new_key == middle_key)' in the caller ( in find_insert_node() ), we only need to check if 'new_key < middle_key' in order to set pnext to the node
-      // to for find_insert_node() to examine.
+      // Set pnext. Since we already checked 'if (new_key == middle_key)' in the caller--in find_insert_node()--we need only check if 'new_key < middle_key', in order to set pnext to the node
+      // for find_insert_node() to examine next.
       Node *pnext = (new_key < middle_key) ? pnode : pLargest;
     
       return pnext;
@@ -2300,7 +2348,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<class Key, class Value> std::ostream& tree234<Key, Value>::iterator::print(std::ostream& ostr) const noexcept
     {
-       ostr << "\n-------------------------------------\niterator settings:\ncurrent = " << current << "\n" << "cursor =  " << cursor <<  '\n';
+       ostr << "\n-------------------------------------\niterator settings:\ncurrent = " <<\
+               current << "\n" << "cursor =  " << cursor <<  '\n';
+    
        ostr << *cursor;      // print the node
        ostr << "\nkey_index = " << key_index << '\n';
     
@@ -2369,7 +2419,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        if (!tree.isEmpty()) {
     
           cursor = get_max(); // Go to largest node.
-          key_index = cursor->getTotalItems() - 1;
+          key_index = cursor->get_lastkey_index();
     
           current = nullptr; 
     
@@ -2487,7 +2537,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
        // but the iterator returned by tree234::end()'s iterator always sets current to nullptr (to signal "one past the end").
        // current to nullptr.
        //
-    
+       // TODO: Does this logic properly hand reverse iterators, too, even when they are empty? 
        if (!current && !lhs.current) return true; 
        else if (current == lhs.current && key_index == lhs.key_index) { 
            return true;
@@ -2609,7 +2659,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
         // Get absolute value of difference between max height and min of height of children.
         int diff = std::abs(maxHeight - minHeight);
     
-        return (diff == 1 || diff ==0) ? true : false; // return true is absolute value is 0 or 1.
+        return (diff == 1 || diff ==0) ? true : false; // return true if absolute value is 0 or 1.
     }
     
     // Visits each Node in level order, testing whether it is balanced. Returns false if any node is not balanced.

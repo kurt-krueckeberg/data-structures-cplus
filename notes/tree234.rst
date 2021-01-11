@@ -30,24 +30,24 @@ How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
 Insertion
 ^^^^^^^^^
 
-.. todo:: Show the root case first. Then show the other case of insertion into a leaf node, using the same root node example, which will serve as the running example.
+The insert algorithm is based on the this description of `B-Trees and 2-3-4Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. New keys are inserted at leaf nodes, and if the leaf is a 4-node, it must first be split into two 2-nodes, one holding the left key, the other the
+right key. The middle key is pushed up into its parent. In an integer tree with a 4-node root as the only node
 
-(Should I keep this sentence? The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_).  New keys are inserted at leaf nodes. If the leaf node is a 4-node, we must make room for the new key, which is done by pushing its middle
-key into its parent. If the parent in turn is a 4-node, we repeat the process and first push its middle key up to its parent. We repeat this process until we reach the root(--right?). Alternately, to always ensure a parent can always accomodate a new key, we can split all 4-nodes as we descend the tree. 
+.. figure:: ../images/4-node-root-1.jpg
+   :alt: 4 Node to be Split
+   :align: center 
+   :scale: 100 %
 
-.. todo:: Provide an illustration of the process. Also note that splitting 4-nodes as we descend still keeps the tree balanced.
+   **Figure: 4-node root to be split**
 
-If the root must be split because it is the parent of a 4-node leaf or is itself a 4-node leaf, the tree grows upward when a new root node is created and added above the old. 
+we insert 25. The root node has been split into two 2-nodes, with new root added above it, and 25 has been added to the left node.
 
-.. todo:: Illustrate the sentences above
+.. figure:: ../images/4-node-root-2.gif
+   :alt: Tree with 4-node root
+   :align: center 
+   :scale: 100 %
 
-The split algorithm
-~~~~~~~~~~~~~~~~~~~
-
-The split algorithm works by converting the 4-node into a 2-node containing only its left key and two left-most children. The middle key is pushed up into the parent, and the right key becomes a brand new 2-node. The new 2-node then takes ownership of the two right-most children of the
-former 4-node, and the newly created 2-node is made a child of the parent. The child indecies in the parent are adjusted as needed to properly reflect these new relationships between nodes.
-
-Here is an example. The key 73 will be inserted into this tree. Therefore the 4-node containing [59, 70, 75] must be split:
+Below is example of inserting 73 into this tree of height two.
 
 .. figure:: ../images/4-node-split-1.jpg
    :alt: 4 Node to be Split
@@ -56,7 +56,7 @@ Here is an example. The key 73 will be inserted into this tree. Therefore the 4-
 
    **Figure: 4-node [59, 70, 75] needs to be split**
 
-Following the split, the tree looks like this:
+Following the split, we have: 
 
 .. figure:: ../images/4-node-split-2.jpg
    :alt: 4 Node after Split
@@ -65,7 +65,7 @@ Following the split, the tree looks like this:
 
    **Figure: 4-node split into two 2-nodes**
 
-And after the split, the search for the proper leaf node resumes with the middle key in the parent of the node just split. The split pushed this key up into the parent, Note: if the parent node has now also become a 4-node, it is is **not split** (since we know it is not a leaf node). The final tree looks like this:
+And after insertion:
 
 .. figure:: ../images/4-node-split-3.jpg
    :alt: Tree after 73 inserted
@@ -74,36 +74,15 @@ And after the split, the search for the proper leaf node resumes with the middle
 
    **Figure: Tree after 73 inserted into leaf node**
 
-In summary, we note that after the split a new node has been added to the tree on the same level of the tree as the former 4-node. The parent has a new key added and one additional child, but **the tree itself remains balanced**. It has only grown "wider" by one 
-node on the level of the former 4-node.
-
-The root is a special case. If the root is a 4-node, its parent is nullptr. In this case a new root node is allocated to hold the middle key of the former root. Here is a tree with 4-node root into which 25 will be inserted: 
-
-.. figure:: ../images/4-node-root-1.jpg
-   :alt: Tree with 4-node root
-   :align: center 
-   :scale: 100 %
-
-   **Figure: 4-node root to be split**
-
-After the split of the 4-node root, a new root a level above has been added to the tree, and the new key of 25 has been added the left most child node:
-
-.. figure:: ../images/4-node-root-2.gif
-   :alt: Tree with 4-node root
-   :align: center 
-   :scale: 100 %
-
-   **Figure: New root added to tree after split**
-
-When the root is split, the tree also remains balanced, but grows upward by one level.
+When a node is split and the parent also is a 4-node, split recurses. If it reaches a 4-node root, a new root is added above the current root, and the recursion terminates. An alternate split strategy is to split all 4-nodes encountered when searching for the insertion leaf node. 
 
 Deletion
 ^^^^^^^^
 
-For a leaf node, we simply delete the key. If the key is in an internal node, we swap the key with its in-order successor, which will be a leaf node, and delete the swapped key from the leaf. To ensure deletion does not leave an empty node, 2-nodes are converted to 3- or 4-nodes as we
+For a leaf node, we simply delete the key. If the key is in an internal node, we swap the key with its in-order successor, and then we delete the swapped key from the leaf. To ensure deletion does not leave an empty node, 2-nodes are converted to 3- or 4-nodes as we
 descend the tree (except in the special case of the root). Doing so, preserves the ordering of the tree. 
 
-The in-order successor of an internal node's key is found in the first key of the left most leaf node of the internal node's key's right subtree; for example, given this tree
+The in-order successor of an internal node's key is found in the first key of the left-most leaf node of the internal node's right subtree; for example, in this tree
 
 .. figure:: ../images/inorder-successor-1.jpg
    :alt: Tree with 4-node root
@@ -114,7 +93,8 @@ The in-order successor of an internal node's key is found in the first key of th
 
 the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ all successors of these internal nodes are the first key in the left most leaf node of the right subtree. 
  
-There are two techniques for converting 2-nodes into 3-nodes as we descend the tree: 1.) "stealing" a key from a sibling and a parent(explained below), creating a 3-node, or 2.) fusing the node with a parent key and silbing key, creating a 4-node. We always attempt to barrow first, so we can fuse, if barrowing fails.
+There are two techniques for converting 2-nodes into 3-nodes as we descend the tree: 1.) "stealing" a key from a sibling and a parent(explained below), creating a 3-node; or 2.) fusing the node with a parent key and silbing key, creating a 4-node. We always attempt to barrow first, so we can fuse,
+if barrowing fails.
 
 **Case 1: Barrow a Key From Sibling**
 
@@ -166,6 +146,8 @@ Note that when a fusion occurs, the total number of nodes is decreased by one, b
 
 .. note::
    If the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.
+
+.. todo:: Remove the note below and instead provide a detailed example. The pdf may provide such an example.
 
 .. note::
     If the key is found in an internal node, the processes of finding its in order successor begins with the subtree rooted at the first child (to the right) that holds larger key(s). If this immediate child is a 2-node, it must be converted

@@ -144,12 +144,10 @@ is a 4-node. And if a child of this child, in turn, needs to be converted, its p
 
 Note that when a fusion occurs, the total number of nodes is decreased by one, but **the tree again remains balanced**.
 
-.. note::
-   If the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.
-
-.. todo:: Remove the note below and instead provide a detailed example. The pdf may provide such an example.
+Finally, if the key to be deleted is the largest key, there will be no in order successor; however, by applying the 2-node conversion technique above, we ensure that the tree will remain balanced.
 
 .. note::
+
     If the key is found in an internal node, the processes of finding its in order successor begins with the subtree rooted at the first child (to the right) that holds larger key(s). If this immediate child is a 2-node, it must be converted
     to a 3-node, but this conversion may also move the original key\ |ndash|\ down into the converted 2-node. It may or may not move as a result of stealing a key from a sibling, but if it does it becomes the first key. If on the other hand a fusion happens, it becomes
     the 2nd key. This is handled in member function **get_delete_successor()**.   

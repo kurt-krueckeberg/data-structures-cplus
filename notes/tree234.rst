@@ -149,8 +149,8 @@ Finally, if the key to be deleted is the largest key, there will be no in order 
 .. note::
 
     If the key is found in an internal node, the processes of finding its in order successor begins with the subtree rooted at the first child (to the right) that holds larger key(s). If this immediate child is a 2-node, it must be converted
-    to a 3-node, but this conversion may also move the original key\ |ndash|\ down into the converted 2-node. It may or may not move as a result of stealing a key from a sibling, but if it does it becomes the first key. If on the other hand a fusion happens, it becomes
-    the 2nd key. This is handled in member function **get_delete_successor()**.   
+    to a 3-node, but this conversion may also move the original key down into the converted 2-node. It may or may not move as a result of stealing a key from a sibling, but if it does it becomes the first key. If on the other hand a fusion happens, it becomes
+    the 2nd key. This logic is in the function **get_delete_successor()**.   
 
 Implementation of class tree234
 -------------------------------

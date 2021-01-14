@@ -1809,29 +1809,29 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     }
     
     /*
-     * Input: 
-     * pdelete is such that:  
-     * pdelete->key(delete_key_index) == delete_key == 'key to be deleted.'
-     *
-     *  Returns tuple consisting of:
-     *  0 - Node* of key to be deleted, which may have changed from its input value.
-     *  1- The child index in the Node *of key to be deleted, which may have changed from its input value.
-     *  2- Node* of leaf node successor.
+     * Input: pdelete->key(delete_key_index) is key to be deleted.
+     * 
+     * Returns three element tuple:
+     *   - pointer to node with key to be deleted. 
+     *   - index of key to be deleted,
+     *   - pointer to leaf node successor.
      */
     template<class Key, class Value> std::tuple<typename tree234<Key, Value>::Node *, int, typename tree234<Key, Value>::Node *> 
     tree234<Key, Value>::get_delete_successor(Node *pdelete, Key delete_key, int delete_key_index) noexcept
     {
-      // get immediate right subtree.
+      // Get pointer to right subtree.
       auto child_index = delete_key_index + 1;
     
       Node *rightSubtree = pdelete->children[child_index].get();
     
+      // If it's a 2-node, convert it to a 3- or 4-node.
       if (rightSubtree->isTwoNode()) { 
     
+          // Set child_index: parent->children[child_index] == 'the converted 2-node'.
           child_index = convert2Node(rightSubtree, child_index);  
     
         /*
-          Check if, when we converted the rightSubtree, delete_key moved...
+          Check if delete_key moved...
     
            Comments: If the root of the right subtree had to be converted, then either a rotation occurred, or a fusion (with the parent, rightSubtree and a
            sibling occurred). If a fusion of the rightSubtree with a parent key and a sibling key occurred, delete_key becomes the 2nd key in rightSubtree.
@@ -1858,9 +1858,9 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
          } 
       }
      
-      // We get here if rightSubtree was not a leaf.
+      // We only get here if rightSubtree was not a leaf.
      
-      // Finds the left-most node of the right subtree and converts 2-nodes encountered.
+      // Finds the left-most node of the right subtree and converts all 2-nodes encountered.
       Node *psuccessor = get_successor_node(rightSubtree, child_index);
     
       return {pdelete, delete_key_index, psuccessor};
@@ -1872,8 +1872,8 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     }
     
     /*
-     * Requires: node is 2-node.
-     * Promises: node is converted into either a 3- or a 4-node. 
+     * Requires: pnode is 2-node.
+     * Returns:  pnode is converted into either a 3- or a 4-node and . 
      *
      * Code follows pages 51-53 of: www.serc.iisc.ernet.in/~viren/Courses/2009/SE286/2-3Trees-Mod.ppt 
      * and pages 64-66 of http://www2.thu.edu.tw/~emtools/Adv.%20Data%20Structure/2-3,2-3-4%26red-blackTree_952.pdf

@@ -17,13 +17,35 @@ Visualization link:
 
 The Standford CS166 Tree slides below are excellent. They explain:
 
-    Binary trees are introduced, then red-black trees, then multiway-trees, who isometry to red-black trees is shown starting around slide #196.
+Binary trees are introduced, then a basic overview of red-black trees, followed by multiway-trees, whose isometry to red-black trees is shown starting around slide #196.
 
-    Red-black trees are an isometry of 2-3-4 trees; they represent the structure of 2-3-4 trees in a different way. Many data structures can be designed and analyzed in the same way. 
-    Huge advantage: Rather than memorizing a complex list of red/black tree rules, just think about what the equivalent operation on the corresponding 2-3-4 tree would be and simulate
-    it with BST operations.
+Red-black tree have these properties:
 
-    Starting at slide #220, the equivalent 2-3-4 tree insert algorithm is for ashown for an insertion into a red black tree.
+* Every node has a flag indicating whether its either red or black.
+* The root is always black
+* No red node has a red child.
+* Every root-null path in the tree passes through the same number of black nodes.
+
+Below are some examples of valid red-black trees:
+
+.. figure:: ../images/rb-valid-examples.png
+   :alt: Exaple of red-balck tree
+   :align: center 
+   :scale: 100 %
+
+.. todo:: Comment on why each tree above is valid.
+
+Below are some examples of invalid red-black trees:
+
+
+.. todo:: A comments on why each tree above is invalid and how the tree below are corrected red-black tree representations.
+
+
+Red-black trees are an isometry of 2-3-4 trees; they represent the structure of 2-3-4 trees in a different way. Many data structures can be designed and analyzed in the same way. 
+Huge advantage: Rather than memorizing a complex list of red/black tree rules, just think about what the equivalent operation on the corresponding 2-3-4 tree would be and simulate
+it with BST operations.
+
+Starting at slide #220, the equivalent 2-3-4 tree insert algorithm is for ashown for an insertion into a red black tree.
 
 `Standford CS166 <https://web.stanford.edu/class/cs166/>`_:
 

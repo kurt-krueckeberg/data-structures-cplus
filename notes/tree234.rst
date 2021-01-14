@@ -30,8 +30,8 @@ How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
 Insertion
 ^^^^^^^^^
 
-The insert algorithm is based on the this description of `B-Trees and 2-3-4 Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. New keys are inserted at leaf nodes, and if the leaf is a 4-node, it must first be split into two 2-nodes, one holding the left key, the other the
-right key. The middle key is pushed up into its parent. In an integer tree with a 4-node root as the only node
+The insert algorithm is based on the this description of `B-Trees and 2-3-4 Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. New keys are inserted at leaf nodes. If the leaf is a 4-node, it is first be split into two 2-nodes: one will hold the left key, the other the
+right key, while the middle key pushed up into the parent. Take, for example, an int tree that has a 4-node root as its only node, if we insert 25,
 
 .. figure:: ../images/4-node-root-1.jpg
    :alt: 4 Node to be Split
@@ -40,7 +40,7 @@ right key. The middle key is pushed up into its parent. In an integer tree with 
 
    **Figure: 4-node root to be split**
 
-we insert 25. The root node has been split into two 2-nodes, with new root added above it, and 25 has been added to the left node.
+the root will be split into two 2-nodes. A new root will be created containing the middle key, and 25 will be inserted into the left 2-node.
 
 .. figure:: ../images/4-node-root-2.gif
    :alt: Tree with 4-node root

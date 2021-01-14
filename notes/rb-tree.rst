@@ -31,9 +31,12 @@ Below are some examples of valid red-black trees:
 .. figure:: ../images/rb-valid-examples.png
    :alt: Exaple of red-balck tree
    :align: center 
-   :scale: 100 %
+   :scale: 50 %
 
 .. todo:: Comment on why each tree above is valid.
+
+In each tree the root is black. The left and right trees are the only trees with red nodes, and none of the red nodes in either tree have red children. While the left tree is not perfectly balance, it does obey the 4th rule. The path from the root to the right null child of node 107 passes
+through two and only two black nodes. The same is holds true for all other paths from the root to null children. It is clearly true for the middle and right tree.
 
 Below are some examples of invalid red-black trees:
 

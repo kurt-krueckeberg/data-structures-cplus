@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+rm -rf _build
+rm ./data-structs.tar.gz
+make html
+cd _build/html
+sed -i -e 's/max-width:\s800px;/max-width: 65%;/' _static/basic.css

@@ -30,7 +30,7 @@ How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
 Insertion
 ^^^^^^^^^
 
-The insert algorithm is based on the this description of `B-Trees and 2-3-4Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. New keys are inserted at leaf nodes, and if the leaf is a 4-node, it must first be split into two 2-nodes, one holding the left key, the other the
+The insert algorithm is based on the this description of `B-Trees and 2-3-4 Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. New keys are inserted at leaf nodes, and if the leaf is a 4-node, it must first be split into two 2-nodes, one holding the left key, the other the
 right key. The middle key is pushed up into its parent. In an integer tree with a 4-node root as the only node
 
 .. figure:: ../images/4-node-root-1.jpg

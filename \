@@ -56,7 +56,7 @@ Below we insert 73 into this tree of height two.
 
    **Figure: 4-node [59, 70, 75] needs to be split**
 
-Following the split, the tree looks like this: 
+Following the split, we have: 
 
 .. figure:: ../images/4-node-split-2.jpg
    :alt: 4 Node after Split
@@ -74,7 +74,7 @@ And after insertion:
 
    **Figure: Tree after 73 inserted into leaf node**
 
-When a node is split and the parent also is a 4-node, split recurses. If it reaches a 4-node root, a new root is added above the current root, and the recursion terminates. An alternate split strategy is to automatically splits all 4-nodes encountered aduring the search for the insertion leaf node. 
+When a node is split and the parent also is a 4-node, split recurses. If it reaches a 4-node root, a new root is added above the current root, and the recursion terminates. An alternate split strategy is to split all 4-nodes encountered when searching for the insertion leaf node. 
 
 Deletion
 ^^^^^^^^

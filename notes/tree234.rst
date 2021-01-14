@@ -1725,7 +1725,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     template<typename Key, typename Value> inline __value_type<Key, Value> tree234<Key, Value>::Node::removeKeyValue(int index) noexcept 
     {
-      __value_type<Key, Value> key_value = std::move(keys_values[index]);  // What is this all about
+      __value_type<Key, Value> key_value = std::move(keys_values[index]);  // Return value
     
       // shift to the left all keys_values to the right of index to the left
       for(auto i = index; i < get_lastkey_index(); ++i) {
@@ -1737,30 +1737,29 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
       return key_value;
     }
-    
     /*
      * Input: right subtree from which to remove key. 
      * Return: true if key removed. false if key not found.
      */
     template<class Key, class Value> bool tree234<Key, Value>::remove(Node *psubtree, Key key)
     {
-      auto [found, pdelete, key_index] = find_delete_node(psubtree, key); 
+      auto [found, pdelete, delete_index] = find_delete_node(psubtree, key); 
       
       if (!found) return false;
     
       if (pdelete->isLeaf()) {
     
            // Remove from leaf node
-           pdelete->removeKeyValue(key_index); 
+           pdelete->removeKeyValue(delete_index); 
     
-      } else { // Internal node. Find successor, converting 2-nodes as we search and resetting pdelete and key_index if necessary.
+      } else { // Internal node. Find successor, converting 2-nodes as we search and resetting pdelete and delete_index if necessary.
         
           // find min and convert 2-nodes as we search.
-          auto[pdelete_, key_index_, pmin] = get_delete_successor(pdelete, key, key_index);
+          auto[pdelete_, delete_index_, psuccessor] = get_delete_successor(pdelete, key, delete_index);
+          
+          pdelete_->keys_values[delete_index_] = std::move(psuccessor->keys_values[0]); // simply overwrite key to be deleted with its successor.
     
-          pdelete_->keys_values[key_index_] = pmin->keys_values[0]; // simply overwrite key to be deleted with its successor.
-    
-          pmin->removeKeyValue(0); // Since successor is not in a 2-node, we can delete it from the leaf.
+          psuccessor->removeKeyValue(0); // Since successor is not in a 2-node, we can delete it from the leaf.
       }
     
       return true;
@@ -1770,7 +1769,6 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
       Input: Node * and its child index in parent
       Return: {bool: found/not found, Node *pFound, int key_index within pFound}
     */
-    
     template<class Key, class Value> std::tuple<bool, typename tree234<Key, Value>::Node *, int>   tree234<Key, Value>::find_delete_node(Node *pcurrent, Key delete_key, int child_index) noexcept
     {
       if (nullptr == pcurrent)
@@ -1810,9 +1808,12 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
     
     /*
      * Input: pdelete->key(delete_key_index) is key to be deleted.
-     * 
+     *
+     * Locates the in-order successor node and converts 2-nodes encountered into 3- or 4-nodes to ensure that the in-order successor key/value can be removed 
+     * without leaving an empty node.
+     *
      * Returns tuple with location of delete node and key to be delete (as it may have moved) and the delete successor node (which will be a leaf node)
-     * Returns three element tuple:
+     * Returns these are a 3-element tuple:
      *   - pointer to node with key to be deleted (as it may have moved in the tree). 
      *   - along with the index of key to be deleted,
      *   - pointer to successor.

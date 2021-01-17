@@ -26,17 +26,15 @@ Red-black tree have these properties:
 * No red node has a red child.
 * Every root-null path in the tree passes through the same number of black nodes.
 
-Below are some examples of valid red-black trees:
+Below are three examples of valid red-black trees:
 
 .. figure:: ../images/rb-valid-examples.png
    :alt: Exaple of red-balck tree
-   :align: center 
+   :align: left 
    :scale: 50 %
 
-.. todo:: Comment on why each tree above is valid.
-
-In each tree the root is black. The left and right trees are the only trees with red nodes, and none of the red nodes in either tree have red children. While the left tree is not perfectly balance, it does obey the 4th rule. The path from the root to the right null child of node 107 passes
-through two and only two black nodes. The same is holds true for all other paths from the root to null children. It is clearly true for the middle and right tree.
+Each tree above has a black root as required. The left and right trees are the only trees with red nodes, and in both tree the red nodes have black children. While the left tree is not perfectly balance, it does obey the 4th rule. Take, for example, the path from the root to the right null child
+of node 107 passes through two (and only two) black nodes. Every other root-null path also passes through two and only two black nodes. Thus, left tree is a valid red-black tree. Finally, it is clear that in the middle and right trees every root-null path passes through the same number of black node.
 
 Below are some examples of invalid red-black trees:
 
@@ -45,8 +43,7 @@ Below are some examples of invalid red-black trees:
 
 
 Red-black trees are an isometry of 2-3-4 trees; they represent the structure of 2-3-4 trees in a different way. Many data structures can be designed and analyzed in the same way. 
-Huge advantage: Rather than memorizing a complex list of red/black tree rules, just think about what the equivalent operation on the corresponding 2-3-4 tree would be and simulate
-it with BST operations.
+Huge advantage: Rather than memorizing a complex list of red/black tree rules, just think about what the equivalent operation on the corresponding 2-3-4 tree would be and simulate it with BST operations.
 
 Starting at slide #220, the equivalent 2-3-4 tree insert algorithm is for ashown for an insertion into a red black tree.
 

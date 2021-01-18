@@ -26,24 +26,26 @@ Red-black tree have these properties:
 * No red node has a red child.
 * Every root-null path in the tree passes through the same number of black nodes.
 
-Below are three examples of valid red-black trees:
+Below are three valid red-black trees:
 
 .. figure:: ../images/rb-valid-examples.png
    :alt: Exaple of red-balck tree
-   :align: left 
-   :scale: 50 %
 
-Each tree above has a black root as required. The left and right trees are the only trees with red nodes, and in both tree the red nodes have black children. While the left tree is not perfectly balance, it does obey the 4th rule. Take, for example, the path from the root to the right null child
-of node 107 passes through two (and only two) black nodes. Every other root-null path also passes through two and only two black nodes. Thus, left tree is a valid red-black tree. Finally, it is clear that in the middle and right trees every root-null path passes through the same number of black node.
+Each tree above has a black root as required. The left and right trees are the only trees with red nodes, and in both tree the red nodes have black children.
+While the left tree is not perfectly balance, it does obey the 4th rule. Take, for example, the path from the root to the right null child of node 107 passes
+through two (and only two) black nodes. Every other root-null path also passes through two and only two black nodes. Thus, left tree is a valid red-black tree.
+Finally, it is clear that in the middle and right trees every root-null path passes through the same number of black node.
 
-Below are some examples of invalid red-black trees:
+Below is an examples of an invalid red-black trees:
 
+.. figure:: ../images/red-black-invalid.jpg
+   :alt: Exaple of red-balck tree
 
-.. todo:: A comments on why each tree above is invalid and how the tree below are corrected red-black tree representations.
+The path from the root to the left null child of node 7 passes through two black nodes, whereas the path to all other null children passes through three black nodes. This violates the fourth invariant above.
 
+Red-black trees actually represent the structure of 2-3-4 trees in a different way. 
 
-Red-black trees are an isometry of 2-3-4 trees; they represent the structure of 2-3-4 trees in a different way. Many data structures can be designed and analyzed in the same way. 
-Huge advantage: Rather than memorizing a complex list of red/black tree rules, just think about what the equivalent operation on the corresponding 2-3-4 tree would be and simulate it with BST operations.
+.. todo:: I shorted the text taken from the slides. They use the word 'isometry' without defining it.
 
 Starting at slide #220, the equivalent 2-3-4 tree insert algorithm is for ashown for an insertion into a red black tree.
 

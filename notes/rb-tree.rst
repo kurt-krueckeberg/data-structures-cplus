@@ -1,4 +1,5 @@
 .. include:: <isonum.txt>
+.. include:: <isopub.txt>
 
 Red Black Trees (under develpment)
 ==================================
@@ -42,10 +43,13 @@ Below is an examples of an invalid red-black trees:
    :alt: Exaple of red-balck tree
 
 The path from the root to the left null child of node 7 passes through two black nodes, whereas the path to all other null children passes through three black nodes. This violates the fourth invariant above.
+Changing the color of two nodes as below will satisfy the fourth invariant:
 
-Red-black trees actually represent the structure of 2-3-4 trees in a different way. 
+.. figure:: ../images/rb-corrected-1.jpg
+   :alt: Exaple of red-balck tree
 
-.. todo:: I shorted the text taken from the slides. They use the word 'isometry' without defining it.
+Red-black trees actually represent the structure of 2-3-4 trees in a different way. And recall 2-3-4 trees remained balanced after an insertion or deletion. They therefore save memory compared to 2-3-4 tree. Another
+cruical advantage of red-black trees involves their insertion and deletion algorithms: the node transformations necessary to maintain a valid red-black (when inserting or deleting a key) are local transformations.
 
 Starting at slide #220, the equivalent 2-3-4 tree insert algorithm is for ashown for an insertion into a red black tree.
 

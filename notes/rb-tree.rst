@@ -48,18 +48,21 @@ Changing the color of two nodes as below will satisfy the fourth invariant:
 .. figure:: ../images/rb-corrected-1.jpg
    :alt: Exaple of red-balck tree
 
-Red-black trees actually represent the structure of 2-3-4 trees in a different way. And recall 2-3-4 trees remained balanced after insertions or deletions. They therefore save memory compared to 2-3-4 tree. Another
-cruical advantage of red-black trees involves their insertion and deletion algorithms: the node transformations necessary to maintain a valid red-black (when inserting or deleting a key) are local transformations.
+Recall 2-3-4 trees are complete trees: all leaf nodes on the same level, and this is true after insertions and deletions. Their height is bounded by log\ :sub:`2`\ (n). Red-black trees actually represent the structure of 2-3-4 trees in a different way. They save memory compared to 2-3-4 trees. They
+also have insertion and deletion algorithms that involve only local transformations.
 
-Starting at slide #220, the equivalent 2-3-4 tree insert algorithm is for ashown for an insertion into a red black tree.
+Resources
+---------
+
+USC `2-3-4 tree and red black tree correspondence <https://ee.usc.edu/~redekopp/cs104/slides/L19b_BalancedBST_BTreeRB.pdf>`_  shows on slides 32-75 relationship of 2-3-4 trees to Red-Black trees.
+It contains extensive illustrations how the tree changes, how rotations occur.
+
+Starting at slide #220, the equivalent 2-3-4 tree insert algorithm is for shown for an insertion into a red black tree.
 
 `Standford CS166 <https://web.stanford.edu/class/cs166/>`_:
 
    * `Balanced Trees, Part I <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_: **B-Trees** (slides 1-51), **Red Black trees** (slides 52-77), **Multi-way trees** (slides 78-271).
    * `Balanced Trees, Part 2 <https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf>`_ Red Black tree performance (slides 1-86).
-
-USC `2-3-4 tree and red black tree correspondence <https://ee.usc.edu/~redekopp/cs104/slides/L19b_BalancedBST_BTreeRB.pdf>`_  shows on slides 32-75 relationship of 2-3-4 trees to Red-Black trees.
-It contains extensive illustrations how the tree changes, how rotations occur.
 
 The National Chengheng University `Transforming a 2 3 4 tree into a Red Black Tree <http://smile.ee.ncku.edu.tw/old/Links/MTable/Course/DataStructure/2-3,2-3-4&red-blackTree_952.pdf>`_ slides introduce 2 3 trees, 2 3 4 trees, and the show how 2 3 4 trees algorithms are equivalent to red black insert algorithms.
 
@@ -91,7 +94,7 @@ Red Black Tree Lecture Notes:
 * Tulane `red black trees <ttp://www.cs.tulane.edu/~carola/teaching/cmps2200/fall17/slides/RB-trees.pdf>`_ contains detailed pseudo code of all **insertion** cases 
 
 Red Black Tree Implementations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 * `Bartosz Milewski’s red-black tree article in C++ using std::shared_ptr <http://bartoszmilewski.com/2013/11/25/functional-data-structures-in-c-trees/>`__
 * `Bartosz Milewski’s red-black tree source code <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_

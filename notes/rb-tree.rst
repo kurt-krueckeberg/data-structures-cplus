@@ -8,7 +8,7 @@ Red Black Trees (under develpment)
 
 .. todo:: Read these sources to discover the clearest and look for those that mention how 2-3 and 2-3-4 tree relate to red-balck trees. Perhaps update existing tree related .rst files with something particularly relevant.
 
-A red-black tree is a binary tree representation of a 2-3-4 tree. 
+Using the USC Slides...A red-black tree is a binary tree representation of a 2-3-4 tree. 
 
 A 2-, 3- and 4-nodes is transformed into its red-black representation as follows:
 
@@ -16,9 +16,10 @@ Visualization link:
 
 * `Red Black Tree Visualization <https://www.cs.usfca.edu/~galles/visualization/RedBlack.html>`_
 
-The Standford CS166 Tree slides below are excellent. They explain:
-
 Binary trees are introduced, then a basic overview of red-black trees, followed by multiway-trees, whose isometry to red-black trees is shown starting around slide #196.
+
+Basic Description and Examples of Red Black Trees
+-------------------------------------------------
 
 Red-black tree have these properties:
 
@@ -40,13 +41,15 @@ Finally, it is clear that in the middle and right trees every root-null path pas
 Below is an examples of an invalid red-black trees:
 
 .. figure:: ../images/red-black-invalid.jpg
-   :alt: Exaple of red-balck tree
+   :alt: Exaple of red-black tree
+   :scale: 90%
 
 The path from the root to the left null child of node 7 passes through two black nodes, whereas the path to all other null children passes through three black nodes. This violates the fourth invariant above.
 Changing the color of two nodes as below will satisfy the fourth invariant:
 
 .. figure:: ../images/rb-corrected-1.jpg
-   :alt: Exaple of red-balck tree
+   :alt: Example of red-balck tree
+   :scale: 90%
 
 Recall 2-3-4 trees are complete trees: all leaf nodes on the same level, and this is true after insertions and deletions. Their height is bounded by log\ :sub:`2`\ (n). Red-black trees actually represent the structure of 2-3-4 trees in a different way. They save memory compared to 2-3-4 trees. They
 also have insertion and deletion algorithms that involve only local transformations.

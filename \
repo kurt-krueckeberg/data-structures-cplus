@@ -49,27 +49,11 @@ Changing the color of two nodes as below will satisfy the fourth invariant:
    :alt: Example of red-balck tree
    :scale: 90%
 
-B-Trees Defined
----------------
-
-2-3-4 trees are just instances of a more general data structure known as B-Trees
-
-The degree **d** of a B-tree is the minimum number of children (degree) for non-leaf nodes
-
-* Non-root nodes must have at least d-1 keys and d children
-* All nodes must have at most 2d-1 keys and 2d children
-
-2-3-4 Trees have degree **d = 2**
-
 Relationship Between 2-3-4 trees and Red Black Trees
 ----------------------------------------------------
 
 Recall 2-3-4 trees are complete trees: all leaf nodes on the same level, and this remains true after insertion and deletion. Their height is bounded by log\ :sub:`2`\ (n). Red-black trees actually represent the structure
 of 2-3-4 trees in a different way. They save memory compared to 2-3-4 trees. Their insertion and deletion algorithms also only involve local transformations.
-A red-black tree is a binary search tree. It has only 2-nodes, no 3- or 4-nodes. 
-
-A red-black tree can be built from a 2-3-4 tree directly by converting each 3- and 4- nodes to multiple 2-nodes. The result is a "balanced" Binary Search Tree. "Balanced" means that the height of
-an RB-Tree is at MOST twice the height of a 2-3-4 tree.  Recall, the height of 2-3-4 tree had an upper bound of log\ :sub:`2`\ (n).  Thus height or an RB-Tree is bounded by 2*log\ :sub:`2`\ (n) which is still O(log\ :sub:`2`\ (n)).
 
 Resources
 ---------

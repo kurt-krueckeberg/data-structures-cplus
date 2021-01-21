@@ -8,15 +8,13 @@ Red Black Trees (under develpment)
 
 .. todo:: Read these sources to discover the clearest and look for those that mention how 2-3 and 2-3-4 tree relate to red-balck trees. Perhaps update existing tree related .rst files with something particularly relevant.
 
-Using the USC Slides...A red-black tree is a binary tree representation of a 2-3-4 tree. 
+A red-black tree is a binary tree representation of a 2-3-4 tree. 
 
 A 2-, 3- and 4-nodes is transformed into its red-black representation as follows:
 
 Visualization link:
 
 * `Red Black Tree Visualization <https://www.cs.usfca.edu/~galles/visualization/RedBlack.html>`_
-
-Binary trees are introduced, then a basic overview of red-black trees, followed by multiway-trees, whose isometry to red-black trees is shown starting around slide #196.
 
 Basic Description and Examples of Red Black Trees
 -------------------------------------------------
@@ -51,7 +49,7 @@ Changing the color of two nodes as below will satisfy the fourth invariant:
    :alt: Example of red-balck tree
    :scale: 90%
 
-Recall 2-3-4 trees are complete trees: all leaf nodes on the same level, and this is true after insertions and deletions. Their height is bounded by log\ :sub:`2`\ (n). Red-black trees actually represent the structure of 2-3-4 trees in a different way. They save memory compared to 2-3-4 trees. They
+Recall 2-3-4 trees are complete trees: all leaf nodes on the same level, and this remains true after insertion and deletion. Their height is bounded by log\ :sub:`2`\ (n). Red-black trees actually represent the structure of 2-3-4 trees in a different way. They save memory compared to 2-3-4 trees. They
 also have insertion and deletion algorithms that involve only local transformations.
 
 Resources

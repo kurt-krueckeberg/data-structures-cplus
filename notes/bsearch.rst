@@ -4,34 +4,62 @@ Binary Search
 Algorithm
 ---------
 
+See binary search section of Princeton Pdf on `Search and Sorting <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_.
+
 .. code-block:: cpp
 
     #include <iostream>
     using namespace std;
-    
-    template<typename T> bool binary_search(T arr[], int total_elements, int x, int& location)
+
+    int bsearch(T key, T a[], int length) 
     {
-      int  left = 0;
-      int right = total_elements - 1;
+       return bsearch(key, a, 0, length);
+    }
+
+    int bsearch(T key, T a[], int lo, int hi) // hi is one-past the last element of the array
+    {
+      if (hi <= lo)
+
+          return -1;
+
+      int mid = lo + (hi - lo) / 2;
     
-       while (left <= right) {
+      if (a[mid] == key)
+
+          return mid;
+    
+      else if (key < a[mid]> 0)
+
+          return bsearch(key, a, lo, mid);
+
+      else 
+
+          return bsearch(key, a, mid+1, hi);
+    }
+        
+    template<typename T> int binary_search(T array[], T key, int length)
+    {
+      int  lo = 0;
+      int hi = length - 1;
+    
+       while (lo <= hi) {
        
-          auto mid = (right - left) / 2;
+          auto mid = (hi - lo) / 2;
      
-          if (arr[mid] == x) {
+          if (array[mid] == key) {
     
              location = mid;
              return true;
     
-          } else if (x > arr[mid])
+          } else if (key > array[mid])
     
-             left = mid + 1;
+             lo = mid + 1;
              
           else   
-             right = mid - 1; 
+             hi = mid - 1; 
       }  
     
-      return false;   
+      return -1;   
     }
     
 If the total number of elements is odd, then the mid-point will be exactly in the middle of the array, with an equal number (an even number) elements to left and to the right. While if the total

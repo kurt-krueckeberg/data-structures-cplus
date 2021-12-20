@@ -13,11 +13,10 @@ Algorithm
     {
       int  left = 0;
       int right = total_elements - 1;
-      int mid = 0;
     
        while (left <= right) {
        
-          mid = (right - left) / 2;
+          auto mid = (right - left) / 2;
      
           if (arr[mid] == x) {
     
@@ -35,9 +34,12 @@ Algorithm
       return false;   
     }
     
-If the total number of elements is odd, then the mid-point will be exactly in the middle of the array, with an equal number (an even number) elements to left and to the right.
-If the implementation language uses zero-based indexing and the total number of elements is even, the last index will be an odd number (total_elements - 1). While if the total
+If the total number of elements is odd, then the mid-point will be exactly in the middle of the array, with an equal number (an even number) elements to left and to the right. While if the total
 number of elements is even, then the mid-point, will not be exactly in the middle, it will have one element to the right of the mid-point.
+
+Note, if the` implementation language uses zero-based array indexing, when the total number of elements is even, the last index will be an odd number (total_elements - 1). 
+
+Each time through the while-loop, the number of elements is reduced by half....
 
 .. code-block:: cpp
 

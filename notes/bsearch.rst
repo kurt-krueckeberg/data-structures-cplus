@@ -4,7 +4,7 @@ Binary Search
 Algorithm
 ---------
 
-See binary search section of Princeton Pdf on `Search and Sorting <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_.
+See binary search section of Princeton Pdf on `Search and Sorting <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_ and Khan Academy `Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
 
 .. code-block:: cpp
 

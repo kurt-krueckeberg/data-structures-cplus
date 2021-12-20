@@ -4,21 +4,23 @@ Binary Search
 Algorithm
 ---------
 
-See binary search section of Princeton Pdf on `Search and Sorting <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_ and Khan Academy `Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
+`Search and Sorting <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_ 
+`Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
 
 .. code-block:: cpp
 
     #include <iostream>
     using namespace std;
 
-    int bsearch(T key, T a[], int length) 
+    int bsearch(T key, T a[], int size) 
     {
-       return bsearch(key, a, 0, length);
+       return bsearch(key, a, 0, size - 1);
     }
 
-    int bsearch(T key, T a[], int lo, int hi) // hi is one-past the last element of the array
+    // Recursive version  
+    int bsearch(T key, T a[], int lo, int hi) // hi is the last element of the array
     {
-      if (hi <= lo)
+      if (hi <= lo) // OR more correctly: if (hi< lo) return -1; 
 
           return -1;
 
@@ -44,7 +46,7 @@ See binary search section of Princeton Pdf on `Search and Sorting <https://intro
     
        while (lo <= hi) {
        
-          auto mid = (hi - lo) / 2;
+          auto mid = lo + (hi - lo) / 2;
      
           if (array[mid] == key) {
     

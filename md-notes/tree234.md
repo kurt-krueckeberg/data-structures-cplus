@@ -22,7 +22,7 @@ This link has an code and illustration of insertion.
 The insert algorithm is based on the this description of [B-Trees and 2-3-4 Trees](https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf). New keys are inserted at leaf nodes. If the leaf is a 4-node, it is first be split into two 2-nodes: one will hold the left key, the other the
 right key, while the middle key pushed up into the parent. Take, for example, an int tree that has a 4-node root as its only node, if we insert 25,
 
-![]images/4-node-root-1.jpg)
+![Test {4 Node to be Split}](../images/4-node-root-1.jpg)
 
 the root will be split into two 2-nodes. A new root will be created containing the middle key, and 25 will be inserted into the left 2-node.
 
@@ -33,27 +33,20 @@ the root will be split into two 2-nodes. A new root will be created containing t
 Below we insert 73 into this tree of height two.
 
 ![](../images/4-node-split-1.jpg)
-4 Node to be Split
 
-   **Figure: 4-node [59, 70, 75] needs to be split**
+**Figure: 4-node [59, 70, 75] needs to be split**
 
 Following the split, the tree looks like this: 
 
 ![](../images/4-node-split-2.jpg)
-   :alt: 4 Node after Split
-   :align: center 
-   :scale: 100 %
 
-   **Figure: 4-node split into two 2-nodes**
+**Figure: 4-node split into two 2-nodes**
 
 And after insertion:
 
 ![](../images/4-node-split-3.jpg)
-   :alt: Tree after 73 inserted
-   :align: center 
-   :scale: 100 %
 
-   **Figure: Tree after 73 inserted into leaf node**
+**Figure: Tree after 73 inserted into leaf node**
 
 When a node is split and the parent also is a 4-node, split recurses. If it reaches a 4-node root, a new root is added above the current root, and the recursion terminates. An alternate split strategy is to automatically splits all 4-nodes encountered aduring the search for the insertion leaf node. 
 
@@ -65,11 +58,8 @@ descend the tree (except in the special case of the root). Doing so, preserves t
 The in-order successor of an internal node's key is found in the first key of the left-most leaf node of the internal node's right subtree; for example, in this tree
 
 ![](../images/inorder-successor-1.jpg)
-   :alt: Tree with 4-node root
-   :align: center 
-   :scale: 100 %
 
-   **Figure: Internal Node in-order successor**
+**Figure: Internal Node in-order successor**
 
 the in-order successor of 23 is 27; of 50, 51; of 60, 62; and so on\ |mdash|\ all successors of these internal nodes are the first key in the left most leaf node of the right subtree. 
  
@@ -81,10 +71,8 @@ if barrowing fails.
 If an adjacent sibling of the 2-node is a 3- or 4-node, we can "steal" an key from the sibling. It is moved up to the parent, and a parent key is moved into the 2-node making it a 3-node. The children affected are transfered accordingly. For example, if 4 is to be deleted from this tree
 
 ![](../images/delete-barrow-1.jpg)
-   :align: center 
-   :scale: 100 %
 
-   **Figure: Delete from 4 from 2-node by barrowing**
+**Figure: Delete from 4 from 2-node by barrowing**
 
 we barrow the 2 from the left sibling, move it into the parent, and we bring 3 down from the parent creating a 3-node. 
 
@@ -104,18 +92,14 @@ If each adjacent sibling (there are at most two) is a 2-node, we steal a key fro
 For example, say, we wish to delete 6 from our first example:
 
 ![](../images/delete-barrow-1.jpg)
-   :align: center 
-   :scale: 100 %
 
    **Figure: Delete from 6 from 2-node by fusing siblings**
 
 Since there a no 3- or 4-node siblings, we fuse the 2-node containing 4 into the 2-node containing 6, and we also bring down 5 from the parent, making the leaf node into a 4-node, from which we can delete 6:
 
 ![](../images/delete-fuse-1.jpg)
-   :align: center 
-   :scale: 100 %
 
-   **Figure: 2-node now a 4-node**
+**Figure: 2-node now a 4-node**
 
 **Special Fuse Case: the root**
 

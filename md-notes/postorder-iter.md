@@ -1,6 +1,6 @@
 ## Post-order forward iterator class
 
-Class `iterator_postorder` iterates the tree in post-order sequence. It begins with the minimun, left-most node and moves the iteration cursor, denoted by ``current``, each time `iterator_postorder& operator++()` is called. `Node *successor()`
+Class `iterator_postorder` iterates the tree in post-order sequence. It begins with the minimun, left-most node and moves the iteration cursor, denoted by ``current``, each time `iterator_postorder& operator++()` is called. `Node *successor()` 
 is described below. The enum class `position``, like the `iterator\_preorder` class, implements a finite state machine that consists of three possible positions...
 
 ```cpp

@@ -9,7 +9,7 @@ Resources:
 * Cambridge University's Isacc Computer Science discussion of `Binary Search <https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all>`_.
 
 The generic algorithm ``template<typename T> int bsearch(T key, T a[], int size)`` calls ``template<typename T> int bsearch(const T& key, T a[], int lo, int hi)`` to search an array of generic type T for a key, where ``lo`` is the
-first index and ``hi`` is the last index. If zero-base array indexing is used in the implementation language, the size of the array is ``hi + 1``.
+first index and ``hi`` is the last index (inclusive). If zero-base array indexing is used in the implementation language, the size of the array is ``hi + 1``.
     
 If the total number of elements in the array is odd, then the mid-point will be exactly in the middle of the array, with an even number of elements to left and to the right. While if the total
 number of elements is even, then the mid-point, will not be exactly in the middle. There will be one element to the right of the mid-point than there is  to the left of the mid-point.

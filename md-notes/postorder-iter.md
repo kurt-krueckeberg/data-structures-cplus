@@ -1,8 +1,7 @@
-Post-order forward iterator class
-+++++++++++++++++++++++++++++++++
+## Post-order forward iterator class
 
-Class ``iterator_postorder`` iterates the tree in post-order sequence. It begins with the minimun, left-most node and moves the iteration cursor, denoted by ``current``, each time ``iterator_postorder& operator++()`` is called. ``Node *successor()``
-is described below. The enum class ``position``, like the ``iterator_preofer`` class, implements a finite state machine that consists of three possible positions...
+Class `iterator_postorder` iterates the tree in post-order sequence. It begins with the minimun, left-most node and moves the iteration cursor, denoted by ``current``, each time `iterator_postorder& operator++()` is called. `Node *successor()``
+is described below. The enum class `position``, like the `iterator_preofer` class, implements a finite state machine that consists of three possible positions...
 
 ```cpp
     class iterator_postorder {  // This not efficient to copy due to the stack container inside it.
@@ -111,7 +110,7 @@ is described below. The enum class ``position``, like the ``iterator_preofer`` c
 Node *successor(); 
 ~~~~~~~~~~~~~~~~~~
 
-The ``successor()`` method first checks if the given node is the right child of its parent or if the parent's right child is empty. If either is true, the post-order successor is the parent; otherwise, we search for the left-most
+The `successor()` method first checks if the given node is the right child of its parent or if the parent's right child is empty. If either is true, the post-order successor is the parent; otherwise, we search for the left-most
 child in the parent's right substree.    
 
 ```cpp

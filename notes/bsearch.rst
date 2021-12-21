@@ -71,7 +71,7 @@ Each time through the while-loop, the number of elements is reduced by half.
       return 0;
    }
 
-Output is:
+Output:
 
 .. raw:: html
 

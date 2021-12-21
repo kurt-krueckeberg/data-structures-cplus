@@ -13,7 +13,7 @@ Algorithm
     #include <iostream>
     using namespace std;
 
-    int bsearch(T key, T a[], int size) 
+    template<typename T> int bsearch(T key, T a[], int size) 
     {
        return bsearch(key, a, 0, size - 1);
     }
@@ -21,7 +21,7 @@ Algorithm
     // Recursive version  
     // Input: 
     // lo and hi define the range of indexes. hi is included hi is right-most index
-    int bsearch(T key, T a[], int lo, int hi) // hi is the last element of the array
+    template<typename T> int bsearch(T key, T a[], int lo, int hi) // hi is the last element of the array
     {
       if (hi <= lo)  
 

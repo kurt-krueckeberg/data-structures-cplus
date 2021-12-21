@@ -11,8 +11,8 @@ Algorithm
 The generic algorithm ``template<typename T> int bsearch(T key, T a[], int size)`` calls ``template<typename T> int bsearch(const T& key, T a[], int lo, int hi)`` to search an array of generic type T for a key, where ``lo`` is the
 first index and ``hi`` is the last index. If zero-base array indexing is used in the implementation language, the size of the array is ``hi + 1``.
     
-If the total number of elements in the array is odd, then the mid-point will be exactly in the middle of the array, with an equal number (an even number) elements to left and to the right. While if the total
-number of elements is even, then the mid-point, will not be exactly in the middle, it will have one element to the right of the mid-point.
+If the total number of elements in the array is odd, then the mid-point will be exactly in the middle of the array, with an even number of elements to left and to the right. While if the total
+number of elements is even, then the mid-point, will not be exactly in the middle. There will be one element to the right of the mid-point than there is  to the left of the mid-point.
 
 Note, if the` implementation language uses zero-based array indexing, when the total number of elements is even, the last index will be an odd number (total_elements - 1). 
 
@@ -51,7 +51,6 @@ Each time through the while-loop, the number of elements is reduced by half....
    
          return bsearch(key, a, mid+1, hi);
    }
-   
    
    template<typename T> int bsearch(T key, T a[], int size)
    {

@@ -6,7 +6,7 @@ Algorithm
 
 * `Search and Sorting <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_ 
 * `Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
-* Isacc Computer Science https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all>`_.
+* Cambridge University's Isacc Computer Science article on `Binary Search <https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all>`_.
 
 The generic algorithm ``template<typename T> int bsearch(T key, T a[], int size)`` calls ``template<typename T> int bsearch(const T& key, T a[], int lo, int hi)`` to search an array of generic type T for a key, where ``lo`` is the
 first index and ``hi`` is the last index. If zero-base array indexing is used in the implementation language, the size of the array is ``hi + 1``.

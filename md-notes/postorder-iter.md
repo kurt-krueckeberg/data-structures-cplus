@@ -107,8 +107,7 @@ described below. The enum class `position`, like the `iterator_preorder` class, 
    };
 ```
 
-Node *successor(); 
-~~~~~~~~~~~~~~~~~~
+### Node *successor(); 
 
 The `successor()` method first checks if the given node is the right child of its parent or if the parent's right child is empty. If either is true, the post-order successor is the parent; otherwise, we search for the left-most
 child in the parent's right substree.    

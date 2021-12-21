@@ -7,8 +7,10 @@ Algorithm
 * `Search and Sorting <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_ 
 * `Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
 * Isacc Computer Science https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all>`_.
+
+The algorithm ``template<typename T> int bsearch(T key, T a[], int size)`` searches an array of generic type T for a key.
     
-If the total number of elements is odd, then the mid-point will be exactly in the middle of the array, with an equal number (an even number) elements to left and to the right. While if the total
+If the total number of elements in the array is odd, then the mid-point will be exactly in the middle of the array, with an equal number (an even number) elements to left and to the right. While if the total
 number of elements is even, then the mid-point, will not be exactly in the middle, it will have one element to the right of the mid-point.
 
 Note, if the` implementation language uses zero-based array indexing, when the total number of elements is even, the last index will be an odd number (total_elements - 1). 

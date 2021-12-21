@@ -22,7 +22,8 @@ This link has an code and illustration of insertion.
 The insert algorithm is based on the this description of [B-Trees and 2-3-4 Trees](https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf). New keys are inserted at leaf nodes. If the leaf is a 4-node, it is first be split into two 2-nodes: one will hold the left key, the other the
 right key, while the middle key pushed up into the parent. Take, for example, an int tree that has a 4-node root as its only node, if we insert 25,
 
-![Test {4 Node to be Split}](../images/4-node-root-1.jpg)
+![](../images/4-node-root-1.jpg)
+**4-node to be split.
 
 the root will be split into two 2-nodes. A new root will be created containing the middle key, and 25 will be inserted into the left 2-node.
 

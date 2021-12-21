@@ -30,8 +30,6 @@ the root will be split into two 2-nodes. A new root will be created containing t
 
 ![](../images/4-node-root-2.gif)
 
-**Tree with 4-node root**
-
 Below we insert 73 into this tree of height two.
 
 ![](../images/4-node-split-1.jpg)

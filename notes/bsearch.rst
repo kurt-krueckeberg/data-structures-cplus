@@ -8,7 +8,8 @@ Algorithm
 * `Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
 * Isacc Computer Science https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all>`_.
 
-The generic algorithm ``template<typename T> int bsearch(T key, T a[], int size)`` calls ``template<typename T> int bsearch(const T& key, T a[], int lo, int hi)`` to search an array of generic type T for a key.
+The generic algorithm ``template<typename T> int bsearch(T key, T a[], int size)`` calls ``template<typename T> int bsearch(const T& key, T a[], int lo, int hi)`` to search an array of generic type T for a key, where ``lo`` is the
+first index and ``hi`` is the last index and thus the size of the array is ``hi + 1`` (if zero-base array indexing is used).
     
 If the total number of elements in the array is odd, then the mid-point will be exactly in the middle of the array, with an equal number (an even number) elements to left and to the right. While if the total
 number of elements is even, then the mid-point, will not be exactly in the middle, it will have one element to the right of the mid-point.

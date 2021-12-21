@@ -23,7 +23,8 @@ The insert algorithm is based on the this description of [B-Trees and 2-3-4 Tree
 right key, while the middle key pushed up into the parent. Take, for example, an int tree that has a 4-node root as its only node, if we insert 25,
 
 ![](../images/4-node-root-1.jpg)
-**4-node to be split.
+
+**4-node to be split.**
 
 the root will be split into two 2-nodes. A new root will be created containing the middle key, and 25 will be inserted into the left 2-node.
 

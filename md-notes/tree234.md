@@ -24,7 +24,7 @@ right key, while the middle key pushed up into the parent. Take, for example, an
 
 ![](../images/4-node-root-1.jpg)
 
-**4-node to be split.**
+**4-node root to be split.**
 
 the root will be split into two 2-nodes. A new root will be created containing the middle key, and 25 will be inserted into the left 2-node.
 

@@ -4,8 +4,9 @@ Binary Search
 Algorithm
 ---------
 
-`Search and Sorting <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_ 
-`Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
+* `Search and Sorting <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_ 
+* `Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
+* Isacc Computer Science `Binary Search <https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all>`_
 
 .. code-block:: cpp
 

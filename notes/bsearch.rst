@@ -16,7 +16,7 @@ number of elements is even, then the mid-point, will not be exactly in the middl
 
 Note, if the implementation language uses zero-based array indexing, when the total number of elements is even, the last index will be an odd number (total_elements - 1). 
 
-Each time through the while-loop, the number of elements is reduced by half....
+Each time through the while-loop, the number of elements is reduced by half.
 
 .. code-block:: cpp
 

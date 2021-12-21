@@ -1,24 +1,17 @@
-.. include:: <isopub.txt>
-.. include:: <isonum.txt>
-
-.. role:: kurt-code
-
-.. _2-3-4-trees:
-
 # Implementing a 2 3 4 Tree in C++17
 
 ## Implementation links:
 
-* `2 3 4 Trees a Visual Introduction <https://www.educative.io/page/5689413791121408/80001>`_ is an excellent tutorial with an animantion of how 2 3 4 algorithms work.
-* `Balanced Search Trees <https://www.cs.drexel.edu/~amd435/courses/cs260/lectures/L-6_2-3_Trees.pdf>`_ has excellent slides and pseudocode of 2-3 and 2-3-4 trees.
-* `B Tress and 2 3 4 Trees <http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_  has a very good explanation with ilustrative examples.
-* `2-3-4 Trees <https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/>`_ at Algorithm Tutor lists all cases for delete, including how root special case. 
-* `Deleting an entry from the (2,4)-tree  <http://www.mathcs.emory.edu/~cheung/Courses/323/Syllabus/Trees/2,4-delete.html>`_ has compelete Java delete code.
-* `Best manual insert and delete animation <https://www.cs.usfca.edu/~galles/visualization/BTree.html>`_
+* [2 3 4 Trees a Visual Introduction](https://www.educative.io/page/5689413791121408/80001) is an excellent tutorial with an animantion of how 2 3 4 algorithms work.
+* [Balanced Search Trees](https://www.cs.drexel.edu/~amd435/courses/cs260/lectures/L-6_2-3_Trees.pdf) has excellent slides and pseudocode of 2-3 and 2-3-4 trees.
+* [B Tress and 2 3 4 Trees](http://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf)  has a very good explanation with ilustrative examples.
+* [2-3-4 Trees](https://algorithmtutor.com/Data-Structures/Tree/2-3-4-Trees/) at Algorithm Tutor lists all cases for delete, including how root special case. 
+* [Deleting an entry from the (2,4)-tree ](http://www.mathcs.emory.edu/~cheung/Courses/323/Syllabus/Trees/2,4-delete.html) has compelete Java delete code.
+* [Best manual insert and delete animation](https://www.cs.usfca.edu/~galles/visualization/BTree.html)
 
 This link has an code and illustration of insertion. 
 
-* `2 3 4 Tree Part1 slides <http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt>`_
+* [2 3 4 Tree Part1 slides](http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt)
 
 ## General Description of a 2-3-4 Tree
 
@@ -26,7 +19,7 @@ This link has an code and illustration of insertion.
 
 #### Insertion
 
-The insert algorithm is based on the this description of `B-Trees and 2-3-4 Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. New keys are inserted at leaf nodes. If the leaf is a 4-node, it is first be split into two 2-nodes: one will hold the left key, the other the
+The insert algorithm is based on the this description of [B-Trees and 2-3-4 Trees](https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf). New keys are inserted at leaf nodes. If the leaf is a 4-node, it is first be split into two 2-nodes: one will hold the left key, the other the
 right key, while the middle key pushed up into the parent. Take, for example, an int tree that has a 4-node root as its only node, if we insert 25,
 
 .. figure:: ../images/4-node-root-1.jpg
@@ -150,7 +143,7 @@ Finally, if the key to be deleted is the largest key, there will be no in order 
 ## Implementation of class tree234
 
 The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages the nodes of the tree. The root is also an instance of `shared_ptr<Node>`. Mention copy ctor and move ctor. And how this differs from shared_ptr<Node> implementation.
-This code is available on `github <https://github.com/kurt-krueckeberg/234tree-in-cpp>`_.
+This code is available on [github](https://github.com/kurt-krueckeberg/234tree-in-cpp).
 
 ```cpp
     #ifndef	TREE234_H
@@ -2161,7 +2154,7 @@ This code is available on `github <https://github.com/kurt-krueckeberg/234tree-i
      *
      * Insertion Algorithm 
      *
-     * The insert algorithm is based on the this description of `B-Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_.  New keys are inserted at leaf nodes.
+     * The insert algorithm is based on the this description of [B-Trees](https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf).  New keys are inserted at leaf nodes.
      * If the leaf node is a 4-node, we must first split it by pushing its middle key up a level to make room for the new key. To ensure the parent can always accomodate a
      * key, we must first split the parent if it is a 4-node. And to ensure the parent's parent can accomodate a new key, we split all 4-nodes as we descend the tree. 
      *

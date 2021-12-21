@@ -5,10 +5,9 @@
 
 .. _2-3-4-trees:
 
-Implementing a 2 3 4 Tree in C++17
-==================================
+# Implementing a 2 3 4 Tree in C++17
 
-Implementation links:
+## Implementation links:
 
 * `2 3 4 Trees a Visual Introduction <https://www.educative.io/page/5689413791121408/80001>`_ is an excellent tutorial with an animantion of how 2 3 4 algorithms work.
 * `Balanced Search Trees <https://www.cs.drexel.edu/~amd435/courses/cs260/lectures/L-6_2-3_Trees.pdf>`_ has excellent slides and pseudocode of 2-3 and 2-3-4 trees.
@@ -21,14 +20,11 @@ This link has an code and illustration of insertion.
 
 * `2 3 4 Tree Part1 slides <http://www.unf.edu/~broggio/cop3540/Chapter%2010%20-%202-3-4%20Trees%20-%20Part%201.ppt>`_
 
-General Description of a 2-3-4 Tree
------------------------------------
+## General Description of a 2-3-4 Tree
 
-How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
--------------------------------------------------------------------
+### How Insertion and Removal Algorithms Maintain a Balanced 2 3 4 Tree
 
-Insertion
-^^^^^^^^^
+#### Insertion
 
 The insert algorithm is based on the this description of `B-Trees and 2-3-4 Trees <https://www.cs.ubc.ca/~liorma/cpsc320/files/B-trees.pdf>`_. New keys are inserted at leaf nodes. If the leaf is a 4-node, it is first be split into two 2-nodes: one will hold the left key, the other the
 right key, while the middle key pushed up into the parent. Take, for example, an int tree that has a 4-node root as its only node, if we insert 25,
@@ -76,8 +72,7 @@ And after insertion:
 
 When a node is split and the parent also is a 4-node, split recurses. If it reaches a 4-node root, a new root is added above the current root, and the recursion terminates. An alternate split strategy is to automatically splits all 4-nodes encountered aduring the search for the insertion leaf node. 
 
-Deletion
-^^^^^^^^
+#### Deletion
 
 For a leaf node, we simply delete the key. If the key is in an internal node, we swap the key with its in-order successor, and then we delete the swapped key from the leaf. To ensure deletion does not leave an empty node, 2-nodes are converted to 3- or 4-nodes as we
 descend the tree (except in the special case of the root). Doing so, preserves the ordering of the tree. 
@@ -152,8 +147,7 @@ Finally, if the key to be deleted is the largest key, there will be no in order 
     to a 3-node, but this conversion may also move the original key down into the converted 2-node. It may or may not move as a result of stealing a key from a sibling, but if it does it becomes the first key. If on the other hand a fusion happens, it becomes
     the 2nd key. This logic is in the function **get_delete_successor()**.   
 
-Implementation of class tree234
--------------------------------
+## Implementation of class tree234
 
 The template class tree234 implements the 2 3 4 tree. `unique_ptr<Node>` manages the nodes of the tree. The root is also an instance of `shared_ptr<Node>`. Mention copy ctor and move ctor. And how this differs from shared_ptr<Node> implementation.
 This code is available on `github <https://github.com/kurt-krueckeberg/234tree-in-cpp>`_.

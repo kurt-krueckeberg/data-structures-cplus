@@ -14,7 +14,7 @@ first index and ``hi`` is the last index (inclusive). If zero-base array indexin
 If the total number of elements in the array is odd, then the mid-point will be exactly in the middle of the array, with an even number of elements to left and to the right. While if the total
 number of elements is even, then the mid-point, will not be exactly in the middle. There will be one element to the right of the mid-point than there is  to the left of the mid-point.
 
-Note, if the` implementation language uses zero-based array indexing, when the total number of elements is even, the last index will be an odd number (total_elements - 1). 
+Note, if the implementation language uses zero-based array indexing, when the total number of elements is even, the last index will be an odd number (total_elements - 1). 
 
 Each time through the while-loop, the number of elements is reduced by half....
 

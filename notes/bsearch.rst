@@ -18,9 +18,11 @@ Algorithm
     }
 
     // Recursive version  
+    // Input: 
+    // lo and hi define the range of indexes. hi is included hi is right-most index
     int bsearch(T key, T a[], int lo, int hi) // hi is the last element of the array
     {
-      if (hi <= lo) // OR more correctly: if (hi< lo) return -1; 
+      if (hi <= lo)  
 
           return -1;
 
@@ -30,7 +32,7 @@ Algorithm
 
           return mid;
     
-      else if (key < a[mid]> 0)
+      else if (key < a[mid])
 
           return bsearch(key, a, lo, mid);
 

@@ -76,7 +76,7 @@ If an adjacent sibling of the 2-node is a 3- or 4-node, we can "steal" an key fr
 
 we barrow the 2 from the left sibling, move it into the parent, and we bring 3 down from the parent creating a 3-node. 
 
-![](../images/delete-barrow-2.jpg)
+![{**Figure: 2-node after barrowing**}](../images/delete-barrow-2.jpg)
    :align: center 
    :scale: 100 %
 

@@ -108,5 +108,5 @@ Search done. key = -20 not found. lo = 0, hi = 0.
 
 ## Total Binary Search Steps
 
-Binary search uses at most **ln<sub>2</sub>(Total # of Elements) + 1**.
+Binary search uses at most **<pre style='font-family: monospace'>ln<sub>2</sub>(Total # of Elements) + 1</pre>**.
 

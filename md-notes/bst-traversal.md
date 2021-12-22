@@ -31,6 +31,6 @@ Non-Stack-based Iterators and Iterative Algorithms
 
 If the node class has a parent pointer, tree traversal can be done iteratively without recourse to a stack. Such iterators classes for in-order, pre-order and post-order recursion algorithms are discussed below.
 
-   inorder-iter.md         
-   preorder-iter.md         
-   postorder-iter.md         
+* [in order](inorder-iter.md)
+* [pre order](preorder-iter.md)
+* [post order](postorder-iter.md)

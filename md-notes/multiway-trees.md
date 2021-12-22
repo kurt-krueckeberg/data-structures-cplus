@@ -7,12 +7,12 @@ Description
 Use of Multiway Trees
 ---------------------
 
-Standford Slides on Balanced Search Trees and `B-tree and Multiway-Tree Lecture Slides <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_.
+Standford Slides on Balanced Search Trees and [B-tree and Multiway-Tree Lecture Slides](https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf).
 
 Souce
 -----
 
-`slide 76 and following <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_: Generalizing Btrees.
+[slide 76 and following](https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf): Generalizing Btrees.
 
 .. figure:: ../images/multiway-tree.gif
    :alt: 4 Node to be Split

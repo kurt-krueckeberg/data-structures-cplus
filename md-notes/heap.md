@@ -92,8 +92,7 @@ C++ Code
 
 The C++ implementation uses a functor to do the comparison operation. This allows the same code to be used for both a max heap and a min heap.
 
-.. code-block:: cpp
-
+```cpp
     template<class T, class Comp=std::less<int> > class heap;  // forward declaration
     
     template<class T> class max_heap : public heap<T>  {};     // max_heap
@@ -127,8 +126,7 @@ add(int priority, const T& data)
 
 Add places the new item at the end of the heap, and then swaps it with its parent until the heap property is re-established, i.e., the parent is not less than either of its children (in the case of a max heap).
 
-.. code-block:: cpp
-
+```cpp
   template<class T, class Comp> void heap<T, Comp>::add(int x, const T& t)
   {
       ++size;
@@ -168,8 +166,7 @@ Add places the new item at the end of the heap, and then swaps it with its paren
 Removes the root. Places the last item in the heap as the root, and the repair the heap property by invoking `sink(int index)`, which recursively swaps the new root with its largest child, as long 
 as the largest child is larger than the root or until the root has become a leaf.
 
-.. code-block:: cpp
-
+```cpp
   template<class T, class Comp> bool heap<T, Comp>::remove()
   {
      if (vec.empty()) {
@@ -217,8 +214,7 @@ as the largest child is larger than the root or until the root has become a leaf
 C++ Implementation
 ^^^^^^^^^^^^^^^^^^
 
-.. code-block:: cpp
-
+```cpp
     #ifndef HEAP_H_23974923874
     #define HEAP_H_23974923874
     #include <iosfwd>

@@ -42,8 +42,7 @@ First implementation
 This implementation assumes the input is an array. A temporary working buffer the same size as the input array is first allocated, which is used in the merge (the conquer) step. After the buffer
 is allocated the recursive subdivision of the array begins. When an array of size one is encountered, the recursion stops, and the merge step occurs.
 
-.. code-block:: cpp
- 
+```cpp
    #ifndef GERNEIC_MERGE_SORT_H
    #define GERNEIC_MERGE_SORT_H
    #include <memory>
@@ -128,8 +127,7 @@ A more Generic Implementaion
 This implementation does not require the data structure being sorted to be an array. It only requires an generic random access iterator type with pointer-like semantics such as
 addition and substraction with an integer, subtraction of two iterators, deferencing and comparison. 
 
-.. code-block:: cpp
-
+```cpp
     #ifndef MERGE_SORT_H
     #define MERGE_SORT_H
     

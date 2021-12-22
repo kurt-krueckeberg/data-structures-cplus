@@ -21,7 +21,7 @@ Why do we need to check that both ``__y`` is not null and the stack is empty?  C
 then be popped and visited, and then ``__y`` will be set to ``__y->right``.  The stack will be empty, but the next node to visit will not be null. On the other hand, after the line ``__y = __y->right.get()``, ``__y`` will become null whenever its parent is a leaf node that has just been
 visited. In this case, the stack will not be null, unless y's parent was the right most node in the tree, at which point the loop will exit. 
 
-.. code-block:: cpp
+```cpp
 
     template<class Key, class Value>
     template<typename Functor>
@@ -61,7 +61,7 @@ its left child are pushed onto the stack. In this manner all the nodes of the le
 
 This behavoir exactly mimics the pre-order recursive algorithm. The while loop terminates when the last node, the right most and largest node in the tree, has been popped and visited. 
 
-.. code-block:: cpp
+```cpp
 
     template<class Key, class Value>
     template<typename Functor>
@@ -105,7 +105,7 @@ Post-order
 
 Show two stack version. Then one stack.
 
-.. code-block:: cpp
+```cpp
 
     template<class Key, class Value>
     template<typename Functor>

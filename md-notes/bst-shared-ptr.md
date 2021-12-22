@@ -3,17 +3,16 @@ Binary Search Tree Implementation Using ``std::shared_ptr``
 
 A binary search tree can be more easily implemented when ``shared_ptr<Node>`` is used:
 
-* `Implementation of Binary Search Trees Via Smart Pointers <https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf>`_ (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses the advantage of using
+* [Implementation of Binary Search Trees Via Smart Pointers](https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf) (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses the advantage of using
   ``std::shared_ptr`` to more easily implement recursive algorithms.
-* `Bartosz Milewski's Functional Data Structures in C++: Trees <https://.com/2013/11/25/functional-data-structures-in-c-trees/>`_ also uses ``std::shared_ptr`` (implementation is at `github <https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree>`_).
+* [Bartosz Milewski's Functional Data Structures in C++: Trees](https://.com/2013/11/25/functional-data-structures-in-c-trees/) also uses [`std::shared_ptr`` (implementation is at `github](https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree)).
 
 insertion
 ---------
 
 ``insert(x)`` creates a root node, if root equals ``nullptr``; otherwise, it calls the recursive methhod ``insert(x, root)``, which recurses until the next child node to be visited is ``nullptr``, where it, then, inserts the new child.
 
-.. code-block:: cpp
-
+```cpp
     template<typename T> bool bstree<T>::insert(const T& x) noexcept
     {
       if (!root) {
@@ -72,8 +71,7 @@ We will combine case #1 with case #2, but first we consider case #2, which has t
 
 Both can be handled by splicing in the sole child node into the position of the node being removed. Since we must also preserve the parent relationships, we must, then, set the new parent of the spliced-in node:
 
-.. code-block:: cpp
-
+```cpp
     auto y = p->parent; // y will become the new parent of the spliced-in node.
     
     // 1. If p has no left child, we replace it with its right child.
@@ -89,8 +87,7 @@ Both can be handled by splicing in the sole child node into the position of the 
 
 Note: If p is a leaf node, it, too, is handled by the code above (and in that case ``p->right`` points to ``nullptr``). If p has a left child but no right child, we handle that next
 
-.. code-block:: cpp
-
+```cpp
     else if (!p->right) { 
     
          // ...remove node p by replacing it with its left child (which may be nullptr), effectively splicing in the 
@@ -100,8 +97,7 @@ Note: If p is a leaf node, it, too, is handled by the code above (and in that ca
     
 Lastly, we handle case #3, and we replace the key in p with its in-order successor. After which we recusively call ``remove`` to remove the duplicate key: 
 
-.. code-block:: cpp
-
+```cpp
     else { // Else if p is an internal node and has two non-nullptr children, so we swap p with its in-order predecessor
     
          std::shared_ptr<Node> q = p->right; // <--- This line not possible with unique_ptr
@@ -120,8 +116,7 @@ Lastly, we handle case #3, and we replace the key in p with its in-order success
 The complete code
 -----------------
     
-.. code-block:: cpp
-
+```cpp
     #ifndef bstree_h
     #define bstree_h
     #include <memory>
@@ -611,4 +606,4 @@ The complete code
     }
     #endif
                      
-The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
+The complete code is on [github.com](thttps://github.com/kurt-krueckeberg/shared_ptr_bstree).

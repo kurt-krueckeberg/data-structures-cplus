@@ -18,12 +18,12 @@ Discussion Links
 
 The following sources discuss 2 3 Trees and their algorithms: 
 
-* `Very, very good slides showing in detail Insert and Delete Use Cases <https://www.slideshare.net/sandpoonia/23-tree>`_
-* `Virgina Tech 2 3 Tree slides with Illustrations of all Use Cases <http://courses.cs.vt.edu/cs2606/Fall07/Notes/T05B.2-3Trees.pdf>`_ 
-* `Simon Frazer Univ: 2 3 Tree Slides, Helpful <http://www.cs.sfu.ca/CourseCentral/225/ahadjkho/lecture-notes/balanced_trees.pdf>`_ 
+* [Very, very good slides showing in detail Insert and Delete Use Cases](https://www.slideshare.net/sandpoonia/23-tree)
+* [Virgina Tech 2 3 Tree slides with Illustrations of all Use Cases](http://courses.cs.vt.edu/cs2606/Fall07/Notes/T05B.2-3Trees.pdf) 
+* [Simon Frazer Univ: 2 3 Tree Slides, Helpful](http://www.cs.sfu.ca/CourseCentral/225/ahadjkho/lecture-notes/balanced_trees.pdf) 
    Insertion Algorithm slides 12-21. Deleteion Algorithm slides 21-36. 
-* `Java 2 3 tree insertion code and step-by-step illustration <https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html>`_.
-* `Cal Poly Has a Good Illustration of All Deletion Use Cases, but pseudo code doesn't have a working example <https://www.cpp.edu/~ftang/courses/CS241/notes/b-tree.htm>`_
+* [Java 2 3 tree insertion code and step-by-step illustration](https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html).
+* [Cal Poly Has a Good Illustration of All Deletion Use Cases, but pseudo code doesn't have a working example](https://www.cpp.edu/~ftang/courses/CS241/notes/b-tree.htm)
 
 Implementation Overview
 -----------------------

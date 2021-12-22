@@ -32,9 +32,9 @@ By fourth invariant, thus a red black tree every root-null path has <= log\ :sub
 Implementation of Left-Leaning Red Black Trees
 ----------------------------------------------
 
-The code is based on Robert Sedgwich's talk `Left Leaning Red Black Trees <http://www.cs.princeton.edu/~rs/talks/LLRB/RedBlack.pdf>`_ ,
+The code is based on Robert Sedgwich's talk [Left Leaning Red Black Trees](http://www.cs.princeton.edu/~rs/talks/LLRB/RedBlack.pdf) ,
 in which he discusses how both 2 3 trees and 2 3 4 trees can be represented as left leaning (or right leaning) red-black trees. The C++ code below is a port of his   
-`java implementation <http://www.cs.princeton.edu/~rs/talks/LLRB/Java/>`_. The invariant\ |ndash|\ checking methods in the java, used to verify that the tree is always as balanced as possible following insertions or deletions, have been removed 
+[java implementation](http://www.cs.princeton.edu/~rs/talks/LLRB/Java/). The invariant\ |ndash|\ checking methods in the java, used to verify that the tree is always as balanced as possible following insertions or deletions, have been removed 
 to improve performance.
 
 The relationship between 2 3 4 trees and red black trees, and how 2 3 4 trees map to red black tree, is also explained at `<http://cw.felk.cvut.cz/lib/exe/fetch.php/courses/a4m33pal/paska12x.pdf>`_ and `<http://www.cs.princeton.edu/courses/archive/spr07/cos226/lectures/balanced.pdf>`_.

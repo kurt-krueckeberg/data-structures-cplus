@@ -1,8 +1,6 @@
-Pre-order forward iterator class
-++++++++++++++++++++++++++++++++
+### Pre-order forward iterator class
 
-class iterator\_preorder
-~~~~~~~~~~~~~~~~~~~~~~~
+#### class iterator\_preorder
 
 The constructor for class **iterator_preorder** sets ``current`` to the root. The iterator uses ``bool at_end`` to track completion. The  ``Node *successor()`` method, called by ``iterator_preorder& operator++()`` to advance to the next node, is explained below.
 

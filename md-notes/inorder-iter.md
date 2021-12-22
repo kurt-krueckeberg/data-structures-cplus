@@ -4,8 +4,7 @@ In-order bidirectional iterator class
 If the tree is not empty, the constructor sets ``current`` to the minimun node, the left-most node with the smallest key. The ``Node *successor()`` method called by ``iterator_inorder& operator++()`` is described below. An enum class implements a finite state machine of three possible 
 iterator positions, with ``at_beg`` and ``at_end`` denoting one-before the first tree value and one-after the last tree key, repectively, and the state ``between`` modeling the state between these two settings. 
 
-.. code-block:: cpp
-
+```cpp
     class iterator_inorder {  
            
        bstree<Key, Value> *ptree;
@@ -149,8 +148,7 @@ iterator positions, with ``at_beg`` and ``at_end`` denoting one-before the first
 
 These bstree uses these methods to return ``iterator_inorder`` objects:
 
-.. code-block:: cpp
-       
+```cpp
        iterator_inorder begin() noexcept
        {
            iterator_inorder iter{*this}; 
@@ -181,8 +179,7 @@ Before ``successor()`` advances to the in-order successor, it checks if we are a
 encounter a parent that is not a right child (of its parent). This will be the first value in the tree greater than ``current->key()``, and thus the in-order successor. If we reach the root before finding such a parent, there is no in-order successor. This situation only occurs when
 ``current`` points to the largest, the right-most node in the tree. In this case, we simply return ``current``.
  
-.. code-block:: cpp
-
+```cpp
     Node *successor()
     {
         if (current == nullptr || pos == position::at_end) return current;
@@ -218,8 +215,7 @@ encounter a parent that is not a right child (of its parent). This will be the f
 encounter a parent that is not a left child (of its parent). This will be the first value in the tree less than ``current->key()``, and thus the in-order predecessor. If we reach the root before finding such a parent, there is no in-order predecessor. This situation only occurs when
 ``current`` points to the smallest, the left-most node in the tree. In this case, we simply return ``current``.
  
-.. code-block:: cpp
-      
+```cpp
     Node *predecessor()
     {
        if (current == nullptr || pos == position::at_beg) return current;

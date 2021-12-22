@@ -1,13 +1,10 @@
-Radix Sort
-==========
+# Radix Sort
 
-Discussion
-----------
+## Discussion
 
 This is an implementation of the radix sort algorithm that uses **base 256**.
 
-Source Code
------------
+## Source Code
 
 This uses **base 256** to do the radix sort
 

@@ -7,17 +7,17 @@ Binary Search Trees Implemented using std::unique_ptr
 Discussion Links
 ----------------
 
-* `Virgina Tech: BST <http://courses.cs.vt.edu/~cs3114/Fall17/barnette/notes/T01_BinarySearchTrees.pdf>`_.
-* `Algorithms 4th Edition by Sedgewich & Wayne <https://algs4.cs.princeton.edu/32bst/>`_ performance problems of Hibbard deletion. 
-* `Sedgwich Powerpoint Slides <https://algs4.cs.princeton.edu/lectures/32BinarySearchTrees.pdf>`_ and why Hibbard deletion is an unsatisfactory solution. 
-* `Emory Univ.: Hibbard delete algorithm for BST, part 1 <https://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/9-BinTree/BST-delete.html>`_
-* `Emory Univ.: Hibbard delete algorithm for BST, part 2 <http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/9-BinTree/BST-delete2.html>`_ with illustrations and complete source code.
-* `Notes on Binary Search Trees <http://pages.cs.wisc.edu/~siff/CS367/Notes/bsts.html>`_  
-* `Introduction to Algorithms, 1990 version <http://staff.ustc.edu.cn/~csli/graduate/algorithms/book6/chap13.htm>`_ 
-*  Standford slides on `Balances Search Trees <https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf>`_.
-* `Coursera, Data Structures and Performance: Deleting from a BST <https://www.coursera.org/lecture/data-structures-optimizing-performance/core-deleting-from-a-bst-DW4NG>`_ 
-* `Introduction to Algorithms, 3rd Edition <http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf>`_  
-* `Radford.edu <https://www.radford.edu/~nokie/classes/360/trees.bst.html>`_  
+* [Virgina Tech: BST](http://courses.cs.vt.edu/~cs3114/Fall17/barnette/notes/T01_BinarySearchTrees.pdf).
+* [Algorithms 4th Edition by Sedgewich & Wayne](https://algs4.cs.princeton.edu/32bst/) performance problems of Hibbard deletion. 
+* [Sedgwich Powerpoint Slides](https://algs4.cs.princeton.edu/lectures/32BinarySearchTrees.pdf) and why Hibbard deletion is an unsatisfactory solution. 
+* [Emory Univ.: Hibbard delete algorithm for BST, part 1](https://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/9-BinTree/BST-delete.html)
+* [Emory Univ.: Hibbard delete algorithm for BST, part 2](http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/9-BinTree/BST-delete2.html) with illustrations and complete source code.
+* [Notes on Binary Search Trees](http://pages.cs.wisc.edu/~siff/CS367/Notes/bsts.html)  
+* [Introduction to Algorithms, 1990 version](http://staff.ustc.edu.cn/~csli/graduate/algorithms/book6/chap13.htm) 
+*  Standford slides on [Balances Search Trees](https://web.stanford.edu/class/cs166/lectures/05/Slides05.pdf).
+* [Coursera, Data Structures and Performance: Deleting from a BST](https://www.coursera.org/lecture/data-structures-optimizing-performance/core-deleting-from-a-bst-DW4NG) 
+* [Introduction to Algorithms, 3rd Edition](http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf)  
+* [Radford.edu](https://www.radford.edu/~nokie/classes/360/trees.bst.html)  
 
 Class Overview
 --------------
@@ -27,8 +27,7 @@ Nested Node class
 
 The tree nodes are of nested tree type ``unique_ptr<Node>``: 
 
-.. code-block:: cpp
-    
+```cpp
     template<class Key, class Value> class bstree {
 
         // Container typedef's used by STL.
@@ -55,7 +54,7 @@ The tree nodes are of nested tree type ``unique_ptr<Node>``:
          std::unique_ptr<bstre<typename Key, typename Value>::Node> root;
     };
 
-Each node contains a ``__value_type`` member __vt, ``struct __value_type`` is take from the **libc++** source code for ``std::map``. It is a convenience wrapper for convenient access its private pair<const Key, Value>. See the ``value-type.h`` header file in the include directory on `github <https://github.com/kurt-krueckeberg/bst>`_.
+Each node contains a ``__value_type`` member __vt, ``struct __value_type`` is take from the **libc++** source code for ``std::map``. It is a convenience wrapper for convenient access its private pair<const Key, Value>. See the [`value-type.h`` header file in the include directory on `github](https://github.com/kurt-krueckeberg/bst).
 
 Destructor
 ^^^^^^^^^^
@@ -68,8 +67,7 @@ Recursive methods
 
 ``find(Key key)`` uses recursion, as do several other tree methods.
 
-.. code-block:: cpp
-
+```cpp
     template<class Key, class Value> std::unique_ptr<typename bstree<Key, Value>::Node>& bstree<Key, Value>::find(Key key, std::unique_ptr<Node>& current) const noexcept
     {
       if (!current || current->key() == key)
@@ -148,8 +146,7 @@ cases:
    2. Otherwise, y lies within z’s right subtree but is not z’s right child.  In this case, we first replace
       y by its own right child, and then we replace z by y.
 
-.. code-block:: cpp
-
+```cpp
     template<class Key, class Value> bool bstree<Key, Value>::remove(Key key, std::unique_ptr<Node>& root_sub) noexcept // root of subtree
     {
       std::unique_ptr<Node>& pnode = find(key, root_sub);
@@ -213,4 +210,4 @@ cases:
 Source Code
 -----------
 
-The implementation is on `gihub <https://github.com/kurt-krueckeberg/bst>`_.
+The implementation is on [gihub](https://github.com/kurt-krueckeberg/bst).

@@ -29,8 +29,7 @@ Scan infix input from left to right and repeat steps 2 to step 4.
 
 Lastly, pop remaining operators from stack.  Several great examples are at: http://www.cs.nyu.edu/courses/fall09/V22.0102-002/lectures/InfixToPostfixExamples.pdf
 
-.. code-block:: cpp
- 
+```cpp
     #include <iostream>
     #include <utility>
     #include <stack>
@@ -215,8 +214,7 @@ Algorithm uses a stack to determine whether a flight exists from the origin city
 Cities are denoted using integers in the input file. Rows begin with the origin city, followed by all cities to which you can flight directly. 
 . A stack is used for back\ |ndash|\ tracking.
 
-.. code-block:: cpp
-
+```cpp
     #include <iostream>
     #include <ostream>
     #include <string>
@@ -436,8 +434,7 @@ Cities are denoted using integers in the input file. Rows begin with the origin 
 
 A program to test the FlightMap.
 
-.. code-block:: cpp
-
+```cpp
     #include "flightmap.h"
     
     int main(int argc, char *argv[])
@@ -491,8 +488,7 @@ It is implemented using two stacks: one holds arithmetic operators, the other st
 The nodes are of two types: NumericElementNode, which is always a leaf node, or BinaryOperationNode, which is an internal node or the root.
 Both classes derive from the abstract ExpressionElementNode and must implement its abstract virtual value() method. 
 
-.. code-block:: cpp
-
+```cpp
     // Inspired from code at: http://math.hws.edu/eck/cs225/s03/binary_trees/
     // Represents a node of any type in an expression tree.
     // This is an "abstract" class, since it contains an undefined
@@ -547,8 +543,7 @@ Both classes derive from the abstract ExpressionElementNode and must implement i
 The recursive method ``BinaryOperationNode::value()`` is implemented in Nodes.cpp. It recursively calls value() until a leaf node of type
 NumericElementNodes returns a **double**.
 
-.. code-block:: cpp
-        
+```cpp
     #include "Nodes.h"
     
     using namespace std;
@@ -583,8 +578,7 @@ NumericElementNodes returns a **double**.
 
 The BinaryExpressionBuilder class is used to parse the infix expression string and to return the binary expression tree. 
 
-.. code-block:: cpp
-
+```cpp
     #include <string>
     #include <stack>
     #include <exception>
@@ -626,8 +620,7 @@ The workhorse routine is ``doBinary(char op)``, which consumes elements of the o
 element removed becomes the **right** subtree and the second element popped becomes the **left** subtree. The new BinaryOperationNode is then pushed onto the stack. 
 This loop at the end of ``BinaryExpressionBuilder::parse(std::string& str)`` 
 
-.. code-block:: cpp
-
+```cpp
     while (!operatorStack.empty()) {
             
             doBinary( operatorStack.top() );
@@ -638,8 +631,7 @@ calls ``doBinary(op)`` until the operator stack is empty. doBinary(), as just me
 a ``BinaryExpressionNode``, which it pushes onto the operand stack. Eventually, when the loop ends, the only element in the stack will be the ``BinaryExpressionNode``
 that represents the input infix string as a complete binary expression tree. 
 
-.. code-block:: cpp
-
+```cpp
     #include "BinaryExpressionBuilder.h"
     #include "Nodes.h"
     #include <sstream>
@@ -772,8 +764,7 @@ that represents the input infix string as a complete binary expression tree.
 
 A command line program to to parse an infix expression, build a binary expression tree and output the result of the expression:
 
-.. code-block:: cpp
-
+```cpp
     /* 
      * File: main.cpp
      */

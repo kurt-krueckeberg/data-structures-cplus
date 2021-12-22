@@ -35,7 +35,7 @@ Each time through the while-loop, the number of elements is reduced by half.
    
      cout << "key = " << key << ". lo = " << lo << ". hi = " << hi << ". Search range = [ " << lo << ", " << hi << "]. Midpoint of range = " << mid << endl;
    
-     if (a[mid] == key) {  // Is key at mid-point
+     if (a[mid] == key) {  // Is key at mid-point?
    
          cout << "key = " << key << "  found at index = " << mid << endl;
          return mid;

@@ -41,12 +41,10 @@ Each time through the while-loop, the number of elements is reduced by half.
          return mid;
    
      } else if (key < a[mid])
+            return bsearch(key, a, lo, mid);
    
-         return bsearch(key, a, lo, mid);
-   
-     else
-   
-         return bsearch(key, a, mid+1, hi);
+     else  
+        return bsearch(key, a, mid+1, hi);
    }
    
    template<typename T> int bsearch(T key, T a[], int size)

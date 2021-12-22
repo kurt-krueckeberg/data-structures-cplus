@@ -2,9 +2,9 @@
 
 ## Resources:
 
-* Binary Search section (pdf of slices of) `Search and Sorting chapter <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_  Computer Science and Introductary Approach by Sedgewick and Wayne.
-* `Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
-* Cambridge University's Isacc Computer Science discussion of `Binary Search <https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all>`_.
+* Binary Search section (pdf of slices of) [Search and Sorting chapter](https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf)  Computer Science and Introductary Approach by Sedgewick and Wayne.
+* [Implementing binary search of an array](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array).
+* Cambridge University's Isacc Computer Science discussion of [Binary Search](https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all).
 
 The generic algorithm ``template<typename T> int bsearch(T key, T a[], int size)`` calls ``template<typename T> int bsearch(const T& key, T a[], int lo, int hi)`` to search an array of generic type T for a key, where ``lo`` is the
 first index and ``hi`` is the last index (inclusive). If zero-base array indexing is used in the implementation language, the size of the array is ``hi + 1``.
@@ -12,7 +12,7 @@ first index and ``hi`` is the last index (inclusive). If zero-base array indexin
 If the total number of elements in the array is odd, then the mid-point will be exactly in the middle of the array, with an even number of elements to left and to the right. While if the total
 number of elements is even, then the mid-point, will not be exactly in the middle. There will be one element to the right of the mid-point than there is  to the left of the mid-point.
 
-Note, if the implementation language uses zero-based array indexing, when the total number of elements is even, the last index will be an odd number (total_elements - 1). 
+Note, if the implementation language uses zero-based array indexing, when the total number of elements is even, the last index will be an odd number (total\_elements - 1). 
 
 Each time through the while-loop, the number of elements is reduced by half.
 

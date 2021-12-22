@@ -9,9 +9,7 @@ Merge Sort
 -----------
 
 Merge sort recursively divides an array into smaller subarrays until subarrays of size one are reached, which terminated the recursion. The merge of the subarrays (into sorted order) then
-occurs.  The number of levels in the recursion is:
-
-    1 + floor (log<sub>2</sub>(N))
+occurs.  The number of levels in the recursion is: <pre>1 + floor (log<sub>2</sub>(N))</pre>
 
 where N is the array size.  
 

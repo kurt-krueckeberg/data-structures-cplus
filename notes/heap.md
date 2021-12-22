@@ -31,9 +31,9 @@ If instead of one, we begin the array at index zero, the calculations for the po
 
 |method|result|
 |------|------|
-|<pre> Parent(i) - (i - 1)/2</pre>|returns position of parent|
-|<pre> Left(i)  - 2 * i + 1</pre>|returns left child position|
-|<pre> Right(i) - 2 * i + 2</pre>|returns right child position|
+|<pre>Parent(i) - (i - 1)/2</pre>|returns position of parent|
+|<pre>Left(i)  - 2 * i + 1</pre>|returns left child position|
+|<pre>Right(i) - 2 * i + 2</pre>|returns right child position|
 
 .. todo:: Organize the remaining discussion after reading the bookmarked articles and understanding them and how they flow.
 

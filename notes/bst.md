@@ -18,7 +18,7 @@
 
 ### Nested Node class
 
-The tree nodes are of nested tree type ``unique_ptr<Node>``: 
+The tree nodes are of nested tree type `unique_ptr<Node>`: 
 
 ```cpp
     template<class Key, class Value> class bstree {
@@ -48,16 +48,16 @@ The tree nodes are of nested tree type ``unique_ptr<Node>``:
     };
 ```
 
-Each node contains a ``__value_type`` member __vt, ``struct __value_type`` is take from the **libc++** source code for ``std::map``. It is a convenience wrapper for convenient access its private pair<const Key, Value>. See the [`value-type.h`` header file in the include directory on `github](https://github.com/kurt-krueckeberg/bst).
+Each node contains a `__value_type` member `__vt`. `struct __value_type` is take from the **libc++** source code for ``std::map``. It is a convenience wrapper for convenient access its private pair<const Key, Value>. See the **value-type.h** header file in the include directory on [github](https://github.com/kurt-krueckeberg/bst).
 
 ### Destructor
 
-While the default ``~bstree`` destructor will successfully frees all tree nodes. This results in one huge recursive call that invokes every Node's destructor. To avoid stack overflow therefore, `destroy_tree()` is used instead to do a post-order
-tree traversal invoking ``unique_ptr<Node>::reset()`` for each node.
+While the default `~bstree` destructor will successfully frees all tree nodes. This results in one huge recursive call that invokes every Node's destructor. To avoid stack overflow therefore, `destroy_tree()` is used instead to do a post-order
+tree traversal invoking `unique_ptr<Node>::reset()` for each node.
 
 ### Recursive methods
 
-``find(Key key)`` uses recursion, as do several other tree methods.
+`find(Key key)` uses recursion, as do several other tree methods.
 
 ```cpp
     template<class Key, class Value> std::unique_ptr<typename bstree<Key, Value>::Node>& bstree<Key, Value>::find(Key key, std::unique_ptr<Node>& current) const noexcept

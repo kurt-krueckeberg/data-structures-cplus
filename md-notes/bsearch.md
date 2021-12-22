@@ -104,3 +104,9 @@ key = -20. lo = 0. hi = 1. Search range = [ 0, 1]. Midpoint of range = 0
 Search done. key = -20 not found. lo = 0, hi = 0.
 ---------------
 </pre>
+
+
+## Total Binary Search Steps
+
+Binary search uses at most **ln<sub>2</sub>(Total # of Elements) + 1**.
+

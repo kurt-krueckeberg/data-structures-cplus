@@ -21,9 +21,9 @@ In the array representation of a heap no space is required for pointers; instead
 
 |method|result|
 |------|------|
-|Parent(i) = i/2|returns position of parent|
-|Left(i)  = 2 * i|returns left child position|
-|Right(i) = 2 * i + 1|returns right child position|
+|<pre>Parent(i) = i / 2</pre>|returns position of parent|
+|<pre>Left(i)  = 2 * i</pre>|returns left child position|
+|<pre>Right(i) = 2 * i + 1</pre>|returns right child position|
 
 ![](../images/heap-as-array1.gif)
 
@@ -31,9 +31,9 @@ If instead of one, we begin the array at index zero, the calculations for the po
 
 |method|result|
 |------|------|
-| Parent(i) - (i - 1)/2|returns position of parent|
-| Left(i)  - 2 * i + 1|returns left child position|
-| Right(i) - 2 * i + 2|returns right child position|
+|<pre> Parent(i) - (i - 1)/2</pre>|returns position of parent|
+|<pre> Left(i)  - 2 * i + 1</pre>|returns left child position|
+|<pre> Right(i) - 2 * i + 2</pre>|returns right child position|
 
 .. todo:: Organize the remaining discussion after reading the bookmarked articles and understanding them and how they flow.
 
@@ -129,6 +129,7 @@ Add places the new item at the end of the heap, and then swaps it with its paren
           }
       }
   }
+```
   
 ### **remove()** Code 
 

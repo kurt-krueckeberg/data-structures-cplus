@@ -25,24 +25,24 @@ Each time through the while-loop, the number of elements is reduced by half.
    // lo and hi define the range to search. hi is included in the search. 
    template<typename T> int bsearch(const T& key, T a[], int lo, int hi) 
    {
-     if (hi < lo) {
+     if (hi < lo) { // Terminate search. Key not found.
    
          cout << "Search done. key = " << key << " not found. lo = " << lo << ", hi = " << hi << ".\n";
          return -1;
      }
    
-     int mid = lo + (hi - lo) / 2;
+     int mid = lo + (hi - lo) / 2;  // Calculate mid-point of range [lo, hi]
    
      cout << "key = " << key << ". lo = " << lo << ". hi = " << hi << ". Search range = [ " << lo << ", " << hi << "]. Midpoint of range = " << mid << endl;
    
-     if (a[mid] == key) {
+     if (a[mid] == key) {  // Is key at mid-point
    
          cout << "key = " << key << "  found at index = " << mid << endl;
          return mid;
    
-     } else if (key < a[mid]) return bsearch(key, a, lo, mid);
+     } else if (key < a[mid]) return bsearch(key, a, lo, mid);  // Search lower half of range
 
-     else return bsearch(key, a, mid + 1, hi);
+     else return bsearch(key, a, mid + 1, hi);  // Search upper half of range.
    }
    
    template<typename T> int bsearch(T key, T a[], int size)

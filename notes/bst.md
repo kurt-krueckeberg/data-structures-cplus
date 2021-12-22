@@ -44,7 +44,7 @@ The tree nodes are of nested tree type `unique_ptr<Node>`:
             };
          //...snip
 
-         std::unique_ptr<bstre<typename Key, typename Value>::Node> root;
+         std::unique_ptr<bstree<typename Key, typename Value>::Node>> root;
     };
 ```
 

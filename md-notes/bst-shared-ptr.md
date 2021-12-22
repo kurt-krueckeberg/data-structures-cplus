@@ -1,16 +1,14 @@
-Binary Search Tree Implementation Using ``std::shared_ptr``
-===========================================================
+# Binary Search Tree Implementation Using  `std::shared_ptr`
 
-A binary search tree can be more easily implemented when ``shared_ptr<Node>`` is used:
+A binary search tree can be more easily implemented when `shared_ptr<Node>` is used:
 
 * [Implementation of Binary Search Trees Via Smart Pointers](https://thesai.org/Downloads/Volume6No3/Paper_9-Implementation_of_Binary_Search_Trees_Via_Smart_Pointers.pdf) (from the International Journal of Advanced Computer Science and Applications, Vol. 6, No. 3) discusses the advantage of using
-  ``std::shared_ptr`` to more easily implement recursive algorithms.
-* [Bartosz Milewski's Functional Data Structures in C++: Trees](https://.com/2013/11/25/functional-data-structures-in-c-trees/) also uses [`std::shared_ptr`` (implementation is at `github](https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree)).
+  `std::shared_ptr` to more easily implement recursive algorithms.
+* [Bartosz Milewski's Functional Data Structures in C++: Trees](https://.com/2013/11/25/functional-data-structures-in-c-trees/) also uses `std::shared_ptr`. His implementation is on [github](https://github.com/BartoszMilewski/Okasaki/tree/master/RBTree)).
 
-insertion
----------
+## insertion
 
-``insert(x)`` creates a root node, if root equals ``nullptr``; otherwise, it calls the recursive methhod ``insert(x, root)``, which recurses until the next child node to be visited is ``nullptr``, where it, then, inserts the new child.
+`insert(x)` creates a root node, if root equals  `nullptr`; otherwise, it calls the recursive methhod  `insert(x, root)`, which recurses until the next child node to be visited is  `nullptr`, where it, then, inserts the new child.
 
 ```cpp
     template<typename T> bool bstree<T>::insert(const T& x) noexcept
@@ -49,11 +47,12 @@ insertion
       
       return true;
     }
+```
 
 copy construction and copy assignment and move construction and assigment
 -------------------------------------------------------------------------
 
-These methods are handled by ``bstree<T>`` only. Node's copy constructor, copy assignment operator, move constructor and move assignment operator are all deleted.
+These methods are handled by `bstree<T>` only. Node's copy constructor, copy assignment operator, move constructor and move assignment operator are all deleted.
 
 remove
 ------
@@ -85,7 +84,7 @@ Both can be handled by splicing in the sole child node into the position of the 
     // ...else if p has no right child and it does have a left child (since the first if-test failed)...
     } 
 
-Note: If p is a leaf node, it, too, is handled by the code above (and in that case ``p->right`` points to ``nullptr``). If p has a left child but no right child, we handle that next
+Note: If p is a leaf node, it, too, is handled by the code above (and in that case `p->right` points to  `nullptr`). If p has a left child but no right child, we handle that next
 
 ```cpp
     else if (!p->right) { 
@@ -94,8 +93,9 @@ Note: If p is a leaf node, it, too, is handled by the code above (and in that ca
          // left subtree.
          p = p->left; 
          p->parent = new_parent;
+```
     
-Lastly, we handle case #3, and we replace the key in p with its in-order successor. After which we recusively call ``remove`` to remove the duplicate key: 
+Lastly, we handle case #3, and we replace the key in p with its in-order successor. After which we recusively call `remove` to remove the duplicate key: 
 
 ```cpp
     else { // Else if p is an internal node and has two non-nullptr children, so we swap p with its in-order predecessor
@@ -112,6 +112,7 @@ Lastly, we handle case #3, and we replace the key in p with its in-order success
          // successor key.  
          remove(q->key, p->right); 
     }
+```
 
 The complete code
 -----------------
@@ -605,5 +606,5 @@ The complete code
     
     }
     #endif
-                     
+```
 The complete code is on [github.com](thttps://github.com/kurt-krueckeberg/shared_ptr_bstree).

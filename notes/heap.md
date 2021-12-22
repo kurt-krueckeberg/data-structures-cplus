@@ -1,12 +1,6 @@
-.. include:: <isopub.txt>
+# Heap  and Priority Queues
 
-.. role:: kurt-code
-
-Heap  and Priority Queues
-=========================
-
-Description
------------
+## Description
 
 A heap is a complete binary tree, i.e., a binary tree in which nodes are added from left to the right until the level is complete, and in which no node has a key that is less than the key of either of its children. In a complete binary tree
 the height of the left subtree is at most one more than the height of the right subtree. Unlike a binary search tree, in a heap the ordering of siblings is undetermined.
@@ -19,7 +13,7 @@ While a heap is a type of complete binary tree, it can be unique represented by 
 
 ![](../images/heap-nodes-numbered.jpg)
 
-**Figure 1. Numbering the Nodes of a Complete Binarya binary heap.** 
+**Figure 1. Numbering the Nodes of a Complete Binary Heap.** 
 
 ![](../images/heap-as-array1.gif)
 
@@ -47,8 +41,7 @@ If instead of one, we begin the array at index zero, the calculations for the po
 
 .. todo:: Organize the remaining discussion after reading the bookmarked articles and understanding them and how they flow.
 
-Max Heap Operations
--------------------
+## Max Heap Operations
 
 The abstract heap data type has three primary operatons:
 
@@ -60,19 +53,16 @@ The abstract heap data type has three primary operatons:
 item the root, and then moving in downward until we again have a value heap.  
 
 
-Code of Array Implementation of Max Heap
-----------------------------------------
+## Code of Array Implementation of Max Heap
 
-**add(int priority, const T& t)** Code 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### **add(int priority, const T& t)** Code 
 
 Pseudocode for Adding an Element to Max Heap:
 
 1. Place the new element in the heap in the last location. 
 2. Repair the heap ordering by swapping the element with its parent(s) as long as the new element has the greater value.
 
-C++ Code
---------
+## C++ Code
 
 The C++ implementation uses a functor to do the comparison operation. This allows the same code to be used for both a max heap and a min heap.
 
@@ -106,8 +96,7 @@ The C++ implementation uses a functor to do the comparison operation. This allow
      };
 ```
 
-add(int priority, const T& data)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### add(int priority, const T& data)
 
 Add places the new item at the end of the heap, and then swaps it with its parent until the heap property is re-established, i.e., the parent is not less than either of its children (in the case of a max heap).
 
@@ -145,8 +134,7 @@ Add places the new item at the end of the heap, and then swaps it with its paren
       }
   }
   
-**remove()** Code 
-^^^^^^^^^^^^^^^^^
+### **remove()** Code 
 
 Removes the root. Places the last item in the heap as the root, and the repair the heap property by invoking `sink(int index)`, which recursively swaps the new root with its largest child, as long 
 as the largest child is larger than the root or until the root has become a leaf.
@@ -197,8 +185,7 @@ as the largest child is larger than the root or until the root has become a leaf
   }
 ```
 
-C++ Implementation
-^^^^^^^^^^^^^^^^^^
+### C++ Implementation
 
 ```cpp
     #ifndef HEAP_H_23974923874

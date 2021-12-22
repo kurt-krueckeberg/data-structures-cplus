@@ -612,3 +612,4 @@ The complete code
     #endif
                      
 The complete code is on `github.com <thttps://github.com/kurt-krueckeberg/shared_ptr_bstree>`_.
+

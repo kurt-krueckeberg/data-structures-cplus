@@ -41,8 +41,11 @@ is allocated the recursive subdivision of the array begins. When an array of siz
    #define GERNEIC_MERGE_SORT_H
    #include <memory>
 
-    template<typename T, typename Comparator> static void do_merge(T a[], int first, int mid, int last, T *buffer, Comparator C);
-    template<typename T, typename Comparator> static void do_merge_sort(T a[], int first, int last, T *buffer, Comparator C);
+    template<typename T, typename Comparator> static void do_merge(T a[], int first, int mid,\
+                                              int last, T *buffer, Comparator C);
+
+    template<typename T, typename Comparator> static void do_merge_sort(T a[], int first,\
+                                              int last, T *buffer, Comparator C);
     
     template<typename T, typename Comparator> void merge_sort(T a[], int first, int last, Comparator C)
     {
@@ -52,7 +55,8 @@ is allocated the recursive subdivision of the array begins. When an array of siz
         do_merge_sort<T, Comparator>(a, first, last, work_buffer.get(), C);
     }
     
-    template<typename T, typename Comparator> static void do_merge_sort(T a[], int first, int last, T buffer[], Comparator C)
+    template<typename T, typename Comparator> static void do_merge_sort(T a[], int first, int last, T buffer[],\
+                                                         Comparator C)
     {
         // base case: the range [first, last] can no longer be subdivided.
         if (first < last) {
@@ -67,7 +71,8 @@ is allocated the recursive subdivision of the array begins. When an array of siz
         }
    }
 
-   template<typename T, typename Comparator> static void do_merge(T a[], int first, int mid, int last, T *buffer, Comparator compare)
+   template<typename T, typename Comparator> static void do_merge(T a[], int first, int mid, int last, T *buffer,\
+                                                           Comparator compare)
    {
        int first1 = first;
        int last1 = mid;

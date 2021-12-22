@@ -20,8 +20,6 @@ While a heap is a type of complete binary tree, it can be unique represented by 
 In the array representation of a heap no space is required for pointers; instead, the parent and children of each node can be found by simple arithmetic on array indices:
 
 ===================================== ==============================
-
-===================================== ==============================
   Parent(i) = i/2                      returns position of parent
   Left(i)  = 2i                        returns left child position
   Right(i) = 2i + 1                    returns right child position
@@ -30,8 +28,6 @@ In the array representation of a heap no space is required for pointers; instead
 ![](../images/heap-as-array1.gif)
 
 If instead of one, we begin the array at index zero, the calculations for the position of a node's parent and its two children become:
-
-===================================== ==============================
 
 ===================================== ==============================
   Parent(i) = (i-1)/2                  returns position of parent

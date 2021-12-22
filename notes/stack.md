@@ -10,8 +10,7 @@ Postfix to Infix Algorithm
 
 Good examples that illustrate infix to post conversion can be found at this `NYU course site <http://www.cs.nyu.edu/courses/fall09/V22.0102-002/lectures/InfixToPostfixExamples.pdf>`_
 
-Algorithm Description
-^^^^^^^^^^^^^^^^^^^^^
+### Algorithm Description
 
 This algorithm assumes left\ |ndash|\ to\ |ndash|\ right operator associtivity.
 

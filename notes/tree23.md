@@ -1,13 +1,3 @@
-.. include:: <isopub.txt>
-
-.. To customize the appearance of inline code, do ``unique_ptr<Node>`` instead of ``unique_ptr<Node>``, or simply customize the 'cpp' class in 
-.. `_static/css/kurt.css` 
-
-.. role:: cpp(code)
-   :language: cppImplementing a 2 3 Tree in C++14
-
-.. _2-3-trees:
-
 Implementing a 2 3 Tree in C++17
 ================================
 
@@ -20,16 +10,14 @@ The following sources discuss 2 3 Trees and their algorithms:
 
 * [Very, very good slides showing in detail Insert and Delete Use Cases](https://www.slideshare.net/sandpoonia/23-tree)
 * [Virgina Tech 2 3 Tree slides with Illustrations of all Use Cases](http://courses.cs.vt.edu/cs2606/Fall07/Notes/T05B.2-3Trees.pdf) 
-* [Simon Frazer Univ: 2 3 Tree Slides, Helpful](http://www.cs.sfu.ca/CourseCentral/225/ahadjkho/lecture-notes/balanced_trees.pdf) 
-   Insertion Algorithm slides 12-21. Deleteion Algorithm slides 21-36. 
+* [Simon Frazer Univ: 2 3 Tree Slides, Helpful](http://www.cs.sfu.ca/CourseCentral/225/ahadjkho/lecture-notes/balanced_trees.pdf) Insertion Algorithm slides 12-21. Deleteion Algorithm slides 21-36. 
 * [Java 2 3 tree insertion code and step-by-step illustration](https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/TwoThreeTree.html).
 * [Cal Poly Has a Good Illustration of All Deletion Use Cases, but pseudo code doesn't have a working example](https://www.cpp.edu/~ftang/courses/CS241/notes/b-tree.htm)
 
 Implementation Overview
 -----------------------
 
-Deletetion
-^^^^^^^^^^
+### Deletetion
 
 We always want to begin the deletion process from a leaf (it’s just easier this way). Hence, for deleting an internal node, we first exchange its value with the leaf inorder successor and then delete the key from the leaf.
 

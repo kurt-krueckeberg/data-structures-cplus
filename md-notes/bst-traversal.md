@@ -8,7 +8,6 @@ Non Stack-Based BST Iterators Implementation Discussions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * [OLD Dominion Univ: Traversing Trees with Iterator, a C++ STL-compatible iterator for BST. Q&A teaching discussion](https://www.cs.odu.edu/~zeil/cs361/latest/Public/treetraversal/index.html)
-
 * [Morris In-Order Traversal: Inorder Tree Traversal without Recursion or Stack](http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/)_
 
 Stack-Based Iterators Implementations Discussion

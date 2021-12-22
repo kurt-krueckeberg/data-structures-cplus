@@ -1,11 +1,6 @@
-.. include:: <isopub.txt>
-.. include:: <mmlalias.txt>
+# Binary Search Trees Implemented using std::unique_ptr
 
-Binary Search Trees Implemented using std::unique_ptr
-=====================================================
-
-Discussion Links
-----------------
+## Discussion Links
 
 * [Virgina Tech: BST](http://courses.cs.vt.edu/~cs3114/Fall17/barnette/notes/T01_BinarySearchTrees.pdf).
 * [Algorithms 4th Edition by Sedgewich & Wayne](https://algs4.cs.princeton.edu/32bst/) performance problems of Hibbard deletion. 
@@ -19,11 +14,9 @@ Discussion Links
 * [Introduction to Algorithms, 3rd Edition](http://ressources.unisciel.fr/algoprog/s00aaroot/aa00module1/res/%5BCormen-AL2011%5DIntroduction_To_Algorithms-A3.pdf)  
 * [Radford.edu](https://www.radford.edu/~nokie/classes/360/trees.bst.html)  
 
-Class Overview
---------------
+## Class Overview
 
-Nested Node class
-^^^^^^^^^^^^^^^^^
+### Nested Node class
 
 The tree nodes are of nested tree type ``unique_ptr<Node>``: 
 
@@ -57,14 +50,12 @@ The tree nodes are of nested tree type ``unique_ptr<Node>``:
 
 Each node contains a ``__value_type`` member __vt, ``struct __value_type`` is take from the **libc++** source code for ``std::map``. It is a convenience wrapper for convenient access its private pair<const Key, Value>. See the [`value-type.h`` header file in the include directory on `github](https://github.com/kurt-krueckeberg/bst).
 
-Destructor
-^^^^^^^^^^
+### Destructor
 
 While the default ``~bstree`` destructor will successfully frees all tree nodes. This results in one huge recursive call that invokes every Node's destructor. To avoid stack overflow therefore, `destroy_tree()` is used instead to do a post-order
 tree traversal invoking ``unique_ptr<Node>::reset()`` for each node.
 
-Recursive methods
-^^^^^^^^^^^^^^^^^
+### Recursive methods
 
 ``find(Key key)`` uses recursion, as do several other tree methods.
 
@@ -113,8 +104,7 @@ Recursive methods
     }
 ```
 
-Delete
-^^^^^^
+### Delete
 
 The overall strategy for deleting a node z from a binary search tree T has three basic cases, but,
 as we shall see, one of the cases is a bit tricky (a sub case of the third case).
@@ -210,7 +200,6 @@ cases:
     }
 ```
 
-Source Code
------------
+## Source Code
 
 The implementation is on [gihub](https://github.com/kurt-krueckeberg/bst).

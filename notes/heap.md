@@ -31,9 +31,9 @@ If instead of one, we begin the array at index zero, the calculations for the po
 
 |method|result|
 |------|------|
-|<pre>Parent(i) - (i - 1)/2</pre>|returns position of parent|
-|<pre>Left(i)  - 2 * i + 1</pre>|returns left child position|
-|<pre>Right(i) - 2 * i + 2</pre>|returns right child position|
+|<pre>Parent(i) = (i - 1)/2</pre>|returns position of parent|
+|<pre>Left(i)  = 2 * i + 1</pre>|returns left child position|
+|<pre>Right(i) = 2 * i + 2</pre>|returns right child position|
 
 .. todo:: Organize the remaining discussion after reading the bookmarked articles and understanding them and how they flow.
 
@@ -47,7 +47,6 @@ The abstract heap data type has three primary operatons:
 
 **peekTop()** retrieve the root of the tree. **add(int priority, const T& t)** adds a new node to the end of the heap, which then "trickles up" to its position in the ordering. **remove()**  deletes the root and reheapifyies array by making the last
 item the root, and then moving in downward until we again have a value heap.  
-
 
 ## Code of Array Implementation of Max Heap
 

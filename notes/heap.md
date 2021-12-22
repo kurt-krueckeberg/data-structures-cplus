@@ -11,29 +11,17 @@ Description
 A heap is a complete binary tree, i.e., a binary tree in which nodes are added from left to the right until the level is complete, and in which no node has a key that is less than the key of either of its children. In a complete binary tree
 the height of the left subtree is at most one more than the height of the right subtree. Unlike a binary search tree, in a heap the ordering of siblings is undetermined.
 
-.. figure:: ../images/heap-depiction.jpg
-   :alt: Logical Structure 
-   :align: center 
-   :scale: 100 %
-   :figclass: custom-figure
+![](../images/heap-depiction.jpg)
 
-   **Figure 1. Logical Structure of a binary heap.** From: https://www.cs.uaf.edu/2009/spring/cs311/slides/cs311_20090417_heap_pq_stl.pdf
+**Figure 1. Logical Structure of a binary heap.** From: https://www.cs.uaf.edu/2009/spring/cs311/slides/cs311_20090417_heap_pq_stl.pdf
 
 While a heap is a type of complete binary tree, it can be unique represented by storing its level order traversal in an array. In the array representation below, index zero is unoccupied, and the root is placed at index one. 
 
-.. .. figure:: ../images/heap-nodes-numbered.jpg
-..    :alt: Logical Structure 
-..    :align: center 
-..    :scale: 100 %
-..    :figclass: custom-figure
+![](../images/heap-nodes-numbered.jpg)
 
-..    **Figure 1. Numbering the Nodes of a Complete Binarya binary heap.** 
+**Figure 1. Numbering the Nodes of a Complete Binarya binary heap.** 
 
-.. figure:: ../images/heap-as-array1.gif
-   :alt: Logical Structure 
-   :align: center 
-   :scale: 100 %
-   :figclass: custom-figure
+![](../images/heap-as-array1.gif)
 
 In the array representation of a heap no space is required for pointers; instead, the parent and children of each node can be found by simple arithmetic on array indices:
 
@@ -45,11 +33,7 @@ In the array representation of a heap no space is required for pointers; instead
   Right(i) = 2i + 1                    returns right child position
 ===================================== ==============================
 
-.. figure:: ../images/heap-as-array1.gif
-   :alt: Logical Structure 
-   :align: center 
-   :scale: 100 %
-   :figclass: custom-figure
+![](../images/heap-as-array1.gif)
 
 If instead of one, we begin the array at index zero, the calculations for the position of a node's parent and its two children become:
 

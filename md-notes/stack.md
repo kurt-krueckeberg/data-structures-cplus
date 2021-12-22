@@ -204,7 +204,7 @@ Lastly, pop remaining operators from stack.  Several great examples are at: http
     
 	    return 0;
     }
-
+```
     
 Find directed path
 ------------------
@@ -468,6 +468,7 @@ A program to test the FlightMap.
     
 	    return 0;
     }
+```
 
 Binary Expression Tree
 ----------------------
@@ -539,6 +540,7 @@ Both classes derive from the abstract ExpressionElementNode and must implement i
     
     inline BinaryOperationNode::BinaryOperationNode(char op, ExpressionElementNode *l, ExpressionElementNode *r) :
 										 binary_op(op), left(l), right(r) {}
+```
 
 The recursive method ``BinaryOperationNode::value()`` is implemented in Nodes.cpp. It recursively calls value() until a leaf node of type
 NumericElementNodes returns a **double**.
@@ -575,6 +577,7 @@ NumericElementNodes returns a **double**.
        
        return result;
     }
+```
 
 The BinaryExpressionBuilder class is used to parse the infix expression string and to return the binary expression tree. 
 
@@ -615,6 +618,7 @@ The BinaryExpressionBuilder class is used to parse the infix expression string a
         
          BinaryOperationNode *parse(std::string& istr) throw(NotWellFormed);
     };
+```
     
 The workhorse routine is ``doBinary(char op)``, which consumes elements of the operand stack and replaces them with ``BinaryOperationNode``. It takes as input the top two elements of the operator stack to create a ``BinaryOperationNode``. The first
 element removed becomes the **right** subtree and the second element popped becomes the **left** subtree. The new BinaryOperationNode is then pushed onto the stack. 
@@ -626,6 +630,7 @@ This loop at the end of ``BinaryExpressionBuilder::parse(std::string& str)``
             doBinary( operatorStack.top() );
             operatorStack.pop();
     }
+```
 
 calls ``doBinary(op)`` until the operator stack is empty. doBinary(), as just mentioned, removes the top two operands from the operand stack, creates from them
 a ``BinaryExpressionNode``, which it pushes onto the operand stack. Eventually, when the loop ends, the only element in the stack will be the ``BinaryExpressionNode``
@@ -761,6 +766,7 @@ that represents the input infix string as a complete binary expression tree.
         
         operandStack.push(p);
     }
+```
 
 A command line program to to parse an infix expression, build a binary expression tree and output the result of the expression:
 
@@ -794,3 +800,4 @@ A command line program to to parse an infix expression, build a binary expressio
         cout << " result = " << root->value();    
         return 0;
     }
+```

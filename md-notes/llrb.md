@@ -1,36 +1,26 @@
-.. include:: <isopub.txt>
+# Red Black Tree in C++
 
-.. role:: kurt-code
-
-Red Black Tree in C++
-=====================
-
-Invariants maintained by red-black trees
-----------------------------------------
+## Invariants maintained by red-black trees
 
 1. Each node has a flag indicating that its red or black
 2. The root is always black
 3. There can be no two consecutive red nodes, i.e., if a node is red, then its children must be black
 4. Every path from the root to every null pointer, i.e. every unsuccessful search, passes through the same number of black nodes
 
-Implications of invariants
---------------------------
+## Implications of invariants
 
 The four invariants above guarantee that a red-black tree's height is always O(log(n)), in particular:
 
-     height  <= 2 * log\ :sub:`2`\ (n + 1).
+     height  <= 2 * log<sub>2</sub>2(n + 1).
 
-Proof:
-^^^^^^
+### Proof:
 
 First note that any binary tree in which every root-NULL path has >= k nodes includes a perfectly balanced search tree of height k - 1, which imples the size of the tree
-must be at least >= 2\ :sup:`k`\ - 1 and thus k <= log\ :sub:`2`\ (n + 1).
+must be at least >= 2<sup>k</sup>- 1 and thus k <= log<sub>2</sub>(n + 1).
 
-By fourth invariant, thus a red black tree every root-null path has <= log\ :sub:`2`\ (n + 1) black nodes. By the third invariant, every root-null path has
-<= 2 * log\ :sub:`2`\ (n + 1) total nodes.
+By fourth invariant, thus a red black tree every root-null path has <= log<sub>2</sub>(n + 1) black nodes. By the third invariant, every root-null path has `2 * log<sub>2</sub>(n + 1)` total nodes.
 
-Implementation of Left-Leaning Red Black Trees
-----------------------------------------------
+## Implementation of Left-Leaning Red Black Trees
 
 The code is based on Robert Sedgwich's talk [Left Leaning Red Black Trees](http://www.cs.princeton.edu/~rs/talks/LLRB/RedBlack.pdf) ,
 in which he discusses how both 2 3 trees and 2 3 4 trees can be represented as left leaning (or right leaning) red-black trees. The C++ code below is a port of his   
@@ -41,8 +31,7 @@ The relationship between 2 3 4 trees and red black trees, and how 2 3 4 trees ma
 
 The source code below can be downloaded from `<https://github.com/kkruecke/llredblack-cpp>`_.
 
-.. code-block:: cpp
-
+```cpp
     #ifndef REDBLACK_SDFSEWRSDPGSCP
     #define REDBLACK_SDFSEWRSDPGSCP
     
@@ -448,3 +437,4 @@ The source code below can be downloaded from `<https://github.com/kkruecke/llred
       traverse(f, root->right);
     }
     #endif
+```

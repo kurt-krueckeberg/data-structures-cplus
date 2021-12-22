@@ -33,8 +33,7 @@ Deletetion
 
 We always want to begin the deletion process from a leaf (it’s just easier this way). Hence, for deleting an internal node, we first exchange its value with the leaf inorder successor and then delete the key from the leaf.
 
-.. code-block:: cpp 
-
+```cpp 
     #ifndef tree23_h_18932492374
     #define tree23_h_18932492374
     
@@ -3173,3 +3172,4 @@ We always want to begin the deletion process from a leaf (it’s just easier thi
     
     }
     #endif
+```

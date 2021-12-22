@@ -18,8 +18,7 @@ Knuth used a gap based on .... Segdwich a gap based on ...
 The code below is based on the code at http://www.eecis.udel.edu/~trnka/CISC220-11S/lectures/shellsort.cc 
 Compare it with this java version http://algs4.cs.princeton.edu/21elementary/Shell.java.html whose description is at http://algs4.cs.princeton.edu/21elementary/.
 
-.. code-block:: cpp
-
+```cpp
     #include <ctime>
     #include <cstdlib>
     #include <string>
@@ -329,3 +328,4 @@ Compare it with this java version http://algs4.cs.princeton.edu/21elementary/She
 	    
 	    return 0;
 	    }
+```

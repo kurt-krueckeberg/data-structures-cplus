@@ -83,6 +83,7 @@ Both can be handled by splicing in the sole child node into the position of the 
     
     // ...else if p has no right child and it does have a left child (since the first if-test failed)...
     } 
+```
 
 Note: If p is a leaf node, it, too, is handled by the code above (and in that case `p->right` points to  `nullptr`). If p has a left child but no right child, we handle that next
 
@@ -607,4 +608,5 @@ The complete code
     }
     #endif
 ```
+
 The complete code is on [github.com](thttps://github.com/kurt-krueckeberg/shared_ptr_bstree).

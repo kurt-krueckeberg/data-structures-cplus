@@ -1,8 +1,8 @@
 In-order bidirectional iterator class
 +++++++++++++++++++++++++++++++++++++
 
-If the tree is not empty, the constructor sets ``current`` to the minimun node, the left-most node with the smallest key. The ``Node *successor()`` method called by ``iterator_inorder& operator++()`` is described below. An enum class implements a finite state machine of three possible 
-iterator positions, with ``at_beg`` and ``at_end`` denoting one-before the first tree value and one-after the last tree key, repectively, and the state ``between`` modeling the state between these two settings. 
+If the tree is not empty, the constructor sets  `current` to the minimun node, the left-most node with the smallest key. The  `Node *successor()` method called by  `iterator_inorder& operator++()` is described below. An enum class implements a finite state machine of three possible 
+iterator positions, with  `at_beg` and  `at_end` denoting one-before the first tree value and one-after the last tree key, repectively, and the state  `between` modeling the state between these two settings. 
 
 ```cpp
     class iterator_inorder {  
@@ -145,8 +145,9 @@ iterator positions, with ``at_beg`` and ``at_end`` denoting one-before the first
            return !operator==(__x, __y); 
         }
        };
+```
 
-These bstree uses these methods to return ``iterator_inorder`` objects:
+These bstree uses these methods to return  `iterator_inorder` objects:
 
 ```cpp
        iterator_inorder begin() noexcept
@@ -174,10 +175,11 @@ These bstree uses these methods to return ``iterator_inorder`` objects:
           return std::make_reverse_iterator(this->begin());
        }    
     };
+```
 
-Before ``successor()`` advances to the in-order successor, it checks if we are already at ``position::at_end``. If not, and if ``current`` has a right child, the right child is the successor, and we are done. If there is no right child, we ascend the parent ancestor chain until we
-encounter a parent that is not a right child (of its parent). This will be the first value in the tree greater than ``current->key()``, and thus the in-order successor. If we reach the root before finding such a parent, there is no in-order successor. This situation only occurs when
-``current`` points to the largest, the right-most node in the tree. In this case, we simply return ``current``.
+Before  `successor()` advances to the in-order successor, it checks if we are already at  `position::at_end`. If not, and if  `current` has a right child, the right child is the successor, and we are done. If there is no right child, we ascend the parent ancestor chain until we
+encounter a parent that is not a right child (of its parent). This will be the first value in the tree greater than  `current->key()`, and thus the in-order successor. If we reach the root before finding such a parent, there is no in-order successor. This situation only occurs when
+ `current` points to the largest, the right-most node in the tree. In this case, we simply return  `current`.
  
 ```cpp
     Node *successor()
@@ -210,10 +212,11 @@ encounter a parent that is not a right child (of its parent). This will be the f
         }
         return __y;
     }
+```
 
-``predecessor()`` is similar to ``successor()``, but it first checks if we are already at ``position::at_beg``. If not, and if ``current`` has a leftt child, the left child is the successor, and we are done. If there is no left child, we ascend the parent ancestor chain until we
-encounter a parent that is not a left child (of its parent). This will be the first value in the tree less than ``current->key()``, and thus the in-order predecessor. If we reach the root before finding such a parent, there is no in-order predecessor. This situation only occurs when
-``current`` points to the smallest, the left-most node in the tree. In this case, we simply return ``current``.
+`predecessor()` is similar to  `successor()`, but it first checks if we are already at  `position::at_beg`. If not, and if  `current` has a leftt child, the left child is the successor, and we are done. If there is no left child, we ascend the parent ancestor chain until we
+encounter a parent that is not a left child (of its parent). This will be the first value in the tree less than  `current->key()`, and thus the in-order predecessor. If we reach the root before finding such a parent, there is no in-order predecessor. This situation only occurs when
+ `current` points to the smallest, the left-most node in the tree. In this case, we simply return  `current`.
  
 ```cpp
     Node *predecessor()
@@ -249,3 +252,4 @@ encounter a parent that is not a left child (of its parent). This will be the fi
         }
         return __x;
     }
+```

@@ -7,22 +7,21 @@ are given that use a stack to maintain the iteration state.
 In-order
 ~~~~~~~~
 
-The stack-based version of the in-order algorithm mimics exactyly the in-order recursive algorithm. An explicit stack holds the nodes to be visited. ``__y``,  which initially is the root pointer, is the pointer to the next node to visit. A while loop continues until the stack is empty
-or ``__y`` becomes ``nullptr``. 
+The stack-based version of the in-order algorithm mimics exactyly the in-order recursive algorithm. An explicit stack holds the nodes to be visited. `!`,  which initially is the root pointer, is the pointer to the next node to visit. A while loop continues until the stack is empty
+or `!` becomes `!`. 
 
-If the tree is empty, we are done since ``__y`` will be nullptr). Inside the while-loop ``__y`` (initially the root) is pushed onto the stack, followed by all its left children. This mimics exactly the first step of the recursive algorithm. Next we pop the top item from the stack, which will
-be the root's left-most grandchild, into ``__y``, visit it, and then set ``__y`` to ``__y``\ 's right child. We then start the loop all over, pushing ``__y``, if it is null, and ``__y``\ 's left children onto the stack, popping the top of the stack into ``__y``, visiting ``__y``, and
-setting ``__y`` to its right child.
+If the tree is empty, we are done since `!` will be nullptr). Inside the while-loop `!` (initially the root) is pushed onto the stack, followed by all its left children. This mimics exactly the first step of the recursive algorithm. Next we pop the top item from the stack, which will
+be the root's left-most grandchild, into `!`, visit it, and then set `!` to `!`\ 's right child. We then start the loop all over, pushing `!`, if it is null, and `!`\ 's left children onto the stack, popping the top of the stack into `!`, visiting `!`, and
+setting `!` to its right child.
 
-Carefully thought shows this process mimics entirely the recursive algorithm. Placing the right child of ``__y`` onto the stack (along with its left children) mimics exactly the remainder of the behavior of the recursive algorithm, which, after recursing down its left children and then
+Carefully thought shows this process mimics entirely the recursive algorithm. Placing the right child of `!` onto the stack (along with its left children) mimics exactly the remainder of the behavior of the recursive algorithm, which, after recursing down its left children and then
 visiting the left-most node, recurses with the right child of the node just visisted.
 
-Why do we need to check that both ``__y`` is not null and the stack is empty?  Consider a tree in which each node (including the root) has one right child and no left child. Then the inner while loop (which pushed all the left children onto the stack) will only push one node (at a time), which will
-then be popped and visited, and then ``__y`` will be set to ``__y->right``.  The stack will be empty, but the next node to visit will not be null. On the other hand, after the line ``__y = __y->right.get()``, ``__y`` will become null whenever its parent is a leaf node that has just been
+Why do we need to check that both `!` is not null and the stack is empty?  Consider a tree in which each node (including the root) has one right child and no left child. Then the inner while loop (which pushed all the left children onto the stack) will only push one node (at a time), which will
+then be popped and visited, and then `!` will be set to `!`.  The stack will be empty, but the next node to visit will not be null. On the other hand, after the line `!`, `!` will become null whenever its parent is a leaf node that has just been
 visited. In this case, the stack will not be null, unless y's parent was the right most node in the tree, at which point the loop will exit. 
 
 ```cpp
-
     template<class Key, class Value>
     template<typename Functor>
     void bstree<Key, Value>::inOrderStackIterative(Functor f, const std::unique_ptr<Node>& root__) const noexcept
@@ -51,6 +50,7 @@ visited. In this case, the stack will not be null, unless y's parent was the rig
                                   // and repeat the entire process. 
        }
     }
+```
 
 Pre-order
 ~~~~~~~~~
@@ -99,6 +99,7 @@ This behavoir exactly mimics the pre-order recursive algorithm. The while loop t
             
         } 
     }
+```
     
 Post-order
 ~~~~~~~~~~
@@ -144,3 +145,4 @@ Show two stack version. Then one stack.
        } 
      }
     }
+```

@@ -120,6 +120,7 @@ The C++ implementation uses a functor to do the comparison operation. This allow
     
        // snip....
      };
+```
 
 add(int priority, const T& data)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -210,6 +211,7 @@ as the largest child is larger than the root or until the root has become a leaf
         }  
     }
   }
+```
 
 C++ Implementation
 ^^^^^^^^^^^^^^^^^^
@@ -588,3 +590,4 @@ C++ Implementation
       ostr << str << std::flush; 
     } 
     #endif	
+```

@@ -53,6 +53,7 @@ The tree nodes are of nested tree type ``unique_ptr<Node>``:
 
          std::unique_ptr<bstre<typename Key, typename Value>::Node> root;
     };
+```
 
 Each node contains a ``__value_type`` member __vt, ``struct __value_type`` is take from the **libc++** source code for ``std::map``. It is a convenience wrapper for convenient access its private pair<const Key, Value>. See the [`value-type.h`` header file in the include directory on `github](https://github.com/kurt-krueckeberg/bst).
 
@@ -110,6 +111,7 @@ Recursive methods
       
        return *this;
     }
+```
 
 Delete
 ^^^^^^
@@ -206,6 +208,7 @@ cases:
     
       return true; 
     }
+```
 
 Source Code
 -----------

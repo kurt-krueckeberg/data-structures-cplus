@@ -21,31 +21,31 @@
 The tree nodes are of nested tree type `unique_ptr<Node>`: 
 
 ```cpp
-    template<class Key, class Value> class bstree {
+template<class Key, class Value> class bstree {
 
-        // Container typedef's used by STL.
-        using key_type   = Key;
-        using mapped_type = Value;
+    // Container typedef's used by STL.
+    using key_type   = Key;
+    using mapped_type = Value;
+
+    using value_type = __value_type<Key, Value>::value_type;// = std::pair<const Key, Value>;  
+    using difference_type = long int;
+    using pointer         = value_type*; 
+    using reference       = value_type&; 
+
+  private:
+       /*
+        * The tree nodes are of type std::unique_ptr<Node>, and each node contains a __value_type member __vt, a convenience 
+          wrapper for access to a pair<const Key, Value>. 
+        */ 
+       class Node {
     
-        using value_type = __value_type<Key, Value>::value_type;// = std::pair<const Key, Value>;  
-        using difference_type = long int;
-        using pointer         = value_type*; 
-        using reference       = value_type&; 
-    
-      private:
-           /*
-            * The tree nodes are of type std::unique_ptr<Node>, and each node contains a __value_type member __vt, a convenience 
-              wrapper for access to a pair<const Key, Value>. 
-            */ 
-           class Node {
-        
-             friend class bstree<Key, Value>;    
-             //...snip
-            };
+         friend class bstree<Key, Value>;    
          //...snip
+        };
+     //...snip
 
-         std::unique_ptr<bstree<typename Key, typename Value>::Node>> root;
-    };
+     std::unique_ptr<bstree<typename Key, typename Value>::Node>> root;
+};
 ```
 
 Each node contains a `__value_type` member `__vt`. `struct __value_type` is take from the **libc++** source code for ``std::map``. It is a convenience wrapper for convenient access its private pair<const Key, Value>. See the **value-type.h** [header file  on github](https://github.com/kurt-krueckeberg/bst/blob/master/include/value-type.h)
@@ -60,48 +60,48 @@ tree traversal invoking `unique_ptr<Node>::reset()` for each node.
 `find(Key key)` uses recursion, as do several other tree methods.
 
 ```cpp
-    template<class Key, class Value> std::unique_ptr<typename bstree<Key, Value>::Node>& bstree<Key, Value>::find(Key key, std::unique_ptr<Node>& current) const noexcept
-    {
-      if (!current || current->key() == key)
-         return current;
-      if (key < current->key())
-         return find(key, current->left);
-      else return find(key, current->right);
-    }
+template<class Key, class Value> std::unique_ptr<typename bstree<Key, Value>::Node>& bstree<Key, Value>::find(Key key, std::unique_ptr<Node>& current) const noexcept
+{
+  if (!current || current->key() == key)
+     return current;
+  if (key < current->key())
+     return find(key, current->left);
+  else return find(key, current->right);
+}
 
-    template<class Key, class Value>
-    bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr}, right{nullptr}
-    {
-       if (lhs.parent == nullptr) // If lhs is the root, then set parent to nullptr.
-           parent = nullptr;
-    
-       // This will recursively invoke the constructor again, resulting in the entire tree rooted at
-       // lhs being copied.
-       if (lhs.left  != nullptr) 
-           connectLeft(*lhs.left); 
-       
-       if (lhs.right != nullptr) 
-           connectRight(*lhs.right); 
-    }
-    
-    template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key, Value>::Node::operator=(const typename bstree<Key, Value>::Node& lhs) noexcept
-    {
-       if (&lhs == this) return *this;
-    
-       __vt = lhs.__vt;
-    
-       if (lhs.parent == nullptr) // If we are copying a root pointer, then set parent.
-           parent = nullptr;
-    
-       // The make_unique<Node> calls below results in the entire tree rooted at lhs being copied.
-       if (lhs.left  != nullptr) 
-           connectLeft(*lhs.left); 
-       
-       if (lhs.right != nullptr)
-           connectRight(*lhs.right); 
-      
-       return *this;
-    }
+template<class Key, class Value>
+bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr}, right{nullptr}
+{
+   if (lhs.parent == nullptr) // If lhs is the root, then set parent to nullptr.
+       parent = nullptr;
+
+   // This will recursively invoke the constructor again, resulting in the entire tree rooted at
+   // lhs being copied.
+   if (lhs.left  != nullptr) 
+       connectLeft(*lhs.left); 
+   
+   if (lhs.right != nullptr) 
+       connectRight(*lhs.right); 
+}
+
+template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key, Value>::Node::operator=(const typename bstree<Key, Value>::Node& lhs) noexcept
+{
+   if (&lhs == this) return *this;
+
+   __vt = lhs.__vt;
+
+   if (lhs.parent == nullptr) // If we are copying a root pointer, then set parent.
+       parent = nullptr;
+
+   // The make_unique<Node> calls below results in the entire tree rooted at lhs being copied.
+   if (lhs.left  != nullptr) 
+       connectLeft(*lhs.left); 
+   
+   if (lhs.right != nullptr)
+       connectRight(*lhs.right); 
+  
+   return *this;
+}
 ```
 
 ### Delete
@@ -139,65 +139,65 @@ cases:
       y by its own right child, and then we replace z by y.
 
 ```cpp
-    template<class Key, class Value> bool bstree<Key, Value>::remove(Key key, std::unique_ptr<Node>& root_sub) noexcept // root of subtree
-    {
-      std::unique_ptr<Node>& pnode = find(key, root_sub);
-      
-      if (!pnode) return false;
-    
-      // There are three cases to consider:
-     
-      // Case 1: If both children are nullptr, we reset the unique_ptr<Node>. 
-      if (!pnode->left && !pnode->right) 
-          pnode.reset();    
+template<class Key, class Value> bool bstree<Key, Value>::remove(Key key, std::unique_ptr<Node>& root_sub) noexcept // root of subtree
+{
+  std::unique_ptr<Node>& pnode = find(key, root_sub);
+  
+  if (!pnode) return false;
 
-      /*
-       Case 2: The node is an internal node (and both its children are non-nullptr). We find pnode's successor y, which we know lies in pnode's right subtree and has no left child.
-       We want to splice y out of its current location and have it replace pnode in the tree. There are two cases to consider:
-      
-       1. The easier case is, if y is pnode's right child, then we replace pnode by y, leaving y’s right child alone. 
-      
-       2. Otherwise, y lies within pnode's right subtree but is not pnode's right child. In this case, we first replace y by its own right child, and then we replace pnode by y.
-      */
-      else if (pnode->left && pnode->right) {  //  If pnode is an internal node,
-    
-          if (!pnode->right->left) { // subcase 1: if  pnode->right->left is nullptr, the successor is pnode->right.
-    
-              pnode->right->parent = pnode->parent; // Before the move assignment below, we set pnode->right->parent to pnode's parent  
-     
-              pnode = std::move(pnode->right); // move-assign pdnoe with its right child, thus, deleting pnode.
-    
-          } else  { 
-    
-              // Because pnode has two children, we know its successor y lies within pnode's right subtree.
-    
-              Node *suc = min(pnode->right); // In this case, we swap pnode's underlying pointer with y's underlying pointer, and then we replace pnode by it's right child, which before the 
-                                             // swap was y's right child.
-    
-              std::unique_ptr<Node>& y = suc->parent->left.get() == suc ? suc->parent->left : suc->parent->right;
-    
-              /*
-              pnode.swap(y);    // Q: Doesn't y->parent need to be set?
-              pnode = std::move(pnode->right);
-               */
-    
-              pnode->__vt = std::move(y->__vt); // move-assign successor's values to pnode's values. No pointers change
-              y = std::move(y->right);          // Replace successor with its right child.
-          }
-          
-      } else { // Case 3: If the node has just one non-nullptr child, we splice it into pnode's position. We use pnode's parent to do this.   
-    
-          std::unique_ptr<Node>& onlyChild = pnode->left ? pnode->left : pnode->right;
-    
-          onlyChild->parent = pnode->parent; // Before the move assignment below we must correct set onlyChild its parent     
+  // There are three cases to consider:
+ 
+  // Case 1: If both children are nullptr, we reset the unique_ptr<Node>. 
+  if (!pnode->left && !pnode->right) 
+      pnode.reset();    
 
-          pnode = std::move(onlyChild);      // Replace pnode by move-assignmetn with its only non-nullptr child, thus, deleting pnode.
-      }  
-    
-      --size; 
-    
-      return true; 
-    }
+  /*
+   Case 2: The node is an internal node (and both its children are non-nullptr). We find pnode's successor y, which we know lies in pnode's right subtree and has no left child.
+   We want to splice y out of its current location and have it replace pnode in the tree. There are two cases to consider:
+  
+   1. The easier case is, if y is pnode's right child, then we replace pnode by y, leaving y’s right child alone. 
+  
+   2. Otherwise, y lies within pnode's right subtree but is not pnode's right child. In this case, we first replace y by its own right child, and then we replace pnode by y.
+  */
+  else if (pnode->left && pnode->right) {  //  If pnode is an internal node,
+
+      if (!pnode->right->left) { // subcase 1: if  pnode->right->left is nullptr, the successor is pnode->right.
+
+          pnode->right->parent = pnode->parent; // Before the move assignment below, we set pnode->right->parent to pnode's parent  
+ 
+          pnode = std::move(pnode->right); // move-assign pdnoe with its right child, thus, deleting pnode.
+
+      } else  { 
+
+          // Because pnode has two children, we know its successor y lies within pnode's right subtree.
+
+          Node *suc = min(pnode->right); // In this case, we swap pnode's underlying pointer with y's underlying pointer, and then we replace pnode by it's right child, which before the 
+                                         // swap was y's right child.
+
+          std::unique_ptr<Node>& y = suc->parent->left.get() == suc ? suc->parent->left : suc->parent->right;
+
+          /*
+          pnode.swap(y);    // Q: Doesn't y->parent need to be set?
+          pnode = std::move(pnode->right);
+           */
+
+          pnode->__vt = std::move(y->__vt); // move-assign successor's values to pnode's values. No pointers change
+          y = std::move(y->right);          // Replace successor with its right child.
+      }
+      
+  } else { // Case 3: If the node has just one non-nullptr child, we splice it into pnode's position. We use pnode's parent to do this.   
+
+      std::unique_ptr<Node>& onlyChild = pnode->left ? pnode->left : pnode->right;
+
+      onlyChild->parent = pnode->parent; // Before the move assignment below we must correct set onlyChild its parent     
+
+      pnode = std::move(onlyChild);      // Replace pnode by move-assignmetn with its only non-nullptr child, thus, deleting pnode.
+  }  
+
+  --size; 
+
+  return true; 
+}
 ```
 
 ## Source Code

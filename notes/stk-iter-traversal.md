@@ -22,34 +22,34 @@ then be popped and visited, and then `!` will be set to `!`.  The stack will be 
 visited. In this case, the stack will not be null, unless y's parent was the right most node in the tree, at which point the loop will exit. 
 
 ```cpp
-    template<class Key, class Value>
-    template<typename Functor>
-    void bstree<Key, Value>::inOrderStackIterative(Functor f, const std::unique_ptr<Node>& root__) const noexcept
-    {
-       if (!root__) return;
-       
-       std::stack<const node_type *> stack;
-    
-       const Node *__y = root__.get();
+template<class Key, class Value>
+template<typename Functor>
+void bstree<Key, Value>::inOrderStackIterative(Functor f, const std::unique_ptr<Node>& root__) const noexcept
+{
+   if (!root__) return;
+   
+   std::stack<const node_type *> stack;
 
-       while (__y || !stack.empty()) { 
+   const Node *__y = root__.get();
 
-          while (__y) { // If __y is non-null, push it and all its left-most descendents onto the stack.
-          
-             stack.push(__y);
-             __y = __y->left.get();
-          } 
-    
-          __y = stack.top();
-    
-          stack.pop();
-    
-          f(__y->__get_value());  
-          
-          __y = __y->right.get(); // Turn to the right child of the node just visited. Push it onto stack
-                                  // and repeat the entire process. 
-       }
-    }
+   while (__y || !stack.empty()) { 
+
+      while (__y) { // If __y is non-null, push it and all its left-most descendents onto the stack.
+      
+         stack.push(__y);
+         __y = __y->left.get();
+      } 
+
+      __y = stack.top();
+
+      stack.pop();
+
+      f(__y->__get_value());  
+      
+      __y = __y->right.get(); // Turn to the right child of the node just visited. Push it onto stack
+                              // and repeat the entire process. 
+   }
+}
 ```
 
 Pre-order
@@ -62,43 +62,42 @@ its left child are pushed onto the stack. In this manner all the nodes of the le
 This behavoir exactly mimics the pre-order recursive algorithm. The while loop terminates when the last node, the right most and largest node in the tree, has been popped and visited. 
 
 ```cpp
+template<class Key, class Value>
+template<typename Functor>
+void bstree<Key, Value>::preOrderStackIterative(Functor f, const std::unique_ptr<Node>& lhs) const noexcept
+{
 
-    template<class Key, class Value>
-    template<typename Functor>
-    void bstree<Key, Value>::preOrderStackIterative(Functor f, const std::unique_ptr<Node>& lhs) const noexcept
-    {
-    
-       if (!lhs) return;
-      
-        std::stack<const node_type *> stack; 
-        stack.push(root.get()); 
-    
-        //
-        //  Pop all items one by one, and do the following for every popped item:
-        // 
-        //   a) invoke functor f 
-        //   b) push just-visted node's right child 
-        //   c) push just-visited node's left child 
-        //
-        // Note: the right child is pushed first, so that the left can be popped first. 
-         
-        while (!stack.empty()) { 
-    
-            // Pop the top item from stack and print it 
-            const node_type *node = stack.top(); 
-            stack.pop(); 
-    
-            f(node->__get_value()); // returns std::pair<const Key&, Value&>
-    
-            // Push right then left non-null children 
-            if (node->right) 
-                stack.push(node->right.get()); 
-    
-            if (node->left)
-                stack.push(node->left.get()); 
-            
-        } 
-    }
+   if (!lhs) return;
+  
+    std::stack<const node_type *> stack; 
+    stack.push(root.get()); 
+
+    //
+    //  Pop all items one by one, and do the following for every popped item:
+    // 
+    //   a) invoke functor f 
+    //   b) push just-visted node's right child 
+    //   c) push just-visited node's left child 
+    //
+    // Note: the right child is pushed first, so that the left can be popped first. 
+     
+    while (!stack.empty()) { 
+
+        // Pop the top item from stack and print it 
+        const node_type *node = stack.top(); 
+        stack.pop(); 
+
+        f(node->__get_value()); // returns std::pair<const Key&, Value&>
+
+        // Push right then left non-null children 
+        if (node->right) 
+            stack.push(node->right.get()); 
+
+        if (node->left)
+            stack.push(node->left.get()); 
+        
+    } 
+}
 ```
     
 Post-order
@@ -107,42 +106,41 @@ Post-order
 Show two stack version. Then one stack.
 
 ```cpp
+template<class Key, class Value>
+template<typename Functor>
+void bstree<Key, Value>::postOrderStackIterative(Functor f, const std::unique_ptr<Node>& root_in) const
+{
+  const Node *pnode = root_in.get();
 
-    template<class Key, class Value>
-    template<typename Functor>
-    void bstree<Key, Value>::postOrderStackIterative(Functor f, const std::unique_ptr<Node>& root_in) const
-    {
-      const Node *pnode = root_in.get();
-    
-      std::stack<const Node *> stack; 
-    
-      const Node *prior_node{nullptr};
-    
-      while (!stack.empty() || pnode) {
-    
-        if (pnode) {
-    
-          stack.push(pnode);
-          pnode = pnode->left.get();
-    
-        } else {
-    
-          const Node *peek_node = stack.top();
-    
-          if (peek_node->right && prior_node != peek_node->right.get())
-    
-              pnode = peek_node->right.get();
-    
-          else {
-    
-            f(peek_node->__get_value());
-                
-            prior_node = stack.top();
-            stack.pop();
-     
-            pnode = nullptr;
-         }
-       } 
+  std::stack<const Node *> stack; 
+
+  const Node *prior_node{nullptr};
+
+  while (!stack.empty() || pnode) {
+
+    if (pnode) {
+
+      stack.push(pnode);
+      pnode = pnode->left.get();
+
+    } else {
+
+      const Node *peek_node = stack.top();
+
+      if (peek_node->right && prior_node != peek_node->right.get())
+
+          pnode = peek_node->right.get();
+
+      else {
+
+        f(peek_node->__get_value());
+            
+        prior_node = stack.top();
+        stack.pop();
+ 
+        pnode = nullptr;
      }
-    }
+   } 
+ }
+}
 ```

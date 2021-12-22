@@ -1,8 +1,6 @@
-Binary Search Algorithm
-=======================
+# Binary Search Algorithm
 
-Resources:
-----------
+## Resources:
 
 * Binary Search section (pdf of slices of) `Search and Sorting chapter <https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf>`_  Computer Science and Introductary Approach by Sedgewick and Wayne.
 * `Implementing binary search of an array <https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array>`_.
@@ -18,8 +16,7 @@ Note, if the implementation language uses zero-based array indexing, when the to
 
 Each time through the while-loop, the number of elements is reduced by half.
 
-.. code-block:: cpp
-
+```cpp
    #include <iostream>
    using namespace std;
    
@@ -28,7 +25,7 @@ Each time through the while-loop, the number of elements is reduced by half.
    // lo and hi define the range to search. hi is included in the search. 
    template<typename T> int bsearch(const T& key, T a[], int lo, int hi) 
    {
-     if (hi <= lo) {
+     if (hi < lo) {
    
          cout << "Search done. key = " << key << " not found. lo = " << lo << ", hi = " << hi << ".\n";
          return -1;
@@ -70,41 +67,40 @@ Each time through the while-loop, the number of elements is reduced by half.
    
       return 0;
    }
+```
 
 Output:
 
-.. raw:: html
-
-   <pre>
-   key = 0. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
-   key = 0. lo = 0. hi = 4. Search range = [ 0, 4]. Midpoint of range = 2
-   key = 0. lo = 0. hi = 2. Search range = [ 0, 2]. Midpoint of range = 1
-   key = 0. lo = 0. hi = 1. Search range = [ 0, 1]. Midpoint of range = 0
-   key = 0  found at index = 0
-   ---------------
-   key = 1. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
-   key = 1. lo = 0. hi = 4. Search range = [ 0, 4]. Midpoint of range = 2
-   key = 1. lo = 0. hi = 2. Search range = [ 0, 2]. Midpoint of range = 1
-   key = 1  found at index = 1
-   ---------------
-   key = 2. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
-   key = 2. lo = 0. hi = 4. Search range = [ 0, 4]. Midpoint of range = 2
-   key = 2  found at index = 2
-   ---------------
-   key = 20. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
-   key = 20. lo = 5. hi = 9. Search range = [ 5, 9]. Midpoint of range = 7
-   key = 20. lo = 8. hi = 9. Search range = [ 8, 9]. Midpoint of range = 8
-   Search done. key = 20 not found. lo = 9, hi = 9.
-   ---------------
-   key = 55. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
-   key = 55. lo = 5. hi = 9. Search range = [ 5, 9]. Midpoint of range = 7
-   key = 55. lo = 8. hi = 9. Search range = [ 8, 9]. Midpoint of range = 8
-   Search done. key = 55 not found. lo = 9, hi = 9.
-   ---------------
-   key = -20. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
-   key = -20. lo = 0. hi = 4. Search range = [ 0, 4]. Midpoint of range = 2
-   key = -20. lo = 0. hi = 2. Search range = [ 0, 2]. Midpoint of range = 1
-   key = -20. lo = 0. hi = 1. Search range = [ 0, 1]. Midpoint of range = 0
-   Search done. key = -20 not found. lo = 0, hi = 0.
-   ---------------
-   </pre>
+<pre>
+key = 0. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
+key = 0. lo = 0. hi = 4. Search range = [ 0, 4]. Midpoint of range = 2
+key = 0. lo = 0. hi = 2. Search range = [ 0, 2]. Midpoint of range = 1
+key = 0. lo = 0. hi = 1. Search range = [ 0, 1]. Midpoint of range = 0
+key = 0  found at index = 0
+---------------
+key = 1. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
+key = 1. lo = 0. hi = 4. Search range = [ 0, 4]. Midpoint of range = 2
+key = 1. lo = 0. hi = 2. Search range = [ 0, 2]. Midpoint of range = 1
+key = 1  found at index = 1
+---------------
+key = 2. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
+key = 2. lo = 0. hi = 4. Search range = [ 0, 4]. Midpoint of range = 2
+key = 2  found at index = 2
+---------------
+key = 20. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
+key = 20. lo = 5. hi = 9. Search range = [ 5, 9]. Midpoint of range = 7
+key = 20. lo = 8. hi = 9. Search range = [ 8, 9]. Midpoint of range = 8
+Search done. key = 20 not found. lo = 9, hi = 9.
+---------------
+key = 55. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
+key = 55. lo = 5. hi = 9. Search range = [ 5, 9]. Midpoint of range = 7
+key = 55. lo = 8. hi = 9. Search range = [ 8, 9]. Midpoint of range = 8
+Search done. key = 55 not found. lo = 9, hi = 9.
+---------------
+key = -20. lo = 0. hi = 9. Search range = [ 0, 9]. Midpoint of range = 4
+key = -20. lo = 0. hi = 4. Search range = [ 0, 4]. Midpoint of range = 2
+key = -20. lo = 0. hi = 2. Search range = [ 0, 2]. Midpoint of range = 1
+key = -20. lo = 0. hi = 1. Search range = [ 0, 1]. Midpoint of range = 0
+Search done. key = -20 not found. lo = 0, hi = 0.
+---------------
+</pre>

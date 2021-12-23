@@ -43,6 +43,55 @@ template<typename T> int bsearch(const T& key, T a[], int lo, int hi)
   else return bsearch(key, a, mid + 1, hi);  // else search upper half of range.
 }
 
+template<typename T> int bsearch(const T& key, T a[], int lo, int hi) 
+{
+  if (hi < lo) { // Terminate search. Key not found.
+
+      cout << "Search done. key = " << key << " not found. lo = " << lo << ", hi = " << hi << ".\n";
+      return -1;
+  }
+
+  int mid = lo + (hi - lo) / 2;  // Calculate mid-point of range
+
+  cout << "key = " << key << ". lo = " << lo << ". hi = " << hi << ". Search range = [ " << lo << ", " << hi << "].\
+          Midpoint of range = " << mid << endl;
+
+  if (a[mid] == key) {  // Is key at mid-point?
+
+      cout << "key = " << key << "  found at index = " << mid << endl;
+      return mid;
+
+  } else if (key < a[mid]) return bsearch(key, a, lo, mid - 1);  // else search lower half of range
+
+  else return bsearch(key, a, mid + 1, hi);  // else search upper half of range.
+}
+
+// Iterative version
+template<typename T> int bsearch_iterative(const T& key, T a[], int lo, int hi) 
+{
+  while (lo <= hi) { // Terminate search. Key not found.
+
+     int mid = lo + (hi - lo) / 2;  // Calculate mid-point of range
+   
+     cout << "key = " << key << ". lo = " << lo << ". hi = " << hi << ". Search range = [ " << lo << ", " << hi << "].\
+             Midpoint of range = " << mid << endl;
+   
+     if (a[mid] == key) {  // Is key at mid-point?
+   
+         cout << "key = " << key << "  found at index = " << mid << endl;
+         return mid;
+   
+     } else if (key < a[mid])
+            hi = mid - 1;  // search lower half of range
+   
+     else 
+         lo = mid + 1;  // else search upper half of range.
+  } 
+
+  cout << "Search done. key = " << key << " not found. lo = " << lo << ", hi = " << hi << ".\n";
+  return -1;
+}
+
 template<typename T> int bsearch(T key, T a[], int size)
 {
    return bsearch(key, a, 0, size - 1);

@@ -15,19 +15,17 @@ This should reveal the general pattern of total # of comparisons in general case
 
 Visulations:
 
-[one](https://www.cs.usfca.edu/~galles/visualization/BST.html)
+[Dr David Gallesone](https://www.cs.usfca.edu/~galles/visualization/Search.html)
 [two](https://yongdanielliang.github.io/animation/web/BinarySearchNew.html)
 
-old stuff
+### Time Complexity
 
+Binary search time analysis 
+The worst case occurs when an item is found in the final subarray is of size one, when when low equals hi equals the midpoint.
 
-The generic algorithm ``template<typename T> int bsearch(T key, T a[], int size)`` calls ``template<typename T> int bsearch(const T& key, T a[], int lo, int hi)`` to search an array of generic type T for a key, where ``lo`` is the
-first index and ``hi`` is the last index (inclusive). If zero-base array indexing is used in the implementation language, the size of the array is ``hi + 1``.
-    
-If the total number of elements in the array is odd, then the mid-point will be exactly in the middle of the array, with an even number of elements to left and to the right. While if the total
-number of elements is even, then the mid-point, will not be exactly in the middle. There will be one element to the right of the mid-point than there is  to the left of the mid-point.
+This is also number of steps required to discover that a key is not in the array. In this case likewise, the final sub array whose midpoint will be examined will be of size one, with low equal hi equla to mid-point.
 
-Note, if the implementation language uses zero-based array indexing, when the total number of elements is even, the last index will be an odd number (total\_elements - 1). 
+The question the is, how many loops does it take to reach a range of size one?
 
 Each time through the while-loop, the number of elements is reduced by half.
 

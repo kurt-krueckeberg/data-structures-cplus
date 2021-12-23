@@ -6,6 +6,21 @@
 * [Implementing binary search of an array](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array).
 * Cambridge University's Isacc Computer Science discussion of [Binary Search](https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all).
 
+
+TODO:
+Compare the # of loop/comparison between an array with eight elements and one with 9 or 10 or 11 ... up to 15 elements. Then examine an array with 16 elements. Compare the # of comp/loops with arrays of 17, 18, 19, 20,...up to 31 elements..
+This should reveal the general pattern of total # of comparisons in general case.
+
+[binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
+
+Visulations:
+
+[one](https://www.cs.usfca.edu/~galles/visualization/BST.html)
+[two](https://yongdanielliang.github.io/animation/web/BinarySearchNew.html)
+
+old stuff
+
+
 The generic algorithm ``template<typename T> int bsearch(T key, T a[], int size)`` calls ``template<typename T> int bsearch(const T& key, T a[], int lo, int hi)`` to search an array of generic type T for a key, where ``lo`` is the
 first index and ``hi`` is the last index (inclusive). If zero-base array indexing is used in the implementation language, the size of the array is ``hi + 1``.
     

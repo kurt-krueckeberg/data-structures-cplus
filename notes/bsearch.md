@@ -2,7 +2,7 @@
 
 ## Resources:
 
-* Binary Search section in [Search and Sorting chapter](https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf) slides of Computer Science an Introductary Approach by Sedgewick and Wayne.
+* Binary Search section of [Search and Sorting chapter](https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf) slides of Computer Science an Introductary Approach by Sedgewick and Wayne.
 * [Implementing binary search of an array](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array).
 * Cambridge University's Isacc Computer Science discussion of [Binary Search](https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all).
 

@@ -14,52 +14,52 @@
 ## Implementation
 
 ```cpp
-   #include <iostream>
-   using namespace std;
-   
-   // Recursive binary search version
-   // Input:
-   // lo and hi define the range to search (hi is included in the search range). 
-   template<typename T> int bsearch(const T& key, T a[], int lo, int hi) 
-   {
-     if (hi < lo) { // Terminate search. Key not found.
-   
-         cout << "Search done. key = " << key << " not found. lo = " << lo << ", hi = " << hi << ".\n";
-         return -1;
-     }
-   
-     int mid = lo + (hi - lo) / 2;  // Calculate mid-point of range
-   
-     cout << "key = " << key << ". lo = " << lo << ". hi = " << hi << ". Search range = [ " << lo << ", " << hi << "]. Midpoint of range = " << mid << endl;
-   
-     if (a[mid] == key) {  // Is key at mid-point?
-   
-         cout << "key = " << key << "  found at index = " << mid << endl;
-         return mid;
-   
-     } else if (key < a[mid]) return bsearch(key, a, lo, mid - 1);  // else search lower half of range
+#include <iostream>
+using namespace std;
 
-     else return bsearch(key, a, mid + 1, hi);  // else search upper half of range.
+// Recursive binary search version
+// Input:
+// lo and hi define the range to search (hi is included in the search range). 
+template<typename T> int bsearch(const T& key, T a[], int lo, int hi) 
+{
+  if (hi < lo) { // Terminate search. Key not found.
+
+      cout << "Search done. key = " << key << " not found. lo = " << lo << ", hi = " << hi << ".\n";
+      return -1;
+  }
+
+  int mid = lo + (hi - lo) / 2;  // Calculate mid-point of range
+
+  cout << "key = " << key << ". lo = " << lo << ". hi = " << hi << ". Search range = [ " << lo << ", " << hi << "]. Midpoint of range = " << mid << endl;
+
+  if (a[mid] == key) {  // Is key at mid-point?
+
+      cout << "key = " << key << "  found at index = " << mid << endl;
+      return mid;
+
+  } else if (key < a[mid]) return bsearch(key, a, lo, mid - 1);  // else search lower half of range
+
+  else return bsearch(key, a, mid + 1, hi);  // else search upper half of range.
+}
+
+template<typename T> int bsearch(T key, T a[], int size)
+{
+   return bsearch(key, a, 0, size - 1);
+}
+
+int main()
+{
+   int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+   auto keys = {0, 1, 2, 20, 55, -20};
+
+   for(auto& key : keys) {
+
+       bsearch(key, a, sizeof(a)/sizeof(a[0]));
+       cout << "---------------\n";
    }
-   
-   template<typename T> int bsearch(T key, T a[], int size)
-   {
-      return bsearch(key, a, 0, size - 1);
-   }
-   
-   int main()
-   {
-      int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-      auto keys = {0, 1, 2, 20, 55, -20};
-   
-      for(auto& key : keys) {
-   
-	  bsearch(key, a, sizeof(a)/sizeof(a[0]));
-	  cout << "---------------\n";
-      }
-   
-      return 0;
-   }
+
+   return 0;
+}
 ```
 
 Output:

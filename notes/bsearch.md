@@ -30,7 +30,8 @@ template<typename T> int bsearch(const T& key, T a[], int lo, int hi)
 
   int mid = lo + (hi - lo) / 2;  // Calculate mid-point of range
 
-  cout << "key = " << key << ". lo = " << lo << ". hi = " << hi << ". Search range = [ " << lo << ", " << hi << "]. Midpoint of range = " << mid << endl;
+  cout << "key = " << key << ". lo = " << lo << ". hi = " << hi << ". Search range = [ " << lo << ", " << hi << "].\
+          Midpoint of range = " << mid << endl;
 
   if (a[mid] == key) {  // Is key at mid-point?
 

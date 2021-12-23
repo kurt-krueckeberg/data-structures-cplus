@@ -151,10 +151,10 @@ Search done. key = -20 not found. lo = 0, hi = 0.
 
 ## Binary search perfomance analysis 
 
-The case of the most number of comparisons iterations occurs when a key is only found when the search subarray is narrowed to one element and lo = hi = mod-point. This is also the number of steps required to discover that a key is not in the array.
-In this case, the final sub array (whose midpoint will be examined) will also be of size one, with low = hi = mid-point, but in this case, the final comparsion will be not equal.
+The worse case (when the number of iterations is largest) occurs when a key is only found when the search subarray is narrowed to one element and thus lo = hi = mod-point. This is also the number of steps required to discover that a key is not in the array.
+In this case, the final sub array section (whose midpoint will be examined) will also be of size one, and likewise low = hi = mid-point; howver, in this case, the final comparsion will be not equal.
 
-The question then becomes, how many loops does it take to reach a range of size one? Each time through the while-loop, the number of elements is reduced by half.
+The question (of the total number of loops) in the worst case then becomes, how many iterations does it take to reach a range of size one? Each time through the while-loop, the number of elements is reduced by half.
 
 See also Kahn Academy's [binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
 

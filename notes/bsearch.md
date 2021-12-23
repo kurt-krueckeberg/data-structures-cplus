@@ -9,7 +9,7 @@
 ## Binary Search Visulations:
 
 * University of San Francisco's [Dr David Gallesone](https://www.cs.usfca.edu/~galles/visualization/Search.html) animation of binary search.
-* [Daniel Yong](https://yongdanielliang.github.io/animation/web/BinarySearchNew.html)
+* [Y. Daniel Liang's](https://yongdanielliang.github.io/animation/web/BinarySearchNew.html) animation.
 
 ## Implementation
 

@@ -56,6 +56,7 @@ int main()
    for(auto& key : keys) {
 
        bsearch(key, a, sizeof(a)/sizeof(a[0]));
+
        cout << "---------------\n";
    }
 

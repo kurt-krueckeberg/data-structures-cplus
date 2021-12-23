@@ -6,28 +6,20 @@
 * [Implementing binary search of an array](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array).
 * Cambridge University's Isacc Computer Science discussion of [Binary Search](https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all).
 
-
-TODO:
-Compare the # of loop/comparison between an array with eight elements and one with 9 or 10 or 11 ... up to 15 elements. Then examine an array with 16 elements. Compare the # of comp/loops with arrays of 17, 18, 19, 20,...up to 31 elements..
-This should reveal the general pattern of total # of comparisons in general case.
-
-[binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
-
 Visulations:
 
 [Dr David Gallesone](https://www.cs.usfca.edu/~galles/visualization/Search.html)
 [two](https://yongdanielliang.github.io/animation/web/BinarySearchNew.html)
 
-### Time Complexity
+### Binary search perfomance analysis 
 
-Binary search time analysis 
 The worst case occurs when an item is found in the final subarray is of size one, when when low equals hi equals the midpoint.
 
 This is also number of steps required to discover that a key is not in the array. In this case likewise, the final sub array whose midpoint will be examined will be of size one, with low equal hi equla to mid-point.
 
-The question the is, how many loops does it take to reach a range of size one?
+The question the is, how many loops does it take to reach a range of size one? Each time through the while-loop, the number of elements is reduced by half.
 
-Each time through the while-loop, the number of elements is reduced by half.
+See also Kahn Academy's [binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
 
 ```cpp
    #include <iostream>
@@ -35,7 +27,7 @@ Each time through the while-loop, the number of elements is reduced by half.
    
    // Recursive binary search version
    // Input:
-   // lo and hi define the range to search. hi is included in the search. 
+   // lo and hi define the range to search (hi is included in the search range). 
    template<typename T> int bsearch(const T& key, T a[], int lo, int hi) 
    {
      if (hi < lo) { // Terminate search. Key not found.
@@ -53,7 +45,7 @@ Each time through the while-loop, the number of elements is reduced by half.
          cout << "key = " << key << "  found at index = " << mid << endl;
          return mid;
    
-     } else if (key < a[mid]) return bsearch(key, a, lo, mid);  // else search lower half of range
+     } else if (key < a[mid]) return bsearch(key, a, lo, mid - 1);  // else search lower half of range
 
      else return bsearch(key, a, mid + 1, hi);  // else search upper half of range.
    }

@@ -2,24 +2,16 @@
 
 ## Resources:
 
-* Binary Search section (of pdf of slides of) [Search and Sorting chapter](https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf)  Computer Science and Introductary Approach by Sedgewick and Wayne.
+* Binary Search section (of slides of) [Search and Sorting chapter](https://introcs.cs.princeton.edu/java/lectures/keynote/CS.11.SearchSort.pdf) of Computer Science and Introductary Approach by Sedgewick and Wayne.
 * [Implementing binary search of an array](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array).
 * Cambridge University's Isacc Computer Science discussion of [Binary Search](https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all).
 
-Visulations:
+## Binary Search Visulations:
 
 [Dr David Gallesone](https://www.cs.usfca.edu/~galles/visualization/Search.html)
 [two](https://yongdanielliang.github.io/animation/web/BinarySearchNew.html)
 
-### Binary search perfomance analysis 
-
-The worst case occurs when an item is found in the final subarray is of size one, when when low equals hi equals the midpoint.
-
-This is also number of steps required to discover that a key is not in the array. In this case likewise, the final sub array whose midpoint will be examined will be of size one, with low equal hi equla to mid-point.
-
-The question the is, how many loops does it take to reach a range of size one? Each time through the while-loop, the number of elements is reduced by half.
-
-See also Kahn Academy's [binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
+## Implementation
 
 ```cpp
    #include <iostream>
@@ -106,6 +98,14 @@ Search done. key = -20 not found. lo = 0, hi = 0.
 ---------------
 </pre>
 
+## Binary search perfomance analysis 
+
+The case of the most number of comparisons iterations occurs when a key is only found when the search subarray is narrowed to one element and lo = hi = mod-point. This is also the number of steps required to discover that a key is not in the array.
+In this case, the final sub array (whose midpoint will be examined) will also be of size one, with low = hi = mid-point, but in this case, the final comparsion will be not equal.
+
+The question then becomes, how many loops does it take to reach a range of size one? Each time through the while-loop, the number of elements is reduced by half.
+
+See also Kahn Academy's [binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
 
 ## Total Binary Search Steps
 

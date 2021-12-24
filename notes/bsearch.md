@@ -66,6 +66,7 @@ template<typename T> int bsearch_iterative(T a[], const T& key, int lo, int hi)
   cout << "Search terminated. " << key << " not found. Search range = [" << lo << ", " << hi << "]. " << endl;
   return -1;
 }
+
 /*
 template<typename T> int bsearch(T a[], T key, int size)
 {
@@ -99,6 +100,8 @@ int main()
    auto keys = {0, 1, 2, 7, 20, 55, -20};
    
    auto size = sizeof(a)/sizeof(a[0]);
+
+   cout << "Array size = " << size << endl;
    
    for(auto&& key : keys) {
    
@@ -161,7 +164,7 @@ Comparing run time with compare_runtime(10);
 ## TODO
 
 TODO: Why is the output from `compare_runtime()` the same as when searching for 7, 20 or 55, but different than when 
-searching for -20?
+searching for -20? Why does it the search output when the key = 0?
 
 ## Binary search perfomance analysis 
 

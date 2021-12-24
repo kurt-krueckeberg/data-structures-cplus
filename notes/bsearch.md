@@ -140,11 +140,11 @@ for (int size = 9; size > 0; size /= 2) {
 }
 ```
 
-which is <pre>log(size)</pre> --  +1?
+which is <pre>floor( log(size) )</pre> --  +1?
 
 See also Kahn Academy's [binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
 
 ## Total Binary Search Steps
 
-Binary search uses at most **<pre style='font-family: monospace'>ln<sub>2</sub>(Total # of Array Elements) + 1</pre>**.
+Binary search uses at most **<pre style='font-family: monospace'>floor( ln<sub>2</sub>(Total # of Array Elements) ) + 1</pre>**.
 

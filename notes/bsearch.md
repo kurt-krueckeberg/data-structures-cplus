@@ -151,10 +151,11 @@ Search done. key = -20 not found. lo = 0, hi = 0.
 
 ## Binary search perfomance analysis 
 
-The worse case for when a key is found, occurs when the search range has been narrowed to element and lo = hi = mid-point. The exact same number of steps are required
-to discover that a key is not in the array. In this case, the final sub array section (whose midpoint will be examined) will also be of size one, and likewise low = hi = mid-point; howver, in this case, the final comparsion will be not equal.
+The worse case for when a key is found, occurs when the search range has been narrowed to a single element and lo = hi = mid-point. This is equvalent to the number of steps required
+to determine that a key is not in the array. In this case, too, the final sub array (whose midpoint will be examined) will also be of size one, and its "mid-point" will therefore be the element itself.
+Of cousre, the final comparsion will be not equal.
 
-The question (of the total number of loops) in the worst case then becomes, how many iterations does it take to reach a range of size one? Each time through the while-loop, the number of elements is reduced by half.
+The question of the maximum number of loops in the worst case becomes how many iterations does it take to reach a range of size one? Each time through the while-loop, the number of elements is reduced by half.
 
 See also Kahn Academy's [binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
 

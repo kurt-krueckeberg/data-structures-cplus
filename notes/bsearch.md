@@ -223,8 +223,8 @@ Comparing run time with compare_runtime(10);
 
 ## TODO
 
-TODO: Why is the output from `compare_runtime()` the same as when searching for 7, 20 or 55, but different than when 
-searching for -20? Why does it the search output when the key = 0?
+TODO: Why is the output from `compare_runtime()` the same as when searching for 7, 20 or 55, but different than when searching for -20? Why does it the search output when the key = 0?
+Is the output different with array B (versus array a)?
 
 ## Binary search perfomance analysis 
 

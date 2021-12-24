@@ -133,6 +133,14 @@ Of cousre, the final comparsion will be not equal.
 
 The question of the maximum number of loops in the worst case becomes how many iterations does it take to reach a range of size one? Each time through the while-loop, the number of elements is reduced by half.
 
+TODO: Compare the output with similar code that does:
+
+```cpp
+for (int size = 9; size > 0; size /= 2) {
+  cout << "size = " << size << endl;
+}
+```
+
 See also Kahn Academy's [binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
 
 ## Total Binary Search Steps

@@ -226,6 +226,9 @@ Comparing run time with compare_runtime(10);
 TODO: Why is the output from `compare_runtime()` the same as when searching for 7, 20 or 55, but different than when searching for -20? Why does it the search output when the key = 0?
 Is the output different with array B (versus array a)?
 
+During an actual search, the half chosen varies after the key is compared to the mid-point (and they are found to be not equal). Sometimes the lower half is chosen (after the comparision), sometimes the upper,
+so that the halves chosen might in general could be written (using u for upper and l for lower) as: u, l, l, u, l, u, l, l ,l u.
+
 ## Binary search perfomance analysis 
 
 The worse case when a key is found, occurs when the search range has been narrowed to a single element and lo = hi = mid-point. The number of loop iterations (and comparisons of the key to the mid-point) 

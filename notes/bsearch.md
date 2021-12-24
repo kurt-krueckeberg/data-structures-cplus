@@ -30,7 +30,7 @@ template<typename T> int bsearch(T a[], const T& key, int lo, int hi)
 
   int mid = lo + (hi - lo) / 2;  // Calculate mid-point of range
 
-  cout << "key = " << key << ". Search range = [" << lo << ", " << hi << "]. Mid-point = " << mid << endl;
+  cout << "key = " << key << ". Search range = [" << lo << ", " << hi << "]. Size = " << (hi -lo) + 1 << ". Mid-point = " << mid << endl;
 
   if (a[mid] == key) {  // Is key at mid-point?
 
@@ -49,8 +49,7 @@ template<typename T> int bsearch_iterative(T a[], const T& key, int lo, int hi)
 
      int mid = lo + (hi - lo) / 2;  // Calculate mid-point of range
 
-     cout << "key = " << key << ". Search range = [" << lo << ", " << hi << "]. Mid-point = " << mid << endl;
-     return -1;
+     cout << "key = " << key << ". Search range = [" << lo << ", " << hi << "]. Size = " << (hi -lo) + 1 << ". Mid-point = " << mid << endl;
 
      if (a[mid] == key) {  // Is key at mid-point?
 
@@ -67,63 +66,96 @@ template<typename T> int bsearch_iterative(T a[], const T& key, int lo, int hi)
   cout << "Search terminated. " << key << " not found. Search range = [" << lo << ", " << hi << "]. " << endl;
   return -1;
 }
-
+/*
 template<typename T> int bsearch(T a[], T key, int size)
 {
    return bsearch(a, key, 0, size - 1);
 }
+*/
+
+template<typename T> int bsearch(T a[], T key, int size)
+{
+   return bsearch_iterative(a, key, 0, size - 1);
+}
+void compare_runtime(int size);
+
+// TODO: hi is not set correctly. I think it needs to be: hi - size - 2?? 
+void compare_runtime(int size)
+{
+  auto lo = 0;
+
+  for (;size > 0; size /= 2) {
+        
+       auto hi = size - 1;
+       auto mid = lo + (hi - lo) / 2;
+
+       cout << "[lo, hi] = [" << lo << ", " << hi << "]. Size = " << size << ". mid-point = " << mid <<  endl;
+  }
+}
 
 int main()
 {
-	int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-	auto keys = {0, 1, 2, 20, 55, -20};
-
-	for(auto&& key : keys) {
-
-		bsearch(a, key, sizeof(a)/sizeof(a[0]));
-		cout << "---------------\n";
-	}
-
-	return 0;
+   int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+   auto keys = {0, 1, 2, 20, 55, -20};
+   
+   auto size = sizeof(a)/sizeof(a[0]);
+   
+   for(auto&& key : keys) {
+   
+	   bsearch(a, key, size);
+	   cout << "---------------\n";
+   }
+   
+   cout << "Comparing run time with compare_runtime(" << size << ");" << endl;
+   
+   compare_runtime(size);
+   return 0;
 }
 ```
 
-Output:
-
 <pre>
-Debug$ ./bsearch 
-key = 0. Search range = [0, 9]. Mid-point = 4
-key = 0. Search range = [0, 3]. Mid-point = 1
-key = 0. Search range = [0, 0]. Mid-point = 0
+key = 0. Search range = [0, 9]. Size = 10. Mid-point = 4
+key = 0. Search range = [0, 3]. Size = 4. Mid-point = 1
+key = 0. Search range = [0, 0]. Size = 1. Mid-point = 0
 key = 0  found at index = 0
 ---------------
-key = 1. Search range = [0, 9]. Mid-point = 4
-key = 1. Search range = [0, 3]. Mid-point = 1
+key = 1. Search range = [0, 9]. Size = 10. Mid-point = 4
+key = 1. Search range = [0, 3]. Size = 4. Mid-point = 1
 key = 1  found at index = 1
 ---------------
-key = 2. Search range = [0, 9]. Mid-point = 4
-key = 2. Search range = [0, 3]. Mid-point = 1
-key = 2. Search range = [2, 3]. Mid-point = 2
+key = 2. Search range = [0, 9]. Size = 10. Mid-point = 4
+key = 2. Search range = [0, 3]. Size = 4. Mid-point = 1
+key = 2. Search range = [2, 3]. Size = 2. Mid-point = 2
 key = 2  found at index = 2
 ---------------
-key = 20. Search range = [0, 9]. Mid-point = 4
-key = 20. Search range = [5, 9]. Mid-point = 7
-key = 20. Search range = [8, 9]. Mid-point = 8
-key = 20. Search range = [9, 9]. Mid-point = 9
+key = 20. Search range = [0, 9]. Size = 10. Mid-point = 4
+key = 20. Search range = [5, 9]. Size = 5. Mid-point = 7
+key = 20. Search range = [8, 9]. Size = 2. Mid-point = 8
+key = 20. Search range = [9, 9]. Size = 1. Mid-point = 9
 Search terminated. 20 not found. Search range = [10, 9]. 
 ---------------
-key = 55. Search range = [0, 9]. Mid-point = 4
-key = 55. Search range = [5, 9]. Mid-point = 7
-key = 55. Search range = [8, 9]. Mid-point = 8
-key = 55. Search range = [9, 9]. Mid-point = 9
+key = 55. Search range = [0, 9]. Size = 10. Mid-point = 4
+key = 55. Search range = [5, 9]. Size = 5. Mid-point = 7
+key = 55. Search range = [8, 9]. Size = 2. Mid-point = 8
+key = 55. Search range = [9, 9]. Size = 1. Mid-point = 9
 Search terminated. 55 not found. Search range = [10, 9]. 
 ---------------
-key = -20. Search range = [0, 9]. Mid-point = 4
-key = -20. Search range = [0, 3]. Mid-point = 1
-key = -20. Search range = [0, 0]. Mid-point = 0
+key = -20. Search range = [0, 9]. Size = 10. Mid-point = 4
+key = -20. Search range = [0, 3]. Size = 4. Mid-point = 1
+key = -20. Search range = [0, 0]. Size = 1. Mid-point = 0
 Search terminated. -20 not found. Search range = [0, -1]. 
 ---------------
+Comparing run time with compare_runtime(10);
+[lo, hi] = [0, 9]. Size = 10. mid-point = 4
+[lo, hi] = [0, 4]. Size = 5. mid-point = 2
+[lo, hi] = [0, 1]. Size = 2. mid-point = 0
+[lo, hi] = [0, 0]. Size = 1. mid-point = 0
 </pre>
+
+## TODO
+
+TODO: Why is the output from `compare_runtime()` the same as when searching for 20 or 55, but different than when 
+searching for -20?
 
 ## Binary search perfomance analysis 
 

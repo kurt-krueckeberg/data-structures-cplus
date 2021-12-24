@@ -238,6 +238,14 @@ The question of the maximum number of loops in the worst case becomes how many i
 
 TODO: Add to the code above a print out the size of the range, and show how setting lo and hi is equivalent--in terms of the number of loop iterators--to reducing the size by half each time. It is equivalent to:
 
+LINKS on perfomrance of binary search:
+
+* https://courses.cs.washington.edu/courses/cse143/20sp/lessons/09/
+* https://stackoverflow.com/questions/8185079/how-to-calculate-binary-search-complexity
+
+
+
+
 ```cpp
 for (int size = 9; size > 0; size /= 2) {
   cout << "size = " << size << endl;

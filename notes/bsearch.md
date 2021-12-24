@@ -132,13 +132,15 @@ is the same as when the key is not found. The only difference is the final compa
 
 The question of the maximum number of loops in the worst case becomes how many iterations does it take to reach a range of size one? Each time through the while-loop, the number of elements is reduced by half.
 
-TODO: Compare the output with similar code that does:
+TODO: Add to the code above a print out the size of the range, and show how setting lo and hi is equivalent--in terms of the number of loop iterators--to reducing the size by half each time. It is equivalent to:
 
 ```cpp
 for (int size = 9; size > 0; size /= 2) {
   cout << "size = " << size << endl;
 }
 ```
+
+which is <pre>log(size)</pre> --  +1?
 
 See also Kahn Academy's [binary search time complexity](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/running-time-of-binary-search)
 

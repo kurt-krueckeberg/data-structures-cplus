@@ -95,8 +95,8 @@ void compare_runtime(int size)
 
 int main()
 {
-   int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-   auto keys = {0, 1, 2, 20, 55, -20};
+   int a[] = {0, 1, 2, 3, 4, 5, 6, 17, 18, 19};
+   auto keys = {0, 1, 2, 7, 20, 55, -20};
    
    auto size = sizeof(a)/sizeof(a[0]);
    
@@ -128,6 +128,12 @@ key = 2. Search range = [0, 3]. Size = 4. Mid-point = 1
 key = 2. Search range = [2, 3]. Size = 2. Mid-point = 2
 key = 2  found at index = 2
 ---------------
+key = 7. Search range = [0, 9]. Size = 10. Mid-point = 4
+key = 7. Search range = [5, 9]. Size = 5. Mid-point = 7
+key = 7. Search range = [5, 6]. Size = 2. Mid-point = 5
+key = 7. Search range = [6, 6]. Size = 1. Mid-point = 6
+Search terminated. 7 not found. Search range = [7, 6]. 
+---------------
 key = 20. Search range = [0, 9]. Size = 10. Mid-point = 4
 key = 20. Search range = [5, 9]. Size = 5. Mid-point = 7
 key = 20. Search range = [8, 9]. Size = 2. Mid-point = 8
@@ -154,7 +160,7 @@ Comparing run time with compare_runtime(10);
 
 ## TODO
 
-TODO: Why is the output from `compare_runtime()` the same as when searching for 20 or 55, but different than when 
+TODO: Why is the output from `compare_runtime()` the same as when searching for 7, 20 or 55, but different than when 
 searching for -20?
 
 ## Binary search perfomance analysis 

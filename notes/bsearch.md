@@ -19,16 +19,24 @@
 #include <array>
 using namespace std;
 
-// Recursive binary search version
-// Input:
-// const reference to an array.
-// lo and hi define the range to search (hi is included in the search range).
+/*
+ Recursive and iterative binary search versions
+ */
+
 template<typename T, size_t N> int bsearch(const T (&a)[N], const T& key, int lo, int hi);
 template<typename T, size_t N> int bsearch_iterative(const T (&a)[N], const T& key, int lo, int hi);
 template<typename T, size_t N> int bsearch(const T (&a)[N], T key);
 void compare_runtime(int size);
 
-template<typename T, size_t N> int bsearch(const T (&a) [], const T& key, int lo, int hi)
+/*
+ Recursive version of binary search
+ Input: 
+ const reference to an array of size N. 
+ lo is index of first array element
+ hi is index of last array element
+ */
+
+template<typename T, size_t N> int bsearch(const T (&a) [N], const T& key, int lo, int hi)
 {
   if (hi < lo) { // Terminate search when hi is to the left of lo.
 
@@ -50,8 +58,14 @@ template<typename T, size_t N> int bsearch(const T (&a) [], const T& key, int lo
   else return bsearch(a, key, mid + 1, hi);  // else search upper half of range.
 }
 
-// Iterative version
-// Pass const reference to an array of size N.
+/*
+ Iterative version of binary search
+ Input: 
+ const reference to an array of size N. 
+ lo is index of first array element
+ hi is index of last array element
+ */
+
 template<typename T, size_t N> int bsearch_iterative(const T (&a)[N], const T& key, int lo, int hi)
 {
   while (lo <= hi) { // Terminate search when hi is to the left of low.
@@ -98,19 +112,19 @@ void compare_runtime(int size)
   }
 }
 
-template<typename T, size_t SZ, size_t M> void test(const T (&arr)[SZ], const T (&keys)[M])
+template<typename T, size_t N, size_t M> void test(const T (&array)[N], const T (&keys)[M])
 {
-   cout << "Array size = " << SZ << endl;
+   cout << "Array size = " << N << endl;
 
    for(auto&& key : keys) {
    
-	bsearch(arr, key);
+	bsearch(array, key);
 	cout << "---------------\n";
    }
    
-   cout << "Comparing run time with compare_runtime(" << SZ << ");" << endl;
+   cout << "Comparing run time with compare_runtime(" << N << ");" << endl;
    
-   compare_runtime(SZ);
+   compare_runtime(N);
    cout << "---------------\n";
 }
 
@@ -120,7 +134,6 @@ int main()
    int a[] = {0, 1, 2, 3, 4, 5, 6, 17, 18, 19};
    int keys[] = {0, 1, 2, 7, 20, 55, -20};
    
-   //test(a, sizeof(a)/sizeof(a[0]), keys); 
    test(a, keys); 
 
    int b[] = {0, 1, 2, 3, 4, 5, 6, 17, 18, 19};
@@ -130,6 +143,8 @@ int main()
    return 0;
 }
 ```
+
+TODO: Double checkout output is correct.
 
 <pre>
 Array size = 10
@@ -224,9 +239,13 @@ Comparing run time with compare_runtime(10);
 
 ## TODO
 
-TODO: Why is the output from `compare_runtime()` the same as when searching for 7, 20 or 55, but different than when searching for -20? Why does it the search output when the key = 0?
+TODO:
+
+View Manual simulation shown above. In it the mid-point is consider part of the upper half of the array.
+ Why is the output from `compare_runtime()` the same as when searching for 7, 20 or 55, but different than when searching for -20? Why does it the search output when the key = 0?
 Is the output different with array B (versus array a)?
 
+Q: Which half is the mid-point part of?
 During an actual search, the half chosen varies after the key is compared to the mid-point (and they are found to be not equal). Sometimes the lower half is chosen (after the comparision), sometimes the upper,
 so that the halves chosen might in general could be written (using u for upper and l for lower) as: u, l, l, u, l, u, l, l ,l u.
 

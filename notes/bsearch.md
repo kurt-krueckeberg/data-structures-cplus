@@ -9,7 +9,6 @@
 ## Binary Search Visulations:
 
 * Dr David Gallesone's binary search [animation](https://www.cs.usfca.edu/~galles/visualization/Search.html) animation of binary search. Allows you to set the speed, go back or forward step by step.
-* Good [manual visual illustration](https://www.youtube.com/watch?v=pjwhAH9t1XU). He explains the mid-point is considered part of the upper half of the array.
 * Good [written illustration](https://www.tutorialspoint.com/data_structures_algorithms/binary_search_algorithm.htm) with a good explanation.
 
 ## Implementation

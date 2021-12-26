@@ -8,8 +8,8 @@
 
 ## Binary Search Visulations:
 
-* University of San Francisco's [Dr David Gallesone](https://www.cs.usfca.edu/~galles/visualization/Search.html) animation of binary search.
-* [Y. Daniel Liang's](https://yongdanielliang.github.io/animation/web/BinarySearchNew.html) animation.
+* University of San Francisco's [Dr David Gallesone](https://www.cs.usfca.edu/~galles/visualization/Search.html) animation of binary search. Allows you to set the speed, go back or forward step by step.
+* Good manual visual [simulation](https://www.youtube.com/watch?v=pjwhAH9t1XU). He explains the mid-point is considered part of the upper half of the array.
 
 ## Implementation
 

@@ -6,10 +6,14 @@
 * Khan Academy's [Implementing binary search of an array](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/implementing-binary-search-of-an-array).
 * [Binary Search](https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all) page of Cambridge University's Isacc Computer Science website.
 
+
+## Time Complexity
+
+Binary Search [Complexity](https://courses.cs.washington.edu/courses/cse143/20sp/lessons/09/)
+
 ## Binary Search Visulations:
 
 * Dr David Gallesone's binary search [animation](https://www.cs.usfca.edu/~galles/visualization/Search.html) animation of binary search. Allows you to set the speed, go back or forward step by step.
-* Good [written illustration](https://www.tutorialspoint.com/data_structures_algorithms/binary_search_algorithm.htm) with a good explanation.
 
 ## Implementation
 

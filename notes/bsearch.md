@@ -1,17 +1,15 @@
 # Binary Search Algorithm
 
+## Binary Search Visulations:
+
+* Dr David Gallesone's binary search [animation](https://www.cs.usfca.edu/~galles/visualization/Search.html) animation of binary search. Allows you to set the speed, go back or forward step by step.
+
 ##  Understanding binary search
 
 * Khan Academy's [Implementing binary search of an array](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/binary-search)
 * [Binary Search](https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all) page of Cambridge University's Isacc Computer Science website.
-
-## Time Complexity
-
-Binary Search [Complexity](https://courses.cs.washington.edu/courses/cse143/20sp/lessons/09/)
-
-## Binary Search Visulations:
-
-* Dr David Gallesone's binary search [animation](https://www.cs.usfca.edu/~galles/visualization/Search.html) animation of binary search. Allows you to set the speed, go back or forward step by step.
+* Binary Search [Complexity](https://courses.cs.washington.edu/courses/cse143/20sp/lessons/09/)
+* Qustion on [Stackoverflow](https://stackoverflow.com/questions/8185079/how-to-calculate-binary-search-complexity)
 
 ## Implementation
 
@@ -260,12 +258,6 @@ The question of the maximum number of loops in the worst case becomes how many i
 TODO: Add to the code above a print out the size of the range, and show how setting lo and hi is equivalent--in terms of the number of loop iterators--to reducing the size by half each time. It is equivalent to:
 
 LINKS on perfomrance of binary search:
-
-* https://courses.cs.washington.edu/courses/cse143/20sp/lessons/09/
-* https://stackoverflow.com/questions/8185079/how-to-calculate-binary-search-complexity
-
-
-
 
 ```cpp
 for (int size = 9; size > 0; size /= 2) {

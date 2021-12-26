@@ -29,7 +29,7 @@ void compare_runtime(int size);
 
 template<typename T, size_t N> int bsearch(const T (&a) [], const T& key, int lo, int hi)
 {
-  if (hi < lo) { // Terminate search. Key not found.
+  if (hi < lo) { // Terminate search when hi is to the left of lo.
 
       cout << "Search terminated. " << key << " not found. Search range = [" << lo << ", " << hi << "]. " << endl;
       return -1;
@@ -53,7 +53,7 @@ template<typename T, size_t N> int bsearch(const T (&a) [], const T& key, int lo
 // Pass const reference to an array of size N.
 template<typename T, size_t N> int bsearch_iterative(const T (&a)[N], const T& key, int lo, int hi)
 {
-  while (lo <= hi) { // Terminate search. Key not found.
+  while (lo <= hi) { // Terminate search when hi is to the left of low.
 
      int mid = lo + (hi - lo) / 2;  // Calculate mid-point of range
 
@@ -83,7 +83,7 @@ template<typename T, size_t N> int bsearch(const T (&a)[N], T key)
    return bsearch_iterative(a, key, lo, hi);
 }
 
-// TODO: IS hi set correctly? I think it needs to be: hi - size - 2?? 
+// TODO: Should hi = size - 2? 
 void compare_runtime(int size)
 {
   auto lo = 0;

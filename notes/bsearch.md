@@ -9,7 +9,8 @@
 * Khan Academy's [Implementing binary search of an array](https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/binary-search)
 * [Binary Search](https://isaaccomputerscience.org/concepts/dsa_search_binary?examBoard=all&stage=all) page of Cambridge University's Isacc Computer Science website.
 * Binary Search [Complexity](https://courses.cs.washington.edu/courses/cse143/20sp/lessons/09/)
-* Qustion on [Stackoverflow](https://stackoverflow.com/questions/8185079/how-to-calculate-binary-search-complexity)
+* The mathematical efficiency of the [sub array problem](file:///home/kurt/d/CompSci/Cormen-Et-Al-Introduction_To_Algorithms-A3.pdf) is in chapter 4 of An Introduction to Algorithms, 3rd Edition, by Cormen, et al. discusses
+* Question on [Stackoverflow](https://stackoverflow.com/questions/8185079/how-to-calculate-binary-search-complexity)
 
 ## Implementation
 
